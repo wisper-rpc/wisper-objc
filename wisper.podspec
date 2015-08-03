@@ -1,9 +1,9 @@
 Pod::Spec.new do |s|
-  s.name             = "wisper"
+  s.name             = "Wisper"
   s.version          = "0.0.1"
-  s.summary          = "A short description of wisper."
+  s.summary          = "A short description of Wisper."
   s.description      = <<-DESC
-                       An optional longer description of wisper
+                       An optional longer description of Wisper
                        DESC
   s.homepage         = "https://bitbucket.org/widespaceGIT/wisper-ios/"
   s.license          = 'MIT'

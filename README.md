@@ -18,7 +18,7 @@ Your project must target iOS 4.0 / OS X v10.6 or later.
 Wisper - iOS is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
-    pod "wisper"
+    pod "Wisper"
 
 ## Main Contributors
 
