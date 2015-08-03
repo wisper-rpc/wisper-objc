@@ -1,0 +1,7 @@
+target 'Wisper', :exclusive => true do
+  pod "wisper", :path => "../"
+end
+
+target 'Tests', :exclusive => true do
+  pod "wisper", :path => "../"
+end
