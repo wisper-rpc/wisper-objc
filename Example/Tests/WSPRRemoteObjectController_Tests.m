@@ -12,13 +12,13 @@
 #import "WSPRRemoteObjectController.h"
 #import "WSPRTestObject.h"
 
-@interface WSUTRPCRemoteObjectController : XCTestCase
+@interface WSPRRemoteObjectController_Tests : XCTestCase
 
 @property (nonatomic, strong) WSPRRemoteObjectController *remoteObjectController;
 
 @end
 
-@implementation WSUTRPCRemoteObjectController
+@implementation WSPRRemoteObjectController_Tests
 
 - (void)setUp {
     [super setUp];

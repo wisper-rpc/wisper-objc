@@ -2,15 +2,16 @@
 //  main.m
 //  Wisper
 //
-//  Created by Patrik Nyblad on 03/08/15.
-//  Copyright (c) 2015 Widespace AB. All rights reserved.
+//  Created by Patrik Nyblad on 10/09/2015.
+//  Copyright (c) 2015 Patrik Nyblad. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "AppDelegate.h"
+@import UIKit;
+#import "WSPRAppDelegate.h"
 
-int main(int argc, char * argv[]) {
+int main(int argc, char * argv[])
+{
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([WSPRAppDelegate class]));
     }
 }

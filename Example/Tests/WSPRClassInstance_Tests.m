@@ -11,11 +11,11 @@
 #import "WSPRClassProperty.h"
 #import "WSPRTestObject.h"
 
-@interface WSRPCUTClassInstance : XCTestCase
+@interface WSPRClassInstance_Tests : XCTestCase
 
 @end
 
-@implementation WSRPCUTClassInstance
+@implementation WSPRClassInstance_Tests
 
 - (void)setUp
 {
