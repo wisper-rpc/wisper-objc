@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'Wisper_Example', :exclusive => true do
+  pod "Wisper", :path => "../"
+end
+
+target 'Wisper_Tests', :exclusive => true do
+  pod "Wisper", :path => "../"
+  pod "OCMock"
+  
+end

@@ -133,3 +133,10 @@ AppleDoc/
 # Ignore AppCode config files
 #
 .idea/
+
+
+###
+# Ignore generated pod files in Example folder
+#
+Example/Pods/
+Example/Wisper.xcworkspace/
