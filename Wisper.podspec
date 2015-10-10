@@ -12,12 +12,16 @@ Pod::Spec.new do |s|
                        DESC
 
   s.homepage         = "https://bitbucket.org/widespaceGIT/wisper-ios/"
+  
+  # Some cool diagrams or the Wisper logo here
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.authors          = { "Patrik Nyblad" => "patrik.nyblad@widespace.com", "Ehssan Hoorvash" => "ehssan.hoorvash@widespace.com", "Oskar Segersvärd" => "oskar.segersvard@widespace.com" }
   s.source           = { :git => "https://bitbucket.org/widespaceGIT/wisper-ios.git", :tag => s.version.to_s }
 
-  s.platform     = :ios, '4.0'
+  #Not sure about lowest compatible versions
+  s.ios.deployment_target = "4.0"
+  s.osx.deployment_target = "10.10"
   s.requires_arc = true
 
   s.source_files = 'Pod/Classes/**/*'
