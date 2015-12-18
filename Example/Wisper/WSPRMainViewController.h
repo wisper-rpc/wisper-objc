@@ -8,6 +8,6 @@
 
 @import UIKit;
 
-@interface WSPRViewController : UIViewController
+@interface WSPRMainViewController : UIViewController
 
 @end
