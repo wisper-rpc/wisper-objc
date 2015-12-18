@@ -68,6 +68,18 @@ typedef NS_ENUM(NSInteger, WSPRPropertyMode)
  */
 @property (nonatomic, strong) NSString *type;
 
+/**
+ *  Optional block used to transform a wisper value to something you want for your mapped property.
+ *  The object you return must be compatible with NSKeyValueCoding -setValue:forKeyPath.
+ */
+@property (nonatomic, copy) id(^deserializeWisperPropertyBlock)(NSObject *wisperValue);
+
+/**
+ *  Optional block used to transform a property value to something wisper understands.
+ *  The object you return must be of one of the types wisper can manage: String, Number, Array or Dictionary.
+ */
+@property (nonatomic, copy) id(^serializeWisperPropertyBlock)(NSObject *propertyValue);
+
 +(instancetype)propertyWithMapName:(NSString *)mapName keyPath:(NSString *)keyPath type:(NSString *)type andMode:(WSPRPropertyMode)mode;
 
 -(instancetype)initWithMapName:(NSString *)mapName keyPath:(NSString *)keyPath type:(NSString *)type andMode:(WSPRPropertyMode)mode;

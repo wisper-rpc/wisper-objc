@@ -38,4 +38,11 @@
  */
 @property (nonatomic, strong) NSObject<WSPRClassProtocol> *instance;
 
+/**
+ *  Handle a property event and set the value of the property if we could handle the event.
+ *  @param event An event to try to handle as a property event.
+ *  @return YES if we handled the property event and actually set a property on the instance, NO if we could not handle the event.
+ */
+-(BOOL)handlePropertyEvent:(WSPREvent *)event;
+
 @end
