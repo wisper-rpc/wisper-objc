@@ -185,7 +185,7 @@
             WSPREvent *event = [[WSPREvent alloc] initWithNotification:remoteObjectCall.notification];
             
             //Set properties if we have any properties with this
-            [self handleRPCPropertyCallWithEvent:event onRPCInstance:rpcInstance];
+            [rpcInstance handlePropertyEvent:event];
             
             //Fire method on instance WSPRClassProtocol
             if (remoteObjectCall.notification && [rpcInstance.instance respondsToSelector:@selector(rpcHandleInstanceEvent:)])
@@ -227,17 +227,94 @@
     WSPRClass *theClass = _classMap[remoteObjectCall.className];
     
     Class classPointer = theClass.classRef;
-    NSObject<WSPRClassProtocol> *instance = [[classPointer alloc] init];
+    NSObject<WSPRClassProtocol> *instance = [classPointer alloc];
     
-    WSPRClassInstance *rpcInstance = [self addRPCObjectInstance:instance withRPCClass:theClass];
-    
-    if (remoteObjectCall.request)
+    //Have the class supplied its own initializer?
+    WSPRClassMethod *createMethod = theClass.instanceMethods[@"~"] ? : theClass.staticMethods[@"~"];
+    if (createMethod)
     {
-        //Make the response
-        WSPRResponse *response = [remoteObjectCall.request createResponse];
-        response.result = rpcInstance.instanceIdentifier;
-        remoteObjectCall.request.responseBlock(response);
+        WSPRClassInstance *rpcInstance = [self addRPCObjectInstance:instance withRPCClass:theClass];
+        
+        if (createMethod.callBlock)
+        {
+            //try to run the callblock method and catch if any exception occurs
+            @try {
+                createMethod.callBlock(self, rpcInstance, createMethod, remoteObjectCall.request);
+            }
+            @catch (NSException *exception)
+            {
+                [self handleInvocationException:exception andMessage:@"CallBlock Invocation Error" forRemoteObjectCall:remoteObjectCall];
+            }
+            @finally {}
+            
+            return;
+        }
+        else
+        {
+            [self invokeMethod:createMethod withParams:remoteObjectCall.params onTarget:instance completion:^(id result, WSPRError *error) {
+                if (error)
+                {
+                    [self sendRPCError:error forRemoteObjectCall:remoteObjectCall asGlobal:NO];
+                    return;
+                }
+                
+                
+                if (remoteObjectCall.request)
+                {
+                    //Make the response
+                    WSPRResponse *response = [remoteObjectCall.request createResponse];
+                    response.result = @{@"id" : rpcInstance.instanceIdentifier, @"props" : [self nonNilPropsFromInstance:rpcInstance]};
+                    remoteObjectCall.request.responseBlock(response);
+                }
+            }];
+        }
     }
+    else
+    {
+        //Use default initializer
+        instance = [instance init];
+        
+        //Add instance after initializing to avoid events for all properties set in init and protecting instance variables from changes before init has been called.
+        WSPRClassInstance *rpcInstance = [self addRPCObjectInstance:instance withRPCClass:theClass];
+        
+        if (remoteObjectCall.request)
+        {
+            //Make the response
+            WSPRResponse *response = [remoteObjectCall.request createResponse];
+            response.result = @{@"id" : rpcInstance.instanceIdentifier, @"props" : [self nonNilPropsFromInstance:rpcInstance]};
+            remoteObjectCall.request.responseBlock(response);
+        }
+    }
+}
+
+-(NSDictionary *)nonNilPropsFromInstance:(WSPRClassInstance *)classInstance
+{
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    WSPRClass *classRepresentation = classInstance.rpcClass;
+    for (NSString *propertyName in [classRepresentation.properties allKeys])
+    {
+        WSPRClassProperty *property = classRepresentation.properties[propertyName];
+        
+        NSObject *propertyValue = [classInstance.instance valueForKeyPath:property.keyPath];
+        
+        if (propertyValue)
+        {
+            if ([property.type isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
+            {
+                WSPRClassInstance *propertyInstance = [self getRPCClassInstanceForInstance:(NSObject<WSPRClassProtocol> *)propertyValue];
+                propertyValue = propertyInstance.instanceIdentifier;
+            }
+            
+            if (property.serializeWisperPropertyBlock)
+            {
+                propertyValue = property.serializeWisperPropertyBlock(propertyValue);
+            }
+            
+            dictionary[propertyName] = propertyValue;
+        }
+    }
+    
+    return [NSDictionary dictionaryWithDictionary:dictionary];
 }
 
 -(void)handleRPCDestroyRemoteObject:(WSPRRemoteObjectCall *)remoteObjectCall
@@ -303,41 +380,6 @@
     }
 }
 
-#pragma mark - RPC Properties
-
--(BOOL)handleRPCPropertyCallWithEvent:(WSPREvent *)event onRPCInstance:(WSPRClassInstance *)rpcInstance
-{
-    WSPRClassProperty *property = rpcInstance.rpcClass.properties[event.name];
-    if (property && (property.mode == WSPRPropertyModeReadWrite || property.mode == WSPRPropertyModeWriteOnly) && property.type)
-    {
-        //Property pass by reference lookup
-        if ([property.type isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
-        {
-            //Accept NSNull
-            if ([event.data isKindOfClass:[NSNull class]])
-            {
-                event.data = nil;
-            }
-            else
-            {
-                //Lookup instance
-                WSPRClassInstance *classInstanceModel = _instanceMap[event.data];
-                
-                if (classInstanceModel)
-                {
-                    event.data = classInstanceModel.instance;
-                }
-            }
-        }
-        
-        if ([WSPRHelper paramType:property.type matchesArgument:event.data])
-        {
-            [rpcInstance.instance setValue:event.data forKeyPath:property.keyPath];
-            return YES;
-        }
-    }
-    return NO;
-}
 
 #pragma mark - RPC Actions
 
@@ -357,26 +399,50 @@
         
         return;
     }
+    
+    [self invokeMethod:method withParams:remoteObjectCall.params onTarget:rpcInstance ? rpcInstance.instance : (Class)class.classRef completion:^(id result, WSPRError *error) {
+        if (error)
+        {
+            [self sendRPCError:error forRemoteObjectCall:remoteObjectCall asGlobal:NO];
+            return;
+        }
         
+        if (remoteObjectCall.request)
+        {
+            WSPRResponse *response = [remoteObjectCall.request createResponse];
+            response.result = result;
+            remoteObjectCall.request.responseBlock(response);
+        }
+    }];
+}
+
+/**
+ *  Abstraction of the invokation part of the remote object method call
+ *  @param method The WSPRClassMethod you want to invoke, either instance or static.
+ *  @param target A pointer to the actual instance or static class to run invoke on.
+ *  @param completion The returned value of the method
+ */
+-(void)invokeMethod:(WSPRClassMethod *)method withParams:(NSArray *)params onTarget:(id)target completion:(void (^)(id result, WSPRError *error))completion
+{
     //Create an invocation
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[rpcInstance ? rpcInstance.instance : (Class)class.classRef methodSignatureForSelector:method.selector]];
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[target methodSignatureForSelector:method.selector]];
     __unsafe_unretained id returnedObject = nil;
     
+    //Retain all arguments when calling the method (ARC fix)
     [invocation retainArguments];
+    
     //Set the selector
     [invocation setSelector:method.selector];
     
     //Set the object/class to perform the selector on
-    [invocation setTarget:rpcInstance ? rpcInstance.instance : (Class)class.classRef];
+    [invocation setTarget:target];
     
-    
-    //Params should filter out the instance so that the params are clean
-    NSArray *params = remoteObjectCall.params;
-
     //Param count validation
     if (method.paramTypes && method.paramTypes.count != params.count)
     {
-        [self handleRPCError:WSPRErrorRemoteObjectInvalidArguments andMessage:[NSString stringWithFormat:@"Number of arguments does not match receiving procedure. Expected: %lu, Got: %lu", (unsigned long)method.paramTypes.count, (unsigned long)params.count] forRemoteObjectCall:remoteObjectCall];
+        WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainRemoteObject andCode:WSPRErrorRemoteObjectInvalidArguments];
+        error.message = [NSString stringWithFormat:@"Number of arguments does not match receiving procedure. Expected: %lu, Got: %lu", (unsigned long)method.paramTypes.count, (unsigned long)params.count];
+        completion(nil, error);
         return;
     }
     for (NSUInteger i = 0; i < params.count; i++)
@@ -393,7 +459,9 @@
                 
                 if (!classInstanceModel)
                 {
-                    [self handleRPCError:WSPRErrorRemoteObjectInvalidArguments andMessage:[NSString stringWithFormat:@"No reference for ID: %@", params[i]] forRemoteObjectCall:remoteObjectCall];
+                    WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainRemoteObject andCode:WSPRErrorRemoteObjectInvalidArguments];
+                    error.message = [NSString stringWithFormat:@"No reference for ID: %@", params[i]];
+                    completion(nil, error);
                     return;
                 }
                 argument = classInstanceModel.instance;
@@ -407,7 +475,9 @@
         //Individual argument validation
         if (![WSPRHelper paramType:method.paramTypes[i] matchesArgument:argument])
         {
-            [self handleRPCError:WSPRErrorRemoteObjectInvalidArguments andMessage:[NSString stringWithFormat:@"Argument type sent to procedure does not match expected type. Expected arguments: %@", method.paramTypes] forRemoteObjectCall:remoteObjectCall];
+            WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainRemoteObject andCode:WSPRErrorRemoteObjectInvalidArguments];
+            error.message = [NSString stringWithFormat:@"Argument type sent to procedure does not match expected type. Expected arguments: %@", method.paramTypes];
+            completion(nil, error);
             return;
         }
         
@@ -419,24 +489,27 @@
         [invocation invoke];
     }
     @catch (NSException *exception) {
-
-        [self handleInvocationException:exception andMessage:@"Method Invocation Error" forRemoteObjectCall:remoteObjectCall];
+        
+        WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainiOS_OSX andCode:0];
+        error.message = @"Method Invocation Error";
+        error.data = @{
+                       @"exception" : @{
+                               @"name" : exception.name,
+                               @"reason" : exception.reason
+                               }
+                       };
+        completion(nil, error);
         return;
         
     }
     @finally {}
     
-    
-    if (remoteObjectCall.request)
+    if (!method.isVoidReturn)
     {
-        if (!method.isVoidReturn)
-        {
-            [invocation getReturnValue:&returnedObject];
-        }
-        WSPRResponse *response = [remoteObjectCall.request createResponse];
-        response.result = returnedObject ? returnedObject : nil;
-        remoteObjectCall.request.responseBlock(response);
+        [invocation getReturnValue:&returnedObject];
     }
+    
+    completion(returnedObject, nil);
 }
 
 #pragma mark - WSPRClassInstanceDelegate methods
