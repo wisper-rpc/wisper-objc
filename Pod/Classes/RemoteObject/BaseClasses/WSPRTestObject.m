@@ -48,6 +48,19 @@
         request.responseBlock(response);
     };
     
+    WSPRClassMethod *initWithArgsMethod = [[WSPRClassMethod alloc] init];
+    initWithArgsMethod.mapName = @"~";
+    initWithArgsMethod.paramTypes = @[WSPR_PARAM_TYPE_STRING];
+    initWithArgsMethod.selector = @selector(initWithTestPropertyValue:);
+    initWithArgsMethod.isVoidReturn = NO;
+    //    initWithArgsMethod.callBlock = ^(WSPRRemoteObjectController *rpcController, WSPRClassInstance *instance, WSPRClassMethod *theMethod, WSPRRequest *request){
+    //        WSPRTestObject *testObject = [(WSPRTestObject *)instance.instance initWithTestPropertyValue:request.params[0]];
+    //        WSPRResponse *response = [request createResponse];
+    //        response.result = @{@"id":instance.instanceIdentifier, @"props":@{@"testProperty":testObject.testProperty}};
+    //        request.responseBlock(response);
+    //    };
+    
+    
     WSPRClassMethod *echoStringMethod = [[WSPRClassMethod alloc] init];
     echoStringMethod.mapName = @"echoString";
     echoStringMethod.paramTypes = @[WSPR_PARAM_TYPE_STRING];
@@ -67,7 +80,6 @@
     staticPassByReferenceMethod.paramTypes = @[WSPR_PARAM_TYPE_INSTANCE];
     staticPassByReferenceMethod.selector = @selector(passByReference:);
     
-    
     WSPRClassMethod *passByReferenceMethod = [[WSPRClassMethod alloc] init];
     passByReferenceMethod.mapName = @"passByReference";
     passByReferenceMethod.isVoidReturn = NO;
@@ -79,6 +91,7 @@
     [classModel addStaticMethod:staticAppendMethod];
     [classModel addStaticMethod:exceptionStaticMethod];
     [classModel addStaticMethod:staticPassByReferenceMethod];
+    [classModel addInstanceMethod:initWithArgsMethod];
     [classModel addInstanceMethod:appendMethod];
     [classModel addInstanceMethod:exceptionMethod];
     [classModel addInstanceMethod:passByReferenceMethod];
@@ -86,6 +99,16 @@
     [classModel addProperty:testPassByReferenceProperty];
     
     return classModel;
+}
+
+-(instancetype)initWithTestPropertyValue:(NSString *)testString
+{
+    self = [self init];
+    if (self)
+    {
+        self.testProperty = testString;
+    }
+    return self;
 }
 
 +(NSString *)echoString:(NSString *)message
