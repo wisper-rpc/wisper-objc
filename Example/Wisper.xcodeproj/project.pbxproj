@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		2A94BAF2348C1DA2DA4CF6EF /* Pods_Wisper_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD7B29E6509C8119C6EA4F74 /* Pods_Wisper_Tests.framework */; };
-		5F2F32E31BC86DA60069D8E9 /* WSPRMessageFactory_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E21BC86DA60069D8E9 /* WSPRMessageFactory_Tests.m */; settings = {ASSET_TAGS = (); }; };
-		5F2F32EE1BC8703D0069D8E9 /* WSPRClassInstance_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E71BC86E460069D8E9 /* WSPRClassInstance_Tests.m */; settings = {ASSET_TAGS = (); }; };
-		5F2F32EF1BC8703D0069D8E9 /* WSPRGateway_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E41BC86E460069D8E9 /* WSPRGateway_Tests.m */; settings = {ASSET_TAGS = (); }; };
-		5F2F32F01BC8703D0069D8E9 /* WSPRRemoteObjectController_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E81BC86E460069D8E9 /* WSPRRemoteObjectController_Tests.m */; settings = {ASSET_TAGS = (); }; };
-		5F2F32F11BC8703D0069D8E9 /* WSPRRouter_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E61BC86E460069D8E9 /* WSPRRouter_Tests.m */; settings = {ASSET_TAGS = (); }; };
+		5F2F32E31BC86DA60069D8E9 /* WSPRMessageFactory_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E21BC86DA60069D8E9 /* WSPRMessageFactory_Tests.m */; };
+		5F2F32EE1BC8703D0069D8E9 /* WSPRClassInstance_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E71BC86E460069D8E9 /* WSPRClassInstance_Tests.m */; };
+		5F2F32EF1BC8703D0069D8E9 /* WSPRGateway_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E41BC86E460069D8E9 /* WSPRGateway_Tests.m */; };
+		5F2F32F01BC8703D0069D8E9 /* WSPRRemoteObjectController_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E81BC86E460069D8E9 /* WSPRRemoteObjectController_Tests.m */; };
+		5F2F32F11BC8703D0069D8E9 /* WSPRRouter_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E61BC86E460069D8E9 /* WSPRRouter_Tests.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
