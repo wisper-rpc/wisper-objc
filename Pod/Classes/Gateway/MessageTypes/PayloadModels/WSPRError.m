@@ -69,11 +69,11 @@
 -(NSDictionary *)asDictionary
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:@{
-             @"domain" : @(self.domain),
-             @"code" : @(self.code),
-             @"name" : self.name,
-             @"message" : self.message ? : @"",
-             }];
+                                                                                      @"domain" : @(self.domain),
+                                                                                      @"code" : @(self.code),
+                                                                                      @"name" : self.name,
+                                                                                      @"message" : self.message ? : @"",
+                                                                                      }];
     if (self.data)
     {
         [dictionary setObject:self.data forKey:@"data"];
