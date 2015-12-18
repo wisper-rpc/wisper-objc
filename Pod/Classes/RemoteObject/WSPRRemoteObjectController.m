@@ -77,6 +77,11 @@
 {
     [super handleMessage:message];
     
+    if (![message isKindOfClass:[WSPRNotification class]])
+    {
+        return;
+    }
+    
     WSPRRemoteObjectCall *remoteObjectCall = [[WSPRRemoteObjectCall alloc] init];
     if ([message isKindOfClass:[WSPRRequest class]])
     {
