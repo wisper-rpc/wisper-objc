@@ -13,6 +13,7 @@
 		5F2F32EF1BC8703D0069D8E9 /* WSPRGateway_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E41BC86E460069D8E9 /* WSPRGateway_Tests.m */; };
 		5F2F32F01BC8703D0069D8E9 /* WSPRRemoteObjectController_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E81BC86E460069D8E9 /* WSPRRemoteObjectController_Tests.m */; };
 		5F2F32F11BC8703D0069D8E9 /* WSPRRouter_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E61BC86E460069D8E9 /* WSPRRouter_Tests.m */; };
+		5F41A14C1C57C3EE007F7EEC /* WSPRRemoteObject_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F41A14B1C57C3EE007F7EEC /* WSPRRemoteObject_Tests.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -49,6 +50,7 @@
 		5F2F32E61BC86E460069D8E9 /* WSPRRouter_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRRouter_Tests.m; sourceTree = "<group>"; };
 		5F2F32E71BC86E460069D8E9 /* WSPRClassInstance_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRClassInstance_Tests.m; sourceTree = "<group>"; };
 		5F2F32E81BC86E460069D8E9 /* WSPRRemoteObjectController_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRRemoteObjectController_Tests.m; sourceTree = "<group>"; };
+		5F41A14B1C57C3EE007F7EEC /* WSPRRemoteObject_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRRemoteObject_Tests.m; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* Wisper_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wisper_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -170,6 +172,7 @@
 				5F2F32E21BC86DA60069D8E9 /* WSPRMessageFactory_Tests.m */,
 				5F2F32E81BC86E460069D8E9 /* WSPRRemoteObjectController_Tests.m */,
 				5F2F32E61BC86E460069D8E9 /* WSPRRouter_Tests.m */,
+				5F41A14B1C57C3EE007F7EEC /* WSPRRemoteObject_Tests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -256,7 +259,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = WSPR;
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "Patrik Nyblad";
 				TargetAttributes = {
 					6003F5AD195388D20070C39A = {
@@ -416,6 +419,7 @@
 				5F2F32F11BC8703D0069D8E9 /* WSPRRouter_Tests.m in Sources */,
 				5F2F32E31BC86DA60069D8E9 /* WSPRMessageFactory_Tests.m in Sources */,
 				5F2F32F01BC8703D0069D8E9 /* WSPRRemoteObjectController_Tests.m in Sources */,
+				5F41A14C1C57C3EE007F7EEC /* WSPRRemoteObject_Tests.m in Sources */,
 				5F2F32EE1BC8703D0069D8E9 /* WSPRClassInstance_Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -468,6 +472,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -532,6 +537,7 @@
 				GCC_PREFIX_HEADER = "Wisper/Wisper-Prefix.pch";
 				INFOPLIST_FILE = "Wisper/Wisper-Info.plist";
 				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -547,6 +553,7 @@
 				GCC_PREFIX_HEADER = "Wisper/Wisper-Prefix.pch";
 				INFOPLIST_FILE = "Wisper/Wisper-Info.plist";
 				MODULE_NAME = ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -569,6 +576,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "Tests/Tests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Wisper_Example.app/Wisper_Example";
 				WRAPPER_EXTENSION = xctest;
@@ -588,6 +596,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tests/Tests-Prefix.pch";
 				INFOPLIST_FILE = "Tests/Tests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Wisper_Example.app/Wisper_Example";
 				WRAPPER_EXTENSION = xctest;
