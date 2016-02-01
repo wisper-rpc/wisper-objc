@@ -141,7 +141,15 @@
 {
     id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
     
-    OCMExpect([mockGateway sendMessage:OCMOCK_ANY]);
+    OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPRRequest *initRequest = (WSPRRequest *)obj;
+        
+        WSPRResponse *response = [initRequest createResponse];
+        response.result = @{@"id" : @"AAA"};
+        initRequest.responseBlock(response);
+        
+        return YES;
+    }]]);
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *request = (WSPRRequest *)obj;
         if ([request.method isEqualToString:@"test.Test:instanceCall"] && [[request.params firstObject] isEqualToString:@"AAA"])
@@ -162,7 +170,15 @@
     id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
     
     //Init should not have fired message
-    OCMExpect([mockGateway sendMessage:OCMOCK_ANY]);
+    OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPRRequest *initRequest = (WSPRRequest *)obj;
+        
+        WSPRResponse *response = [initRequest createResponse];
+        response.result = @{@"id" : @"AAA"};
+        initRequest.responseBlock(response);
+        
+        return YES;
+    }]]);
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *request = (WSPRRequest *)obj;
         if ([request.method isEqualToString:@"test.Test:instanceCall"] && [[request.params firstObject] isEqualToString:@"AAA"])
@@ -185,7 +201,15 @@
 {
     id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
     
-    OCMExpect([mockGateway sendMessage:OCMOCK_ANY]);
+    OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPRRequest *initRequest = (WSPRRequest *)obj;
+        
+        WSPRResponse *response = [initRequest createResponse];
+        response.result = @{@"id" : @"AAA"};
+        initRequest.responseBlock(response);
+        
+        return YES;
+    }]]);
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *request = (WSPRRequest *)obj;
         if ([request.method isEqualToString:@"test.Test:implementationLessMethodTurnedIntoNotification"] && [[request.params firstObject] isEqualToString:@"AAA"])
@@ -205,7 +229,15 @@
 {
     id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
     
-    OCMExpect([mockGateway sendMessage:OCMOCK_ANY]);
+    OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPRRequest *initRequest = (WSPRRequest *)obj;
+        
+        WSPRResponse *response = [initRequest createResponse];
+        response.result = @{@"id" : @"AAA"};
+        initRequest.responseBlock(response);
+        
+        return YES;
+    }]]);
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *request = (WSPRRequest *)obj;
         NSLog(@"REQUEST = %@", request);
@@ -228,7 +260,15 @@
 {
     id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
     
-    OCMExpect([mockGateway sendMessage:OCMOCK_ANY]);
+    OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPRRequest *initRequest = (WSPRRequest *)obj;
+        
+        WSPRResponse *response = [initRequest createResponse];
+        response.result = @{@"id" : @"AAA"};
+        initRequest.responseBlock(response);
+        
+        return YES;
+    }]]);
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *request = (WSPRRequest *)obj;
         if ([request.method isEqualToString:@"test.Test:implementationLessMethodTurnedIntoNotificationWithString"] &&
