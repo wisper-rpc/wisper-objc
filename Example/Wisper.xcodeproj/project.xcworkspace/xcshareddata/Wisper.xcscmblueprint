@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "30D47CA36F18C4BD75A5748552C9643CB569B055",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "30D47CA36F18C4BD75A5748552C9643CB569B055" : 0,
+    "12834321861DA670361617D77B6C8F4F12E69294" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "A3AC6213-EF25-4D54-B2E7-7E2D5ADEE680",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "30D47CA36F18C4BD75A5748552C9643CB569B055" : "wisper-ios\/",
+    "12834321861DA670361617D77B6C8F4F12E69294" : ".."
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Wisper",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Example\/Wisper.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "bitbucket.org:WidespaceGIT\/ws_sdk_ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "12834321861DA670361617D77B6C8F4F12E69294"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/WidespaceGIT\/wisper-ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "30D47CA36F18C4BD75A5748552C9643CB569B055"
+    }
+  ]
+}
