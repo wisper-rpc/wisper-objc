@@ -97,18 +97,21 @@
     if (messageType == WSPRGatewayMessageTypeRequest)
     {
         WSPRRequest *request = (WSPRRequest *)message;
-        __weak WSPRRequest *weakIncomingRequest = request;
-        __weak WSPRGateway *weakSelf = self;
-        request.responseBlock = ^(WSPRResponse *response)
+        if (!request.responseBlock)
         {
-            //Retain self so that we don't let go of the reference in the middle of execution.
-            __strong WSPRGateway *strongSelf = weakSelf;
-            __strong WSPRRequest *strongIncomingRequest = weakIncomingRequest;
-            [strongSelf sendMessage:response];
-            
-            //Assign an empty block as soon as this request has been answered by a response so that a second response cannot be sent.
-            strongIncomingRequest.responseBlock = ^(WSPRResponse *response){};
-        };
+            __weak WSPRRequest *weakIncomingRequest = request;
+            __weak WSPRGateway *weakSelf = self;
+            request.responseBlock = ^(WSPRResponse *response)
+            {
+                //Retain self so that we don't let go of the reference in the middle of execution.
+                __strong WSPRGateway *strongSelf = weakSelf;
+                __strong WSPRRequest *strongIncomingRequest = weakIncomingRequest;
+                [strongSelf sendMessage:response];
+                
+                //Assign an empty block as soon as this request has been answered by a response so that a second response cannot be sent.
+                strongIncomingRequest.responseBlock = ^(WSPRResponse *response){};
+            };
+        }
     }
     else if (messageType == WSPRGatewayMessageTypeResponse)
     {
