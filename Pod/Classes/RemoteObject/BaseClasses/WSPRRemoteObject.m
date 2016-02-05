@@ -154,11 +154,11 @@
 
 #pragma mark - Private Actions
 
--(void)_initRemoteObjectWithParams:(NSDictionary *)params
+-(void)_initRemoteObjectWithParams:(NSArray *)params
 {
     WSPRRequest *request = [[WSPRRequest alloc] init];
     request.method = [NSString stringWithFormat:@"%@~", self.mapName];
-    request.params = params ? @[params] : @[];
+    request.params = params ? : @[];
     request.responseBlock = ^(WSPRResponse *response) {
         if ([response isKindOfClass:[WSPRResponse class]])
         {
