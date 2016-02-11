@@ -38,6 +38,10 @@
 
 @end
 
+
+/**
+ *  An object that receives and routes messages to other known routes or reverse up to its known parent.
+ */
 @interface WSPRRouter : NSObject <WSPRRouteProtocol>
 
 @property (nonatomic, strong) NSMutableDictionary *routes;

@@ -8,8 +8,16 @@
 
 #import "WSPRRouter.h"
 
+
+/**
+ *  The Gateway router receives its messages from an internal WSPRGateway instance. 
+ *  Reverse messages are sent out through the Gateway.
+ */
 @interface WSPRGatewayRouter : WSPRRouter <WSPRGatewayDelegate>
 
+/**
+ *  The transceiving gateway that all messages are routed to and from. 
+ */
 @property (nonatomic, readonly) WSPRGateway *gateway;
 
 @end
