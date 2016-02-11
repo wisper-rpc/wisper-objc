@@ -10,11 +10,23 @@
 
 @interface WSPRClassRouter ()
 
-@property (nonatomic, strong) NSMutableDictionary *classMap;
+@property (nonatomic, strong) WSPRClass *classModel;
 @property (nonatomic, strong) NSMutableDictionary *instanceMap;
 
 @end
 
 @implementation WSPRClassRouter
+
+#pragma mark - Life cycle
+-(instancetype)initWithClass:(Class<WSPRClassProtocol>)aClass
+{
+    WSPRClass *wisperClass = [aClass rpcRegisterClass];
+    self = [self initWithNameSpace:wisperClass.mapName];
+    if (self)
+    {
+        self.classModel = wisperClass;
+    }
+    return self;
+}
 
 @end
