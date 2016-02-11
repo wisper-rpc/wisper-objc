@@ -9,6 +9,19 @@
 #import "WSPRRouter.h"
 #import "WSPRObject.h"
 
+typedef enum {
+    WSPRCallTypeUnknown,
+    WSPRCallTypeCreate,
+    WSPRCallTypeDestroy,
+    WSPRCallTypeStatic,
+    WSPRCallTypeStaticEvent,
+    WSPRCallTypeInstance,
+    WSPRCallTypeInstanceEvent
+} WSPRCallType;
+
+/**
+ *  A router that takes care of exactly one remote object class and all of its messages and instances.
+ */
 @interface WSPRClassRouter : WSPRRouter
 
 /**
@@ -25,5 +38,9 @@
  *  @return A router instance that handes a wisper class.
  */
 -(instancetype)initWithClass:(Class<WSPRClassProtocol>)aClass;
+
+#pragma mark - Helpers
+
++(WSPRCallType)callTypeFromMethodString:(NSString *)method;
 
 @end

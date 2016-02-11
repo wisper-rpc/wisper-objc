@@ -29,4 +29,42 @@
     return self;
 }
 
+
+#pragma mark - Helpers
+
++(WSPRCallType)callTypeFromMethodString:(NSString *)method
+{
+    NSArray *components = [method componentsSeparatedByString:@":"];
+    if (components.count > 1)
+    {
+        if ([[components lastObject] rangeOfString:@"~"].location != NSNotFound)
+        {
+            return WSPRCallTypeDestroy;
+        }
+        else if ([[components lastObject] rangeOfString:@"!"].location != NSNotFound)
+        {
+            return WSPRCallTypeInstanceEvent;
+        }
+        return WSPRCallTypeInstance;
+    }
+    
+    if ([method rangeOfString:@"~"].location != NSNotFound)
+    {
+        return WSPRCallTypeCreate;
+    }
+    
+    if ([method rangeOfString:@"!"].location != NSNotFound)
+    {
+        return WSPRCallTypeStaticEvent;
+    }
+    
+    if ([method rangeOfString:@"."].location != NSNotFound)
+    {
+        return WSPRCallTypeStatic;
+    }
+    
+    return WSPRCallTypeUnknown;
+}
+
+
 @end
