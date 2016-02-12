@@ -37,10 +37,10 @@
     WSPRCallType callType = [[self class] callTypeFromMethodString:path];
     switch (callType) {
         case WSPRCallTypeCreate:
-            [self handleCreateRemoteObject:message];
+            [self handleCreateInstance:message];
             break;
         case WSPRCallTypeDestroy:
-            
+            [self handleDestroyInstance:message];
             break;
         case WSPRCallTypeStatic:
             
@@ -64,7 +64,7 @@
 
 #pragma mark - Private Actions
 
--(void)handleCreateRemoteObject:(WSPRNotification *)message
+-(void)handleCreateInstance:(WSPRNotification *)message
 {
     Class classPointer = self.classModel.classRef;
     NSObject<WSPRClassProtocol> *instance = [classPointer alloc];
@@ -125,6 +125,22 @@
             response.result = @{@"id" : rpcInstance.instanceIdentifier, @"props" : [self nonNilPropsFromInstance:rpcInstance]};
             request.responseBlock(response);
         }
+    }
+}
+
+-(void)handleDestroyInstance:(WSPRNotification *)message
+{
+    WSPRClassInstance *rpcInstance = _instanceMap[[message.params firstObject]];
+    
+    [self destroyInstance:rpcInstance];
+    
+    if ([message isKindOfClass:[WSPRRequest class]])
+    {
+        WSPRRequest *request = (WSPRRequest *)message;
+        
+        WSPRResponse *response = [request createResponse];
+        response.result = [message.params firstObject];
+        request.responseBlock(response);
     }
 }
 
