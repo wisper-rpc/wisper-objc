@@ -56,4 +56,11 @@
 
 -(instancetype)initWithNameSpace:(NSString *)routeNamespace;
 
+/**
+ *  Gets the root router of the whole routing tree. This is usually some kind of gateway.
+ *  The root is found by recursively looping through all parents until we reach the top level.
+ *  @return The root router.
+ */
+-(id<WSPRRouteProtocol>)rootRouter;
+
 @end

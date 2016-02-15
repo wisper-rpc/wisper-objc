@@ -37,6 +37,16 @@
     return self;
 }
 
+-(id<WSPRRouteProtocol>)rootRouter
+{
+    id<WSPRRouteProtocol> route = self;
+    while (route.parentRoute)
+    {        
+        route = route.parentRoute;
+    }
+    return route;
+}
+
 
 #pragma mark - WSPRRoute Protocol
 

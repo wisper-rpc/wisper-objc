@@ -117,5 +117,18 @@
     OCMVerifyAll(router1Mock);
 }
 
+- (void)testGetRootRouter
+{
+    [_router1 exposeRoute:_router2 onPath:@"r2"];
+    [_router2 exposeRoute:_router3 onPath:@"r3"];
+    
+    XCTAssertEqual([_router3 rootRouter], _router1, @"Wrong root router returned");
+}
+
+- (void)testGetRootRouterOnRoot
+{
+    XCTAssertEqual([_router1 rootRouter], _router1, @"Wrong root router returned");
+}
+
 
 @end
