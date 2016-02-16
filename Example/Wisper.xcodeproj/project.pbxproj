@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2A94BAF2348C1DA2DA4CF6EF /* Pods_Wisper_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD7B29E6509C8119C6EA4F74 /* Pods_Wisper_Tests.framework */; };
 		5F2AA0351C6D0385000BC85B /* WSPRClassRouter_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2AA0341C6D0385000BC85B /* WSPRClassRouter_Tests.m */; };
+		5F2AA03F1C736E42000BC85B /* WSPRInstanceRegistry_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2AA03E1C736E42000BC85B /* WSPRInstanceRegistry_Tests.m */; };
 		5F2F32E31BC86DA60069D8E9 /* WSPRMessageFactory_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E21BC86DA60069D8E9 /* WSPRMessageFactory_Tests.m */; };
 		5F2F32EE1BC8703D0069D8E9 /* WSPRClassInstance_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E71BC86E460069D8E9 /* WSPRClassInstance_Tests.m */; };
 		5F2F32EF1BC8703D0069D8E9 /* WSPRGateway_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E41BC86E460069D8E9 /* WSPRGateway_Tests.m */; };
@@ -47,6 +48,7 @@
 		4097EF0ADE746039AF3FAA20 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		47CCCA9CB7B50639CD55C0D5 /* Pods-Wisper_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisper_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wisper_Tests/Pods-Wisper_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		5F2AA0341C6D0385000BC85B /* WSPRClassRouter_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRClassRouter_Tests.m; sourceTree = "<group>"; };
+		5F2AA03E1C736E42000BC85B /* WSPRInstanceRegistry_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRInstanceRegistry_Tests.m; sourceTree = "<group>"; };
 		5F2F32E21BC86DA60069D8E9 /* WSPRMessageFactory_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRMessageFactory_Tests.m; sourceTree = "<group>"; };
 		5F2F32E41BC86E460069D8E9 /* WSPRGateway_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRGateway_Tests.m; sourceTree = "<group>"; };
 		5F2F32E61BC86E460069D8E9 /* WSPRRouter_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRRouter_Tests.m; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 				5F2F32E61BC86E460069D8E9 /* WSPRRouter_Tests.m */,
 				5F2AA0341C6D0385000BC85B /* WSPRClassRouter_Tests.m */,
 				5F41A14B1C57C3EE007F7EEC /* WSPRRemoteObject_Tests.m */,
+				5F2AA03E1C736E42000BC85B /* WSPRInstanceRegistry_Tests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -421,6 +424,7 @@
 				5F2F32EF1BC8703D0069D8E9 /* WSPRGateway_Tests.m in Sources */,
 				5F2F32F11BC8703D0069D8E9 /* WSPRRouter_Tests.m in Sources */,
 				5F2AA0351C6D0385000BC85B /* WSPRClassRouter_Tests.m in Sources */,
+				5F2AA03F1C736E42000BC85B /* WSPRInstanceRegistry_Tests.m in Sources */,
 				5F2F32E31BC86DA60069D8E9 /* WSPRMessageFactory_Tests.m in Sources */,
 				5F2F32F01BC8703D0069D8E9 /* WSPRRemoteObjectController_Tests.m in Sources */,
 				5F41A14C1C57C3EE007F7EEC /* WSPRRemoteObject_Tests.m in Sources */,
