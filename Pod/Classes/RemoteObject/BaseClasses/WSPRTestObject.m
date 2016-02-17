@@ -42,7 +42,12 @@
     
     WSPRClassMethod *echoMethod = [[WSPRClassMethod alloc] init];
     echoMethod.mapName = @"echo";
-    echoMethod.callBlock = ^(WSPRRemoteObjectController *rpcController, WSPRClassInstance *instance, WSPRClassMethod *theMethod, WSPRRequest *request){
+    echoMethod.callBlock = ^(id caller, WSPRClassInstance *instance, WSPRClassMethod *theMethod, WSPRNotification *notification){
+        WSPRRequest *request = [notification isKindOfClass:[WSPRRequest class]] ? (WSPRRequest *)notification : nil;
+        
+        if (!request)
+            return;
+        
         WSPRResponse *response = [request createResponse];
         response.result = request.params;
         request.responseBlock(response);

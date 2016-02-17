@@ -20,16 +20,19 @@
 @class WSPRRemoteObjectController;
 
 /**
- Call to use instead of selector.
+ A block that is executed instead of an actual method call. The block carries all parameters needed to make a complete response by yourself.
+ The notificataion passed could be an instance of WSPRRequest, in that case you need to respond to the request manually to not cause a leak.
+ 
+ @param caller Where this callblock was invoked from. Normally it is an instance of WSPRGateway or WSPRRouter.
  @param instance If this is executed as an instance method the instance will be available here.
- @param theMethod Model object representing the current method to execute as parsed by the RPC Controller.
- @param request The full request that the RPC Controller generated from the interface so you have all params. You have to respond manually by creating a WSPRResponse from the WSPRRequest and fire the callback while passing the response as a parameter.
+ @param method Model object representing the method being executed.
+ @param notification The actual message that was received so you have access to all params. If this is an instance of WSPRRequest you have to respond manually by creating a WSPRResponse from the WSPRRequest and fire the callback while passing the response as a parameter.
  @see WSPRClassInstance
  @see WSPRRequest
  @see WSPRResponse
  @see callBlock
  */
-typedef void (^CallBlock)(WSPRRemoteObjectController *rpcController, WSPRClassInstance *instance, WSPRClassMethod *theMethod, WSPRRequest *request);
+typedef void (^CallBlock)(id caller, WSPRClassInstance *instance, WSPRClassMethod *method, WSPRNotification *notification);
 
 @interface WSPRClassMethod : NSObject
 
