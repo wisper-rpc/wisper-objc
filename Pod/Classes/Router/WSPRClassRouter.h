@@ -8,16 +8,17 @@
 
 #import "WSPRRouter.h"
 #import "WSPRObject.h"
+#import "WSPRHelper.h"
 
-typedef enum {
-    WSPRCallTypeUnknown,
-    WSPRCallTypeCreate,
-    WSPRCallTypeDestroy,
-    WSPRCallTypeStatic,
-    WSPRCallTypeStaticEvent,
-    WSPRCallTypeInstance,
-    WSPRCallTypeInstanceEvent
-} WSPRCallType;
+//typedef enum {
+//    WSPRCallTypeUnknown,
+//    WSPRCallTypeCreate,
+//    WSPRCallTypeDestroy,
+//    WSPRCallTypeStatic,
+//    WSPRCallTypeStaticEvent,
+//    WSPRCallTypeInstance,
+//    WSPRCallTypeInstanceEvent
+//} WSPRCallType;
 
 /**
  *  A router that takes care of exactly one remote object class and all of its messages and instances.
