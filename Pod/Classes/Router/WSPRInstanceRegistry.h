@@ -41,6 +41,16 @@
 +(WSPRClassInstance *)instanceWithId:(NSString *)identifier underRootRoute:(id<WSPRRouteProtocol>)rootRoute;
 
 /**
+ *  Get a wisper instance by passing the actual instance.
+ *
+ *  @param instance  The actual instance we want the model for.
+ *  @param rootRoute The root route where we are are searching for the instance.
+ *
+ *  @return An instance wrapper model if found, otherwise nil.
+ */
++(WSPRClassInstance *)instanceModelForInstance:(id<WSPRClassProtocol>)instance underRootRoute:(id<WSPRRouteProtocol>)rootRoute;
+
+/**
  *  Add an instance scoped under a specific root route.
  *
  *  @param instance  The instance you want to add.

@@ -112,4 +112,18 @@
     XCTAssertNil([WSPRInstanceRegistry instanceWithId:classInstance.instanceIdentifier underRootRoute:rootRoute2], @"Instance was accessible from wrong root route!");
 }
 
+- (void)testGettingInstanceModelForInstance
+{
+    WSPRRouter *rootRoute = [[WSPRRouter alloc] initWithNameSpace:@"R1"];
+    
+    id mockedInstance = OCMProtocolMock(@protocol(WSPRClassProtocol));
+    
+    WSPRClassInstance *classInstance = [[WSPRClassInstance alloc] init];
+    classInstance.instanceIdentifier = @"neo";
+    classInstance.instance = mockedInstance;
+    [WSPRInstanceRegistry addInstance:classInstance underRootRoute:rootRoute];
+    
+    XCTAssertEqual([WSPRInstanceRegistry instanceModelForInstance:mockedInstance underRootRoute:rootRoute], classInstance, @"Could not get instance for actual instance!");
+}
+
 @end

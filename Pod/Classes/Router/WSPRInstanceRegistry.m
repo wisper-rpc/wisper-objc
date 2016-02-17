@@ -55,6 +55,19 @@
     return [self instancesUnderRootRoute:rootRoute][identifier];
 }
 
++(WSPRClassInstance *)instanceModelForInstance:(id<WSPRClassProtocol>)instance underRootRoute:(id<WSPRRouteProtocol>)rootRoute
+{
+    NSMutableDictionary *instances = [self instancesUnderRootRoute:rootRoute];
+    for (WSPRClassInstance *wisperInstance in [instances allValues])
+    {
+        if (wisperInstance.instance == instance)
+        {
+            return wisperInstance;
+        }
+    }
+    return nil;
+}
+
 +(void)addInstance:(WSPRClassInstance *)instance underRootRoute:(id<WSPRRouteProtocol>)rootRoute
 {
     if (!instance)
