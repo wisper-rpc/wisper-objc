@@ -157,4 +157,9 @@
     return [instance description];
 }
 
+-(void)rpcHandleInstanceEvent:(WSPREvent *)event
+{
+
+}
+
 @end
