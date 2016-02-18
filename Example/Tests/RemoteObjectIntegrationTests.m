@@ -49,46 +49,6 @@
     XCTAssertEqual(testObjectRouter.classModel.classRef, [WSPRTestObject class], @"Test Object not registered properly!");
 }
 
-- (void)testNotifyStaticMethod
-{
-    id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
-    
-    OCMExpect(ClassMethod([testObjectClassMock appendString:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [(NSString *)obj isEqualToString:@"Hello "];
-    }] withString:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [(NSString *)obj isEqualToString:@"world!"];
-    }]]));
-    
-    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
-    
-    WSPRNotification *notification = [[WSPRNotification alloc] init];
-    notification.method = @"wisp.test.TestObject.append";
-    notification.params = @[@"Hello ", @"world!"];
-    
-    [_gatewayRouter.gateway handleMessage:notification];
-    
-    OCMVerifyAll(testObjectClassMock);
-}
-
-- (void)testRequestStaticMethod
-{
-    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
-    
-    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
-    
-    WSPRRequest *request = [[WSPRRequest alloc] init];
-    request.method = @"wisp.test.TestObject.append";
-    request.params = @[@"Hello ", @"world!"];
-    request.responseBlock = ^(WSPRResponse *response){
-        if ([(NSString *)response.result isEqualToString:@"Hello world!"])
-            [expectation fulfill];
-    };
-    
-    [_gatewayRouter.gateway handleMessage:request];
-    
-    [self waitForExpectationsWithTimeout:0.1 handler:nil];
-}
-
 - (void)testNormalCreateInstance
 {
     //Disable custom init method
@@ -156,6 +116,46 @@
         NSString *instanceId = [(NSDictionary *)response.result objectForKey:@"id"];
         
         if ([[[WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter] instance] isKindOfClass:[WSPRTestObject class]])
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testNotifyStaticMethod
+{
+    id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
+    
+    OCMExpect(ClassMethod([testObjectClassMock appendString:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [(NSString *)obj isEqualToString:@"Hello "];
+    }] withString:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [(NSString *)obj isEqualToString:@"world!"];
+    }]]));
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRNotification *notification = [[WSPRNotification alloc] init];
+    notification.method = @"wisp.test.TestObject.append";
+    notification.params = @[@"Hello ", @"world!"];
+    
+    [_gatewayRouter.gateway handleMessage:notification];
+    
+    OCMVerifyAll(testObjectClassMock);
+}
+
+- (void)testRequestStaticMethod
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.method = @"wisp.test.TestObject.append";
+    request.params = @[@"Hello ", @"world!"];
+    request.responseBlock = ^(WSPRResponse *response){
+        if ([(NSString *)response.result isEqualToString:@"Hello world!"])
             [expectation fulfill];
     };
     
