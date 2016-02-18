@@ -105,10 +105,20 @@
 
 #pragma mark - Helpers
 
-+(NSArray *)splitPath:(NSString *)path
++(NSArray *)splitPath:(NSString *)inPath
 {
+    NSString *path = inPath;
+    NSMutableCharacterSet *specialMarkers = [[NSMutableCharacterSet alloc] init];
+    [specialMarkers addCharactersInString:@":~"];
+    
+    NSRange specialMarkerRange = [path rangeOfCharacterFromSet:specialMarkers];
+    if (specialMarkerRange.location != NSNotFound)
+    {
+        path = [path substringToIndex:specialMarkerRange.location];
+    }
+    
     NSRange range = [path rangeOfString:@"."];
-
+    
     if (range.location != NSNotFound)
     {
         NSString *step = [path substringToIndex:range.location];
