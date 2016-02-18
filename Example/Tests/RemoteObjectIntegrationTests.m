@@ -227,7 +227,7 @@
 
 #pragma mark - Event handling
 
-- (void)testStaticEventHandling
+- (void)testStaticEvent
 {
     id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
     
@@ -260,10 +260,10 @@
     OCMVerifyAll(testObjectClassMock);
 }
 
-- (void)testInstanceEventHandling
+- (void)testInstanceEvent
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
-
+    
     [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
         
         id testObjectMock = OCMPartialMock(instance.instance);
@@ -273,7 +273,7 @@
         event.mapName = @"wisp.test.TestObject";
         event.instanceIdentifier = instance.instanceIdentifier;
         event.data = @(1.0);
-
+        
         OCMExpect([testObjectMock rpcHandleInstanceEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
             WSPREvent *event = (WSPREvent *)obj;
             if (![event.instanceIdentifier isEqualToString:instance.instanceIdentifier])
@@ -295,6 +295,27 @@
         
         OCMVerifyAll(testObjectMock);
         [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testInstancePropertyEvent
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPREvent *event = [[WSPREvent alloc] init];
+        event.name = @"testProperty";
+        event.mapName = @"wisp.test.TestObject";
+        event.instanceIdentifier = instance.instanceIdentifier;
+        event.data = @"instance property test value";
+        
+        [_gatewayRouter.gateway handleMessage:[event createNotification]];
+        
+        if ([[(WSPRTestObject *)instance.instance testProperty] isEqualToString:@"instance property test value"])
+            [expectation fulfill];
     }];
     
     [self waitForExpectationsWithTimeout:0.1 handler:nil];
