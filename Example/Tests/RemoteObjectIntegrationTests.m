@@ -98,11 +98,11 @@
     WSPRRequest *request = [[WSPRRequest alloc] init];
     request.requestIdentifier = @"create0";
     request.method = @"wisp.test.TestObject~";
-    request.params = @[@"ASD"];
+    request.params = @[@"some init value"];
     request.responseBlock = ^(WSPRResponse *response){
         NSString *instanceId = [(NSDictionary *)response.result objectForKey:@"id"];
-        
-        if ([[[WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter] instance] isKindOfClass:[WSPRTestObject class]])
+        NSString *testPropertyValue = [(NSDictionary *)response.result objectForKey:@"props"][@"testProperty"];
+        if ([[[WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter] instance] isKindOfClass:[WSPRTestObject class]] && [testPropertyValue isEqualToString:@"some init value"])
             [expectation fulfill];
     };
     
