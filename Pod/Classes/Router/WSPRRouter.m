@@ -82,18 +82,18 @@
     NSArray *splitPath = [[self class] splitPath:path];
     NSString *step = [splitPath firstObject];
     NSString *rest = splitPath.count == 2 ? [splitPath lastObject] : nil;
+    
+    if (!rest)
+    {
+        self.routes[step] = route;
+        [route setParentRoute:self];
+        [route setRouteNamespace:step];
+        return;
+    }
 
     id<WSPRRouteProtocol> existing = self.routes[step];
     if (!existing)
     {
-        if (!rest)
-        {
-            self.routes[step] = route;
-            [route setParentRoute:self];
-            if (![route routeNamespace])
-                [route setRouteNamespace:step];
-            return;
-        }
         existing = [[WSPRRouter alloc] init];
         [existing setRouteNamespace:step];
         [existing setParentRoute:self];
