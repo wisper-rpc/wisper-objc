@@ -59,6 +59,27 @@
     XCTAssertEqual([someRouter parentRoute], _router1, @"Parent router not linked properly");
 }
 
+- (void)testExposeSameRouteTwice
+{
+    [_router1 exposeRoute:_router2 onPath:@"some.path.r2"];
+    [_router1 exposeRoute:_router2 onPath:@"some.path.r2"];
+    
+    WSPRRouter *someRouter = [_router1 routes][@"some"];
+    WSPRRouter *pathRouter = [someRouter routes][@"path"];
+    WSPRRouter *r2Router = [pathRouter routes][@"r2"];
+    
+    XCTAssert(someRouter && someRouter != _router1 && someRouter != _router2, @"Router was not generated properly");
+    
+    XCTAssert(pathRouter && pathRouter != _router1 && pathRouter != _router2, @"Router was not generated properly");
+    
+    XCTAssertEqual(_router2, r2Router, @"Last route was not set correctly.");
+    
+    XCTAssertEqual([_router2 parentRoute], pathRouter, @"Parent router not linked properly");
+    XCTAssertEqual([pathRouter parentRoute], someRouter, @"Parent router not linked properly");
+    XCTAssertEqual([someRouter parentRoute], _router1, @"Parent router not linked properly");
+
+}
+
 - (void)testRouteMessage
 {
     id router3Mock = OCMPartialMock(_router3);
