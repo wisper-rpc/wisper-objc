@@ -22,6 +22,7 @@
     if (self)
     {
         self.gateway = [[WSPRGateway alloc] init];
+        _gateway.delegate = self;
     }
     return self;
 }
