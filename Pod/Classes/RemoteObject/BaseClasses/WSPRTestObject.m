@@ -57,12 +57,17 @@
     initWithArgsMethod.paramTypes = @[WSPR_PARAM_TYPE_STRING];
     initWithArgsMethod.selector = @selector(initWithTestPropertyValue:);
     initWithArgsMethod.isVoidReturn = NO;
-    //    initWithArgsMethod.callBlock = ^(WSPRRemoteObjectController *rpcController, WSPRClassInstance *instance, WSPRClassMethod *theMethod, WSPRRequest *request){
-    //        WSPRTestObject *testObject = [(WSPRTestObject *)instance.instance initWithTestPropertyValue:request.params[0]];
-    //        WSPRResponse *response = [request createResponse];
-    //        response.result = @{@"id":instance.instanceIdentifier, @"props":@{@"testProperty":testObject.testProperty}};
-    //        request.responseBlock(response);
-    //    };
+    initWithArgsMethod.callBlock = ^(id caller, WSPRClassInstance *instance, WSPRClassMethod *theMethod, WSPRNotification *notification) {
+        
+        WSPRRequest *request = [notification isKindOfClass:[WSPRRequest class]] ? (WSPRRequest *)notification : nil;
+        if (!request)
+            return;
+
+        WSPRTestObject *testObject = [(WSPRTestObject *)instance.instance initWithTestPropertyValue:request.params[0]];
+        WSPRResponse *response = [request createResponse];
+        response.result = @{@"id":instance.instanceIdentifier, @"props":@{@"testProperty":testObject.testProperty}};
+        request.responseBlock(response);
+    };
     
     
     WSPRClassMethod *echoStringMethod = [[WSPRClassMethod alloc] init];
