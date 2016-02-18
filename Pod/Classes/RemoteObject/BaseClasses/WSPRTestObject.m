@@ -14,7 +14,6 @@
 {
     WSPRClass *classModel = [[WSPRClass alloc] init];
     classModel.classRef = [self class];
-    classModel.mapName = @"wisp.test.TestObject";
     
     WSPRClassMethod *appendMethod = [[WSPRClassMethod alloc] init];
     appendMethod.mapName = @"append";

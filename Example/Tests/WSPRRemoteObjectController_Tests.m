@@ -23,6 +23,12 @@
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+    WSPRClass *testObjectClassModel = [WSPRTestObject rpcRegisterClass];
+    testObjectClassModel.mapName = @"wisp.test.TestObject";
+    
+    id classMock = OCMClassMock([WSPRTestObject class]);
+    OCMStub([classMock rpcRegisterClass]).andReturn(testObjectClassModel);
+    
     self.remoteObjectController = [[WSPRRemoteObjectController alloc] init];
     [self.remoteObjectController registerClass:[WSPRTestObject class]];
 }
