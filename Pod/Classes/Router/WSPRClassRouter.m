@@ -77,8 +77,25 @@
             break;
         }
         case WSPRCallTypeInstanceEvent:
+        {
+            WSPREvent *event = [[WSPREvent alloc] initWithNotification:message];
+            WSPRClassInstance *instance = [WSPRInstanceRegistry instanceWithId:[message.params firstObject] underRootRoute:[self rootRouter]];
             
+            //Fire method on instance WSPRClassProtocol
+            if ([instance.instance respondsToSelector:@selector(rpcHandleInstanceEvent:)])
+            {
+                [instance.instance rpcHandleInstanceEvent:event];
+            }
+            
+            if ([message isKindOfClass:[WSPRRequest class]])
+            {
+                WSPRRequest *request = (WSPRRequest *)message;
+                WSPRResponse *response = [request createResponse];
+                response.result = event.name;
+                request.responseBlock(response);
+            }
             break;
+        }
         default:
             //We don't know what to do so leave it to super
             [super route:message toPath:path];
