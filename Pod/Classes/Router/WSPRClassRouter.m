@@ -20,11 +20,10 @@
 #pragma mark - Life cycle
 -(instancetype)initWithClass:(Class<WSPRClassProtocol>)aClass
 {
-    WSPRClass *wisperClass = [aClass rpcRegisterClass];
-    self = [self initWithNameSpace:wisperClass.mapName];
+    self = [self init];
     if (self)
     {
-        self.classModel = wisperClass;
+        self.classModel = [aClass rpcRegisterClass];
     }
     return self;
 }

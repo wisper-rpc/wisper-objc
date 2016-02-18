@@ -27,16 +27,6 @@
     return self;
 }
 
--(instancetype)initWithNameSpace:(NSString *)routeNamespace
-{
-    self = [self init];
-    if (self)
-    {
-        self.routeNamespace = routeNamespace;
-    }
-    return self;
-}
-
 -(id<WSPRRouteProtocol>)rootRouter
 {
     id<WSPRRouteProtocol> route = self;
@@ -104,7 +94,8 @@
                 [route setRouteNamespace:step];
             return;
         }
-        existing = [[WSPRRouter alloc] initWithNameSpace:step];
+        existing = [[WSPRRouter alloc] init];
+        [existing setRouteNamespace:step];
         [existing setParentRoute:self];
         self.routes[step] = existing;
     }

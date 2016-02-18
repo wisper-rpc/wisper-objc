@@ -23,9 +23,9 @@
 - (void)setUp
 {
     [super setUp];
-    self.router1 = [[WSPRRouter alloc] initWithNameSpace:@"r1"];
-    self.router2 = [[WSPRRouter alloc] initWithNameSpace:@"r2"];
-    self.router3 = [[WSPRRouter alloc] initWithNameSpace:@"r3"];
+    self.router1 = [[WSPRRouter alloc] init];
+    self.router2 = [[WSPRRouter alloc] init];
+    self.router3 = [[WSPRRouter alloc] init];
 }
 
 - (void)tearDown

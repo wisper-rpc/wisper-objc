@@ -38,7 +38,7 @@
 
 - (void)testAddingInstance
 {
-    WSPRRouter *rootRoute = [[WSPRRouter alloc] initWithNameSpace:@"R1"];
+    WSPRRouter *rootRoute = [[WSPRRouter alloc] init];
     WSPRInstanceRegistry *instanceRegistry = [WSPRInstanceRegistry sharedInstance];
     
     WSPRClassInstance *classInstance = [[WSPRClassInstance alloc] init];
@@ -52,7 +52,7 @@
 
 - (void)testRemovingNonLastInstance
 {
-    WSPRRouter *rootRoute = [[WSPRRouter alloc] initWithNameSpace:@"R1"];
+    WSPRRouter *rootRoute = [[WSPRRouter alloc] init];
     WSPRInstanceRegistry *instanceRegistry = [WSPRInstanceRegistry sharedInstance];
     
     WSPRClassInstance *classInstance = [[WSPRClassInstance alloc] init];
@@ -73,7 +73,7 @@
 
 - (void)testRemovingLastInstanceRemovesRootRouteMap
 {
-    WSPRRouter *rootRoute = [[WSPRRouter alloc] initWithNameSpace:@"R1"];
+    WSPRRouter *rootRoute = [[WSPRRouter alloc] init];
     WSPRInstanceRegistry *instanceRegistry = [WSPRInstanceRegistry sharedInstance];
     
     WSPRClassInstance *classInstance = [[WSPRClassInstance alloc] init];
@@ -86,7 +86,7 @@
 
 - (void)testGettingInstanceWithId
 {
-    WSPRRouter *rootRoute = [[WSPRRouter alloc] initWithNameSpace:@"R1"];
+    WSPRRouter *rootRoute = [[WSPRRouter alloc] init];
     
     WSPRClassInstance *classInstance = [[WSPRClassInstance alloc] init];
     classInstance.instanceIdentifier = @"neo";
@@ -97,13 +97,13 @@
 
 - (void)testGettingInstanceWithIdIsScopedForRoute
 {
-    WSPRRouter *rootRoute = [[WSPRRouter alloc] initWithNameSpace:@"R1"];
+    WSPRRouter *rootRoute = [[WSPRRouter alloc] init];
     
     WSPRClassInstance *classInstance = [[WSPRClassInstance alloc] init];
     classInstance.instanceIdentifier = @"the_1";
     [WSPRInstanceRegistry addInstance:classInstance underRootRoute:rootRoute];
 
-    WSPRRouter *rootRoute2 = [[WSPRRouter alloc] initWithNameSpace:@"R1"];
+    WSPRRouter *rootRoute2 = [[WSPRRouter alloc] init];
     
     WSPRClassInstance *classInstance2 = [[WSPRClassInstance alloc] init];
     classInstance2.instanceIdentifier = @"the_2";
@@ -114,7 +114,7 @@
 
 - (void)testGettingInstanceModelForInstance
 {
-    WSPRRouter *rootRoute = [[WSPRRouter alloc] initWithNameSpace:@"R1"];
+    WSPRRouter *rootRoute = [[WSPRRouter alloc] init];
     
     id mockedInstance = OCMProtocolMock(@protocol(WSPRClassProtocol));
     
