@@ -63,8 +63,19 @@
             break;
         }
         case WSPRCallTypeStaticEvent:
+        {
+            WSPREvent *event = [[WSPREvent alloc] initWithNotification:message];
+            [self.classModel.classRef rpcHandleStaticEvent:event];
             
+            if ([message isKindOfClass:[WSPRRequest class]])
+            {
+                WSPRRequest *request = (WSPRRequest *)message;
+                WSPRResponse *response = [request createResponse];
+                response.result = event.name;
+                request.responseBlock(response);
+            }
             break;
+        }
         case WSPRCallTypeInstanceEvent:
             
             break;
