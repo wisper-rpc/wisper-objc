@@ -31,9 +31,16 @@
     [super tearDown];
 }
 
-- (void)testRegisteringTestObject
+- (void)testRegisterTestObject
 {
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRouter *wispRouter = _gatewayRouter.routes[@"wisp"];
+    WSPRRouter *testRouter = wispRouter.routes[@"test"];
+    WSPRClassRouter *testObjectRouter = testRouter.routes[@"TestObject"];
+    
+    XCTAssertEqual(testObjectRouter.classModel.classRef, [WSPRTestObject class], @"Test Object not registered properly!");
+}
 
     WSPRNotification *notification = [[WSPRNotification alloc] init];
     notification.method = @"wisp.test.TestObject.append";
