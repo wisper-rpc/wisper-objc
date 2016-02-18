@@ -18,6 +18,12 @@
 @implementation WSPRClassRouter
 
 #pragma mark - Life cycle
+
++(instancetype)routerWithClass:(Class<WSPRClassProtocol>)aClass
+{
+    return [[[self class] alloc] initWithClass:aClass];
+}
+
 -(instancetype)initWithClass:(Class<WSPRClassProtocol>)aClass
 {
     self = [self init];

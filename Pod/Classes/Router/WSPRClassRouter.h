@@ -31,6 +31,11 @@
 @property (nonatomic, strong, readonly) WSPRClass *classModel;
 
 /**
+ *  Shorthand method for -initWithClass:
+ */
++(instancetype)routerWithClass:(Class<WSPRClassProtocol>)aClass;
+
+/**
  *  Setup this class router with a Wisper object class.
  *  The router will get its mapname from the provided wisper object after running -rpcRegisterClass.
  *
