@@ -39,7 +39,7 @@
 
 -(void)route:(WSPRNotification *)message toPath:(NSString *)path
 {
-    WSPRCallType callType = [[self class] callTypeFromMethodString:path];
+    WSPRCallType callType = [[self class] callTypeFromMethodString:message.method];
     switch (callType) {
         case WSPRCallTypeCreate:
             [self handleCreateInstance:message];
