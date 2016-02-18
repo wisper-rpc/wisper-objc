@@ -109,7 +109,7 @@
 {
     NSString *path = inPath;
     NSMutableCharacterSet *specialMarkers = [[NSMutableCharacterSet alloc] init];
-    [specialMarkers addCharactersInString:@":~"];
+    [specialMarkers addCharactersInString:@":~!"];
     
     NSRange specialMarkerRange = [path rangeOfCharacterFromSet:specialMarkers];
     if (specialMarkerRange.location != NSNotFound)
