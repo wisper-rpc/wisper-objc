@@ -177,5 +177,71 @@
     [self waitForExpectationsWithTimeout:0.1 handler:nil];
 }
 
+- (void)testNotifyInstanceMethod
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        id testObjectMock = OCMPartialMock(instance.instance);
+        
+        OCMExpect([testObjectMock appendString:[OCMArg checkWithBlock:^BOOL(id obj) {
+            return [(NSString *)obj isEqualToString:@"Hello "];
+        }] withString:[OCMArg checkWithBlock:^BOOL(id obj) {
+            return [(NSString *)obj isEqualToString:@"world!"];
+        }]]);
+
+        WSPRNotification *notification = [[WSPRNotification alloc] init];
+        notification.method = @"wisp.test.TestObject:append";
+        notification.params = @[instance.instanceIdentifier, @"Hello ", @"world!"];
+        
+        [_gatewayRouter.gateway handleMessage:notification];
+        
+        OCMVerifyAll(testObjectMock);
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testRequestInstanceMethod
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRRequest *request = [[WSPRRequest alloc] init];
+        request.requestIdentifier = @"instance0";
+        request.method = @"wisp.test.TestObject:append";
+        request.params = @[instance.instanceIdentifier, @"Hello ", @"world!"];
+        request.responseBlock = ^(WSPRResponse *response){
+            if ([(NSString *)response.result isEqualToString:@"Hello world!"])
+                [expectation fulfill];
+        };
+        [_gatewayRouter.gateway handleMessage:request];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+
+#pragma mark - Helpers
+
+- (void)testObjectInstanceWithCompletion:(void (^)(WSPRClassInstance *instance))completion
+{
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"create0";
+    request.method = @"wisp.test.TestObject~";
+    request.params = @[@"a"];
+    request.responseBlock = ^(WSPRResponse *response){
+        NSString *instanceId = [(NSDictionary *)response.result objectForKey:@"id"];
+        WSPRClassInstance *instance = [WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter];
+        completion(instance);
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+}
 
 @end
