@@ -225,6 +225,82 @@
 }
 
 
+#pragma mark - Event handling
+
+- (void)testStaticEventHandling
+{
+    id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
+    
+    WSPREvent *event = [[WSPREvent alloc] init];
+    event.name = @"progress";
+    event.mapName = @"wisp.test.TestObject";
+    event.data = @(1.0);
+    
+    OCMExpect(ClassMethod([testObjectClassMock rpcHandleStaticEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPREvent *event = (WSPREvent *)obj;
+        if (event.instanceIdentifier && event.instanceIdentifier.length > 0)
+            return NO;
+        
+        if (![event.name isEqualToString:@"progress"])
+            return NO;
+        
+        if (![event.mapName isEqualToString:@"wisp.test.TestObject"])
+            return NO;
+        
+        if ([(NSNumber *)event.data floatValue] != 1.0f)
+            return NO;
+        
+        return YES;
+    }]]));
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    [_gatewayRouter.gateway handleMessage:[event createNotification]];
+    
+    OCMVerifyAll(testObjectClassMock);
+}
+
+- (void)testInstanceEventHandling
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        id testObjectMock = OCMPartialMock(instance.instance);
+        
+        WSPREvent *event = [[WSPREvent alloc] init];
+        event.name = @"progress";
+        event.mapName = @"wisp.test.TestObject";
+        event.instanceIdentifier = instance.instanceIdentifier;
+        event.data = @(1.0);
+
+        OCMExpect([testObjectMock rpcHandleInstanceEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+            WSPREvent *event = (WSPREvent *)obj;
+            if (![event.instanceIdentifier isEqualToString:instance.instanceIdentifier])
+                return NO;
+            
+            if (![event.name isEqualToString:@"progress"])
+                return NO;
+            
+            if (![event.mapName isEqualToString:@"wisp.test.TestObject"])
+                return NO;
+            
+            if ([(NSNumber *)event.data floatValue] != 1.0f)
+                return NO;
+            
+            return YES;
+        }]]);
+        
+        [_gatewayRouter.gateway handleMessage:[event createNotification]];
+        
+        OCMVerifyAll(testObjectMock);
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+
 #pragma mark - Helpers
 
 - (void)testObjectInstanceWithCompletion:(void (^)(WSPRClassInstance *instance))completion
