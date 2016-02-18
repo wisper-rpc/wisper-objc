@@ -38,6 +38,9 @@
     [super tearDown];
 }
 
+
+#pragma mark - Registering
+
 - (void)testRegisterTestObject
 {
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
@@ -48,6 +51,9 @@
     
     XCTAssertEqual(testObjectRouter.classModel.classRef, [WSPRTestObject class], @"Test Object not registered properly!");
 }
+
+
+#pragma mark - Instance creation
 
 - (void)testNormalCreateInstance
 {
@@ -63,6 +69,7 @@
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
     WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"create0";
     request.method = @"wisp.test.TestObject~";
     request.responseBlock = ^(WSPRResponse *response){
         NSString *instanceId = [(NSDictionary *)response.result objectForKey:@"id"];
@@ -89,6 +96,7 @@
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
     WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"create0";
     request.method = @"wisp.test.TestObject~";
     request.params = @[@"ASD"];
     request.responseBlock = ^(WSPRResponse *response){
@@ -110,6 +118,7 @@
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
     WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"create0";
     request.method = @"wisp.test.TestObject~";
     request.params = @[@"ASD"];
     request.responseBlock = ^(WSPRResponse *response){
@@ -123,6 +132,9 @@
     
     [self waitForExpectationsWithTimeout:0.1 handler:nil];
 }
+
+
+#pragma mark - Method invocation
 
 - (void)testNotifyStaticMethod
 {
@@ -152,6 +164,7 @@
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
     WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"static0";
     request.method = @"wisp.test.TestObject.append";
     request.params = @[@"Hello ", @"world!"];
     request.responseBlock = ^(WSPRResponse *response){
