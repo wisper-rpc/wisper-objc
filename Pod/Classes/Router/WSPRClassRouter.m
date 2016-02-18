@@ -80,6 +80,9 @@
         {
             WSPREvent *event = [[WSPREvent alloc] initWithNotification:message];
             WSPRClassInstance *instance = [WSPRInstanceRegistry instanceWithId:[message.params firstObject] underRootRoute:[self rootRouter]];
+
+            //Set properties if we have any properties with this event name
+            [instance handlePropertyEvent:event];
             
             //Fire method on instance WSPRClassProtocol
             if ([instance.instance respondsToSelector:@selector(rpcHandleInstanceEvent:)])
