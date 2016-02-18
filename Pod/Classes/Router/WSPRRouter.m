@@ -119,5 +119,14 @@
     return @[path];
 }
 
+-(NSString *)description
+{
+    return [@{
+              @"type": NSStringFromClass([self class]),
+              @"namespace" : self.routeNamespace ? : @"",
+              @"routes" : [self.routes allKeys] ? : @[]
+              } description];
+}
+
 
 @end
