@@ -23,6 +23,8 @@
 //TODO: Add functionality for getting the same access as with blocks in methods by specifying special parameter types
 //TODO: Remove the need for `isVoidReturn`
 //TODO: Add router for blocks/functions
+//TODO: Create remote object for exposing routes that are available on one bridge to another
+//TODO: Implement proxying
 
 
 @interface WSPRTestObject ()
