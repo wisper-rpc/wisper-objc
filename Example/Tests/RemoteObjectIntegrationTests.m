@@ -11,6 +11,13 @@
 #import "WSPRTestObject.h"
 #import "WSPRGatewayRouter.h"
 #import "WSPRClassRouter.h"
+#import "WSPRInstanceRegistry.h"
+
+@interface WSPRTestObject ()
+
+-(instancetype)initWithTestPropertyValue:(NSString *)testString;
+
+@end
 
 @interface RemoteObjectIntegrationTests : XCTestCase
 
@@ -81,5 +88,81 @@
     
     [self waitForExpectationsWithTimeout:0.1 handler:nil];
 }
+
+- (void)testNormalCreateInstance
+{
+    //Disable custom init method
+    WSPRClass *testObjectClassModel = [WSPRTestObject rpcRegisterClass];
+    testObjectClassModel.instanceMethods = @{};
+    id classMock = OCMClassMock([WSPRTestObject class]);
+    OCMStub([classMock rpcRegisterClass]).andReturn(testObjectClassModel);
+    
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.method = @"wisp.test.TestObject~";
+    request.responseBlock = ^(WSPRResponse *response){
+        NSString *instanceId = [(NSDictionary *)response.result objectForKey:@"id"];
+        
+        if ([[[WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter] instance] isKindOfClass:[WSPRTestObject class]])
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testCustomCreateInstance
+{
+    //Disable block init method
+    WSPRClass *testObjectClassModel = [WSPRTestObject rpcRegisterClass];
+    [(WSPRClassMethod *)testObjectClassModel.instanceMethods[@"~"] setCallBlock:nil];
+    id classMock = OCMClassMock([WSPRTestObject class]);
+    OCMStub([classMock rpcRegisterClass]).andReturn(testObjectClassModel);
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.method = @"wisp.test.TestObject~";
+    request.params = @[@"ASD"];
+    request.responseBlock = ^(WSPRResponse *response){
+        NSString *instanceId = [(NSDictionary *)response.result objectForKey:@"id"];
+        
+        if ([[[WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter] instance] isKindOfClass:[WSPRTestObject class]])
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testBlockCreateInstance
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.method = @"wisp.test.TestObject~";
+    request.params = @[@"ASD"];
+    request.responseBlock = ^(WSPRResponse *response){
+        NSString *instanceId = [(NSDictionary *)response.result objectForKey:@"id"];
+        
+        if ([[[WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter] instance] isKindOfClass:[WSPRTestObject class]])
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
 
 @end
