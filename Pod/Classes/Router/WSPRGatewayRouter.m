@@ -29,8 +29,11 @@
 
 #pragma mark - WSPRRoute Protocol
 
--(void)reverse:(WSPRMessage *)message
+-(void)reverse:(WSPRMessage *)message fromPath:(NSString *)path
 {
+    if ([message isKindOfClass:[WSPRNotification class]])
+        [(WSPRNotification *)message setMethod:[[NSString stringWithFormat:@"%@.", path] stringByAppendingString:[(WSPRNotification *)message method]]];
+    
     [self.gateway sendMessage:message];
 }
 
