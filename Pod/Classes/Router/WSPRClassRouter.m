@@ -386,6 +386,7 @@
 
 -(void)classInstance:(WSPRClassInstance *)classInstance didCreatePropertyEvent:(WSPREvent *)event
 {
+    event.mapName = self.routeNamespace;
     [self.parentRoute reverse:[event createNotification] fromPath:nil];
 }
 
