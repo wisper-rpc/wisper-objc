@@ -148,6 +148,49 @@
 }
 
 
+#pragma mark - Instance destruction
+
+- (void)testDestroyInstance
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        //Weak object should be nilled when destroyed
+        __weak id testObjectMock = OCMPartialMock(instance.instance);
+        __weak WSPRClassInstance *weakInstance = instance;
+        
+        
+        //Copy instance ID so we have it after instance is removed
+        NSString *instanceId = instance.instanceIdentifier;
+        
+        OCMExpect([testObjectMock rpcDestructor]).andForwardToRealObject();
+        
+        //Destroy the instance
+        WSPRRequest *request = [[WSPRRequest alloc] init];
+        request.requestIdentifier = @"destroy0";
+        request.method = @"wisp.test.TestObject:~";
+        request.params = @[instanceId];
+        request.responseBlock = ^(WSPRResponse *response){
+            OCMVerifyAll(testObjectMock);
+            [testObjectMock stopMocking]; //Really important to stop mocking here since removing KVO will not work otherwise
+
+            if (![WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter])
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (!weakInstance) {
+                        [expectation fulfill];
+                    }
+                });
+        };
+        
+        [_gatewayRouter.gateway handleMessage:request];
+        
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
+}
+
+
 #pragma mark - Method invocation
 
 - (void)testNotifyStaticMethod
