@@ -335,6 +335,42 @@
     [self waitForExpectationsWithTimeout:0.1 handler:nil];
 }
 
+- (void)testInstancePropertyUpdatedEvent
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+        
+        OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+            WSPRNotification *notification = (WSPRNotification *)obj;
+            WSPREvent *event = [[WSPREvent alloc] initWithNotification:notification];
+            
+            if (![event.name isEqualToString:@"testProperty"])
+                return NO;
+            
+            if (![event.data isEqualToString:@"testChange"])
+                return NO;
+            
+            if (![event.instanceIdentifier isEqualToString:instance.instanceIdentifier])
+                return NO;
+            
+            if (![event.mapName isEqualToString:@"wisp.test.TestObject"])
+                return NO;
+            
+            return YES;
+        }]]);
+        
+        [(WSPRTestObject *)instance.instance setTestProperty:@"testChange"];
+        
+        OCMVerifyAll(gatewayMock);
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
 
 #pragma mark - Helpers
 
