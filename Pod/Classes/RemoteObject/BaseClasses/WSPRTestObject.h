@@ -20,6 +20,7 @@
 @property (nonatomic, strong) NSString *testProperty;
 
 @property (nonatomic, weak) WSPRTestObject *testPassByReferenceProperty;
+@property (nonatomic, assign) CGPoint testSerializeProperty;
 
 /**
  Test method for the Wisper Gateway to verify that it works correctly.

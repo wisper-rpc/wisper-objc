@@ -38,6 +38,26 @@
     testPassByReferenceProperty.keyPath = @"testPassByReferenceProperty";
     testPassByReferenceProperty.mode = WSPRPropertyModeReadWrite;
     testPassByReferenceProperty.type = WSPR_PARAM_TYPE_INSTANCE;
+
+    WSPRClassProperty *testSerializeProperty = [[WSPRClassProperty alloc] init];
+    testSerializeProperty.mapName = @"testSerializeProperty";
+    testSerializeProperty.keyPath = @"testSerializeProperty";
+    testSerializeProperty.mode = WSPRPropertyModeReadWrite;
+    testSerializeProperty.type = WSPR_PARAM_TYPE_DICTIONARY;
+    [testSerializeProperty setSerializeWisperPropertyBlock:^id(NSObject *property) {
+        CGPoint pointValue = [(NSValue *)property CGPointValue];
+        return @{
+                 @"x" : @(pointValue.x),
+                 @"y" : @(pointValue.y)
+                 };
+    }];
+    [testSerializeProperty setDeserializeWisperPropertyBlock:^id(NSObject *serializedProperty) {
+        NSDictionary *pointDictionary = (NSDictionary *)serializedProperty;
+        return [NSValue valueWithCGPoint:CGPointMake(
+                                                     [pointDictionary[@"x"] floatValue],
+                                                     [pointDictionary[@"y"] floatValue]
+                                                     )];
+    }];
     
     WSPRClassMethod *echoMethod = [[WSPRClassMethod alloc] init];
     echoMethod.mapName = @"echo";
@@ -106,6 +126,7 @@
     [classModel addInstanceMethod:passByReferenceMethod];
     [classModel addProperty:testProperty];
     [classModel addProperty:testPassByReferenceProperty];
+    [classModel addProperty:testSerializeProperty];
     
     return classModel;
 }
