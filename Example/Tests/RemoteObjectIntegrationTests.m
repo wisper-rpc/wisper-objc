@@ -651,6 +651,69 @@
     [self waitForExpectationsWithTimeout:0.1 handler:nil];
 }
 
+#pragma mark - Property Serialization / Deserialization
+
+- (void)testSerializeProperty
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRNotification *notification = [[WSPRNotification alloc] init];
+        notification.method = @"wisp.test.TestObject:!";
+        notification.params = @[instance.instanceIdentifier, @"testSerializeProperty", @{
+                                    @"x" : @(10.5f),
+                                    @"y" : @(11.7f)
+                                    }];
+        
+        [_gatewayRouter.gateway handleMessage:notification];
+        
+        if (((WSPRTestObject *)instance.instance).testSerializeProperty.x == 10.5f && ((WSPRTestObject *)instance.instance).testSerializeProperty.y == 11.7f) {
+            [expectation fulfill];
+        }
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testDeserializeProperty
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+        
+        OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+            WSPRNotification *notification = (WSPRNotification *)obj;
+            WSPREvent *event = [[WSPREvent alloc] initWithNotification:notification];
+            NSDictionary *serializedPoint = (NSDictionary *)event.data;
+            
+            if (![event.mapName isEqualToString:@"wisp.test.TestObject"])
+                return NO;
+            
+            if (![event.instanceIdentifier isEqualToString:instance.instanceIdentifier])
+                return NO;
+            
+            if (![event.name isEqualToString:@"testSerializeProperty"])
+                return NO;
+            
+            if ([serializedPoint[@"x"] floatValue] != 10.5f || [serializedPoint[@"y"] floatValue] != 11.7f)
+                return NO;
+            
+            return YES;
+        }]]);
+        
+        [(WSPRTestObject *)instance.instance setTestSerializeProperty:CGPointMake(10.5, 11.7)];
+        
+        OCMVerifyAll(gatewayMock);
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+
 #pragma mark - Helpers
 
 - (void)testObjectInstanceWithCompletion:(void (^)(WSPRClassInstance *instance))completion
