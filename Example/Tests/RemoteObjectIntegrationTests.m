@@ -415,6 +415,242 @@
 }
 
 
+#pragma mark - Pass by reference
+
+- (void)testPassByReferenceStaticMethodArgument
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRClassInstance *argumentInstance = instance;
+        
+        id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
+        
+        OCMExpect(ClassMethod([testObjectClassMock passByReference:[OCMArg checkWithBlock:^BOOL(id obj) {
+            return obj == argumentInstance.instance;
+        }]]));
+        
+        WSPRNotification *notification = [[WSPRNotification alloc] init];
+        notification.method = @"wisp.test.TestObject.passByReference";
+        notification.params = @[argumentInstance.instanceIdentifier];
+        
+        [_gatewayRouter.gateway handleMessage:notification];
+        
+        OCMVerifyAll(testObjectClassMock);
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testPassByReferenceInstanceMethodArgument
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRClassInstance *argumentInstance = instance;
+        
+       [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+           
+           id testObjectMock = OCMPartialMock(instance.instance);
+           
+           OCMExpect([testObjectMock passByReference:[OCMArg checkWithBlock:^BOOL(id obj) {
+               return obj == argumentInstance.instance;
+           }]]).andForwardToRealObject();
+           
+           WSPRNotification *notification = [[WSPRNotification alloc] init];
+           notification.method = @"wisp.test.TestObject:passByReference";
+           notification.params = @[instance.instanceIdentifier, argumentInstance.instanceIdentifier];
+           
+           [_gatewayRouter.gateway handleMessage:notification];
+           
+           OCMVerifyAll(testObjectMock);
+           [expectation fulfill];
+       }];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testPassByReferencePropertyEvent
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRClassInstance *argumentInstance = instance;
+        
+        [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+            
+            WSPRNotification *notification = [[WSPRNotification alloc] init];
+            notification.method = @"wisp.test.TestObject:!";
+            notification.params = @[instance.instanceIdentifier, @"testPassByReferenceProperty", argumentInstance.instanceIdentifier];
+            
+            [_gatewayRouter.gateway handleMessage:notification];
+            
+            if (((WSPRTestObject *)instance.instance).testPassByReferenceProperty == argumentInstance.instance) {
+                [expectation fulfill];
+            }
+        }];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testNilPassByReferencePropertyEvent
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRNotification *notification = [[WSPRNotification alloc] init];
+        notification.method = @"wisp.test.TestObject:!";
+        notification.params = @[instance.instanceIdentifier, @"testPassByReferenceProperty", [NSNull null]];
+        
+        [_gatewayRouter.gateway handleMessage:notification];
+        
+        if (((WSPRTestObject *)instance.instance).testPassByReferenceProperty == nil) {
+            [expectation fulfill];
+        }
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testBadPassByReferencePropertyEvent
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRNotification *notification = [[WSPRNotification alloc] init];
+        notification.method = @"wisp.test.TestObject:!";
+        notification.params = @[instance.instanceIdentifier, @"testPassByReferenceProperty", @"0xBADREFERENCEID"];
+        
+        [_gatewayRouter.gateway handleMessage:notification];
+        
+        if (((WSPRTestObject *)instance.instance).testPassByReferenceProperty == nil) {
+            [expectation fulfill];
+        }
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testPassByReferencePropertyChangeEvent
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRClassInstance *argumentInstance = instance;
+        
+        [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+            
+            id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+            
+            OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+                WSPRNotification *notification = (WSPRNotification *)obj;
+                WSPREvent *event = [[WSPREvent alloc] initWithNotification:notification];
+                
+                if (![event.mapName isEqualToString:@"wisp.test.TestObject"])
+                    return NO;
+                
+                if (![event.instanceIdentifier isEqualToString:instance.instanceIdentifier])
+                    return NO;
+                
+                if (![event.name isEqualToString:@"testPassByReferenceProperty"])
+                    return NO;
+                
+                if (![event.data isEqualToString:argumentInstance.instanceIdentifier])
+                    return NO;
+                
+                return YES;
+            }]]);
+            
+            [(WSPRTestObject *)instance.instance setTestPassByReferenceProperty:argumentInstance.instance];
+            
+            [expectation fulfill];
+        }];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testPropertyChangeEventWithNilInstance
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+        
+        OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+            WSPRNotification *notification = (WSPRNotification *)obj;
+            WSPREvent *event = [[WSPREvent alloc] initWithNotification:notification];
+            
+            if (![event.mapName isEqualToString:@"wisp.test.TestObject"])
+                return NO;
+            
+            if (![event.instanceIdentifier isEqualToString:instance.instanceIdentifier])
+                return NO;
+            
+            if (![event.name isEqualToString:@"testPassByReferenceProperty"])
+                return NO;
+            
+            if (event.data != [NSNull null])
+                return NO;
+            
+            return YES;
+        }]]);
+        
+        [(WSPRTestObject *)instance.instance setTestPassByReferenceProperty:nil];
+        
+        OCMVerifyAll(gatewayMock);
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testPropertyChangeEventWithBadInstance
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+        
+        OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+            WSPRNotification *notification = (WSPRNotification *)obj;
+            WSPREvent *event = [[WSPREvent alloc] initWithNotification:notification];
+            
+            if (![event.mapName isEqualToString:@"wisp.test.TestObject"])
+                return NO;
+            
+            if (![event.instanceIdentifier isEqualToString:instance.instanceIdentifier])
+                return NO;
+            
+            if (![event.name isEqualToString:@"testPassByReferenceProperty"])
+                return NO;
+            
+            if (event.data != [NSNull null])
+                return NO;
+            
+            return YES;
+        }]]);
+        
+        [(WSPRTestObject *)instance.instance setTestPassByReferenceProperty:(WSPRTestObject *)[[NSObject alloc] init]];
+        
+        OCMVerifyAll(gatewayMock);
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
 #pragma mark - Helpers
 
 - (void)testObjectInstanceWithCompletion:(void (^)(WSPRClassInstance *instance))completion
