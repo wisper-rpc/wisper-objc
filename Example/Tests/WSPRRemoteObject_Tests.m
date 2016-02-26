@@ -240,7 +240,6 @@
     }]]);
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *request = (WSPRRequest *)obj;
-        NSLog(@"REQUEST = %@", request);
         if ([request.method isEqualToString:@"test.Test:implementationLessMethodTurnedIntoNotificationWithString"] &&
             [[request.params firstObject] isEqualToString:@"AAA"] &&
             [request.params[1] isEqualToString:@"someParam"])
