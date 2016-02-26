@@ -152,7 +152,7 @@
 
 - (void)testDestroyInstance
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
         
@@ -236,7 +236,7 @@
 
 - (void)testNotifyInstanceMethod
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
 
     [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
         
@@ -263,7 +263,7 @@
 
 - (void)testRequestInstanceMethod
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
         
@@ -319,7 +319,7 @@
 
 - (void)testInstanceEvent
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
         
@@ -359,7 +359,7 @@
 
 - (void)testInstancePropertyEvent
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
         
@@ -380,7 +380,7 @@
 
 - (void)testInstancePropertyUpdatedEvent
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
         
