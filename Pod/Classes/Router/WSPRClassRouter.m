@@ -233,7 +233,8 @@
 -(void)invokeMethod:(WSPRClassMethod *)method withParams:(NSArray *)params onTarget:(id)target completion:(void (^)(id result, WSPRError *error))completion
 {
     //Create an invocation
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[target methodSignatureForSelector:method.selector]];
+    NSMethodSignature *methodSignature = [target methodSignatureForSelector:method.selector];
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
     __unsafe_unretained id returnedObject = nil;
     
     //Retain all arguments when calling the method (ARC fix)
@@ -312,7 +313,8 @@
     }
     @finally {}
     
-    if (!method.isVoidReturn)
+    BOOL isVoidReturn = (strncmp([methodSignature methodReturnType], "v", 1) == 0);
+    if (!isVoidReturn)
     {
         [invocation getReturnValue:&returnedObject];
     }

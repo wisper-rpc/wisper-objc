@@ -18,13 +18,11 @@
     WSPRClassMethod *appendMethod = [[WSPRClassMethod alloc] init];
     appendMethod.mapName = @"append";
     appendMethod.selector = @selector(appendString:withString:);
-    appendMethod.isVoidReturn = NO;
     appendMethod.paramTypes = @[WSPR_PARAM_TYPE_STRING, WSPR_PARAM_TYPE_STRING];
 
     WSPRClassMethod *staticAppendMethod = [[WSPRClassMethod alloc] init];
     staticAppendMethod.mapName = @"append";
     staticAppendMethod.selector = @selector(appendString:withString:);
-    staticAppendMethod.isVoidReturn = NO;
     staticAppendMethod.paramTypes = @[WSPR_PARAM_TYPE_STRING, WSPR_PARAM_TYPE_STRING];
     
     WSPRClassProperty *testProperty = [[WSPRClassProperty alloc] init];
@@ -76,7 +74,6 @@
     initWithArgsMethod.mapName = @"~";
     initWithArgsMethod.paramTypes = @[WSPR_PARAM_TYPE_STRING];
     initWithArgsMethod.selector = @selector(initWithTestPropertyValue:);
-    initWithArgsMethod.isVoidReturn = NO;
     initWithArgsMethod.callBlock = ^(id caller, WSPRClassInstance *instance, WSPRClassMethod *theMethod, WSPRNotification *notification) {
         
         WSPRRequest *request = [notification isKindOfClass:[WSPRRequest class]] ? (WSPRRequest *)notification : nil;
@@ -105,13 +102,11 @@
     
     WSPRClassMethod *staticPassByReferenceMethod = [[WSPRClassMethod alloc] init];
     staticPassByReferenceMethod.mapName = @"passByReference";
-    staticPassByReferenceMethod.isVoidReturn = NO;
     staticPassByReferenceMethod.paramTypes = @[WSPR_PARAM_TYPE_INSTANCE];
     staticPassByReferenceMethod.selector = @selector(passByReference:);
     
     WSPRClassMethod *passByReferenceMethod = [[WSPRClassMethod alloc] init];
     passByReferenceMethod.mapName = @"passByReference";
-    passByReferenceMethod.isVoidReturn = NO;
     passByReferenceMethod.paramTypes = @[WSPR_PARAM_TYPE_INSTANCE];
     passByReferenceMethod.selector = @selector(passByReference:);
     
