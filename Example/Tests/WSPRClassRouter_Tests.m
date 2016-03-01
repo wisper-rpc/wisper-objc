@@ -228,5 +228,53 @@
     OCMVerifyAll(instanceMock2);
 }
 
+// Reference deallocation of WSPRClassRouter using normal init method
+- (void)testDeallocWSPRClassRouteras
+{
+    WSPRClassRouter *object = [[WSPRClassRouter alloc] initWithClass:[WSPRTestObject class]];
+    __weak WSPRClassRouter *weakObject = object;
+    object = nil;
+    XCTAssertNil(weakObject);
+}
+
+// Reference deallocation of WSPRClassRouter using `autoreleased` instance pattern
+- (void)testDeallocWSPRClassRouter
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    WSPRClassRouter *object = [WSPRClassRouter routerWithClass:[WSPRTestObject class]];
+    __weak WSPRClassRouter *weakObject = object;
+    object = nil;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!weakObject)
+            [expectation fulfill];
+    });
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testDeallocFlushesAllInstances
+{
+    WSPRTestObject *testObjectToBeAdded = [[WSPRTestObject alloc] init];
+    WSPRClassRouter *classRouter = [[WSPRClassRouter alloc] initWithClass:[WSPRTestObject class]];
+    __weak WSPRClassRouter *weakClassRouter = classRouter;
+    WSPRClassInstance *instance = [classRouter addInstance:testObjectToBeAdded];
+    
+    id instanceMock = OCMPartialMock(instance.instance);
+    
+    //Expect instance to be destroyed
+    OCMExpect([instanceMock rpcDestructor]);
+
+    //Deallocate instance
+    classRouter = nil;
+    
+    //Verify that added instance is destroyed as a result of the dealloc
+    OCMVerifyAll(instanceMock);
+    
+    //Verify that the router was deallocated
+    XCTAssertNil(weakClassRouter);
+}
+
 
 @end
