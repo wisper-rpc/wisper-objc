@@ -51,7 +51,7 @@
         [params addObject:_data];
     
     WSPRNotification *notification = [[WSPRNotification alloc] init];
-    notification.method = [NSString stringWithFormat:@"%@%@", _mapName, _instanceIdentifier ? @":!" : @"!"];
+    notification.method = [NSString stringWithFormat:@"%@%@", _mapName ? : @"", _instanceIdentifier ? @":!" : @"!"];
     notification.params = [NSArray arrayWithArray:params];
     return notification;
 }
