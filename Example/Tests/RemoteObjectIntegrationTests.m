@@ -570,7 +570,7 @@
                 return YES;
             }]]);
             
-            [(WSPRTestObject *)instance.instance setTestPassByReferenceProperty:argumentInstance.instance];
+            [(WSPRTestObject *)instance.instance setTestPassByReferenceProperty:(WSPRTestObject*)argumentInstance.instance];
             
             [expectation fulfill];
         }];
