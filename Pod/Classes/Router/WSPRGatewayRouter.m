@@ -32,7 +32,14 @@
 -(void)reverse:(WSPRMessage *)message fromPath:(NSString *)path
 {
     if ([message isKindOfClass:[WSPRNotification class]])
-        [(WSPRNotification *)message setMethod:[[NSString stringWithFormat:@"%@.", path] stringByAppendingString:[(WSPRNotification *)message method]]];
+    {
+        WSPRNotification *notification = (WSPRNotification *)message;
+        NSCharacterSet *specialMarkers = [NSCharacterSet characterSetWithCharactersInString:@":!~"];
+        NSRange specialMarkerRange = [notification.method rangeOfCharacterFromSet:specialMarkers];
+        BOOL isSpecialMethod = specialMarkerRange.location == 0;
+
+        [notification setMethod:[NSString stringWithFormat:@"%@%@%@", path, isSpecialMethod ? @"" : @".", [notification method]]];
+    }
     
     [self.gateway sendMessage:message];
 }
