@@ -13,15 +13,13 @@
 #import "WSPRClassRouter.h"
 #import "WSPRInstanceRegistry.h"
 
-//TODO: Add exception tests to everything!
+//TODO: Bad route test
+//TODO: Add exception/fail tests to everything!
 //TODO: Add tests for flushing instances on route
-//TODO: Add tests for events/notification back from remote object
+//TODO: Add tests for notification back from remote object
 //TODO: Add tests for wrong method name
 //TODO: Add tests for bad params
-//TODO: Add tests for serializing instance
-//TODO: Add tests for deserializing instance
 //TODO: Add functionality for getting the same access as with blocks in methods by specifying special parameter types
-//TODO: Remove the need for `isVoidReturn`
 //TODO: Add router for blocks/functions
 //TODO: Create remote object for exposing routes that are available on one bridge to another
 //TODO: Implement proxying
