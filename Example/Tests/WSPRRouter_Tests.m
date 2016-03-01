@@ -151,5 +151,11 @@
     XCTAssertEqual([_router1 rootRouter], _router1, @"Wrong root router returned");
 }
 
+- (void)testGetRouterAtPath
+{
+    [_router1 exposeRoute:_router3 onPath:@"r2.r3"];
+    XCTAssertEqual([_router1 routerAtPath:@"r2.r3"], _router3, @"Router could not be found!");
+}
+
 
 @end

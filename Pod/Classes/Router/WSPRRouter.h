@@ -61,4 +61,11 @@
  */
 -(id<WSPRRouteProtocol>)rootRouter;
 
+/**
+ *  Returns the router for a specific path under this router
+ *  @param path The path you want to look up.
+ *  @return An instance implementing the route protocol if found, otherwise nil.
+ */
+-(id<WSPRRouteProtocol>)routerAtPath:(NSString *)path;
+
 @end

@@ -37,6 +37,28 @@
     return route;
 }
 
+-(id<WSPRRouteProtocol>)routerAtPath:(NSString *)path
+{
+    WSPRRouter *router = self;
+    NSString *currentPath = path;
+    
+    NSArray *splitPath = [[self class] splitPath:currentPath];
+    NSString *step = [splitPath firstObject];
+
+    while (router.routes[step])
+    {
+        //Move to new ruter
+        router = [router.routes[step] isKindOfClass:[WSPRRouter class]] ? router.routes[step] : nil;
+        
+        //Find next
+        currentPath = splitPath.count == 2 ? [splitPath lastObject] : nil;
+        splitPath = [[self class] splitPath:currentPath];
+        step = [splitPath firstObject];
+
+    }
+    return router;
+}
+
 
 #pragma mark - WSPRRoute Protocol
 
@@ -107,9 +129,11 @@
 
 +(NSArray *)splitPath:(NSString *)inPath
 {
+    if (!inPath)
+        return @[];
+        
     NSString *path = inPath;
-    NSMutableCharacterSet *specialMarkers = [[NSMutableCharacterSet alloc] init];
-    [specialMarkers addCharactersInString:@":~!"];
+    NSCharacterSet *specialMarkers = [NSCharacterSet characterSetWithCharactersInString:@":~!"];
     
     NSRange specialMarkerRange = [path rangeOfCharacterFromSet:specialMarkers];
     if (specialMarkerRange.location != NSNotFound)
