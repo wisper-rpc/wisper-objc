@@ -12,6 +12,7 @@
 @interface WSPRClassRouter () <WSPRClassInstanceDelegate>
 
 @property (nonatomic, strong) WSPRClass *classModel;
+@property (nonatomic, strong) NSMutableArray *ownedInstances;
 
 @end
 
@@ -22,6 +23,16 @@
 +(instancetype)routerWithClass:(Class<WSPRClassProtocol>)aClass
 {
     return [[[self class] alloc] initWithClass:aClass];
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self)
+    {
+        self.ownedInstances = [NSMutableArray array];
+    }
+    return self;
 }
 
 -(instancetype)initWithClass:(Class<WSPRClassProtocol>)aClass
@@ -118,7 +129,7 @@
     WSPRClassMethod *createMethod = self.classModel.instanceMethods[@"~"] ? : self.classModel.staticMethods[@"~"];
     if (createMethod)
     {
-        WSPRClassInstance *wisperInstance = [self addInstance:instance];
+        WSPRClassInstance *wisperInstance = [self internalAddInstance:instance];
         
         if (createMethod.callBlock)
         {
@@ -162,7 +173,7 @@
         instance = [instance init];
         
         //Add instance after initializing to avoid events for all properties set in init and protecting instance variables from changes before init has been called.
-        WSPRClassInstance *wisperInstance = [self addInstance:instance];
+        WSPRClassInstance *wisperInstance = [self internalAddInstance:instance];
         
         if ([message isKindOfClass:[WSPRRequest class]])
         {
@@ -322,18 +333,7 @@
     completion(returnedObject, nil);
 }
 
-
-
-
-
-
-
-
-
-
-
-
--(WSPRClassInstance *)addInstance:(id<WSPRClassProtocol>)instance
+-(WSPRClassInstance *)internalAddInstance:(id<WSPRClassProtocol>)instance
 {
     instance.rpcController = self;
     
@@ -346,54 +346,9 @@
     wisperInstance.delegate = self;
     
     [WSPRInstanceRegistry addInstance:wisperInstance underRootRoute:[self rootRouter]];
+    [self.ownedInstances addObject:key];
     return wisperInstance;
 }
-
--(BOOL)removeInstance:(WSPRClassInstance *)instance
-{
-    //TODO: Tell the other endpoint that we have removed the object!
-    
-    //Do we have the instance?
-    WSPRClassInstance *wisperInstance = [WSPRInstanceRegistry instanceWithId:instance.instanceIdentifier underRootRoute:[self rootRouter]];
-
-    if (!wisperInstance)
-        return NO;
-    
-    //Unregister
-    wisperInstance.delegate = nil;
-    wisperInstance.instance.rpcController = nil;
-    
-    //Remove the instance
-    [WSPRInstanceRegistry removeInstance:wisperInstance underRootRoute:[self rootRouter]];
-    
-    return YES;
-}
-
--(void)flushInstances
-{
-    //TODO: This needs to get some solution!
-    
-    //Avoid mutating dictionary while enumerating
-//    NSArray *keys = _instanceMap.allKeys;
-//    for (NSString *key in keys)
-//    {
-//        WSPRClassInstance *rpcInstance = _instanceMap[key];
-//        [self destroyInstance:rpcInstance];
-//    }
-//    [_instanceMap removeAllObjects];
-}
-
-
-#pragma mark - WSPRClassInstanceDelegate
-
--(void)classInstance:(WSPRClassInstance *)classInstance didCreatePropertyEvent:(WSPREvent *)event
-{
-    event.mapName = self.routeNamespace;
-    [self.parentRoute reverse:[event createNotification] fromPath:nil];
-}
-
-
-#pragma mark - Helpers
 
 -(void)destroyInstance:(WSPRClassInstance *)instance
 {
@@ -406,11 +361,59 @@
         [instance.instance rpcDestructor];
     }
     
-    //Second we remove the connections from the instance to the rest of the SDK (we do this after -rpcDestructor so that the object still has references to the AdSpace and other necessary objects)
+    //Second we remove the connections from the instance to the rest of wisper (we do this after -rpcDestructor so that the object still has references to the things it might need)
     [instance.instance setRpcController:nil];
     
     //Lastly we remove the last reference which in turn deallocates the instance.
     [WSPRInstanceRegistry removeInstance:instance underRootRoute:[self rootRouter]];
+    
+    if ([self.ownedInstances containsObject:instance.instanceIdentifier])
+        [self.ownedInstances removeObject:instance.instanceIdentifier];
+}
+
+
+#pragma mark - Public Actions
+
+-(WSPRClassInstance *)addInstance:(id<WSPRClassProtocol>)instance
+{
+    WSPRClassInstance *wisperInstance = [self internalAddInstance:instance];
+    
+    WSPREvent *event = [[WSPREvent alloc] init];
+    event.name = @"~";
+    event.data = wisperInstance.instanceIdentifier;
+    [self reverse:[event createNotification] fromPath:event.mapName];
+    
+    return wisperInstance;
+}
+
+-(void)removeInstance:(WSPRClassInstance *)instance
+{
+    [self destroyInstance:instance];
+    
+    WSPREvent *event = [[WSPREvent alloc] init];
+    event.name = @"~";
+    event.instanceIdentifier = instance.instanceIdentifier;
+    [self reverse:[event createNotification] fromPath:event.mapName];
+}
+
+-(void)flushInstances
+{
+    //Avoid mutating array while enumerating
+    NSArray *ids = [NSArray arrayWithArray:self.ownedInstances];
+    for (NSString *key in ids)
+    {
+        WSPRClassInstance *instance = [WSPRInstanceRegistry instanceWithId:key underRootRoute:[self rootRouter]];
+        [self removeInstance:instance];
+    }
+}
+
+
+#pragma mark - WSPRClassInstanceDelegate
+
+-(void)classInstance:(WSPRClassInstance *)classInstance didCreatePropertyEvent:(WSPREvent *)event
+{
+    event.mapName = self.routeNamespace;
+    [self.parentRoute reverse:[event createNotification] fromPath:nil];
 }
 
 
