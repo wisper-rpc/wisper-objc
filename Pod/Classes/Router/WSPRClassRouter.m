@@ -384,7 +384,7 @@
     
     WSPREvent *event = [[WSPREvent alloc] init];
     event.name = @"~";
-    event.data = wisperInstance.instanceIdentifier;
+    event.data = @{@"id" : wisperInstance.instanceIdentifier, @"props" : [self nonNilPropsFromInstance:wisperInstance]};
     [self reverse:[event createNotification] fromPath:event.mapName];
     
     return wisperInstance;

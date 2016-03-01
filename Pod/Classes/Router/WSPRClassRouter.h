@@ -46,14 +46,14 @@
 -(instancetype)initWithClass:(Class<WSPRClassProtocol>)aClass;
 
 /**
- *  Add an instance not created by wisper to the router. A create `!` `~` event will be sent to notify the other side that a new instance is available.
+ *  Add an instance not created by wisper to the router. A create `!` `~, {id:_instance_id_, props:{...}}` event will be sent to notify the other side that a new instance is available.
  *  @param instance instance description
  *  @return The resulting wrapper for the instance you added.
  */
 -(WSPRClassInstance *)addInstance:(id<WSPRClassProtocol>)instance;
 
 /**
- *  Removes an instance that you have added. A destroy `:!` `~` event will be sent to notify the other side that the instance is no longer available.
+ *  Removes an instance that you have added. A destroy `:!` `_instance_id_, ~` event will be sent to notify the other side that the instance is no longer available.
  *  @param instance The instance you want to remove.
  */
 -(void)removeInstance:(WSPRClassInstance *)instance;
