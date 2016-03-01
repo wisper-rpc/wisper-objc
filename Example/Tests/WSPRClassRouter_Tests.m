@@ -80,7 +80,8 @@
     OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRNotification *notification = (WSPRNotification *)obj;
         WSPREvent *event = [[WSPREvent alloc] initWithNotification:notification];
-                
+        NSDictionary *dataDictionary = (NSDictionary *)event.data;
+        
         if (![event.mapName isEqualToString:@"wisp.test.TestObject"])
             return NO;
         
@@ -90,7 +91,13 @@
         if (event.instanceIdentifier)
             return NO;
         
-        if (!event.data)
+        if (!dataDictionary[@"id"])
+            return NO;
+        
+        if ([(NSNumber *)dataDictionary[@"props"][@"testSerializeProperty"][@"x"] floatValue] != 0.5f)
+            return NO;
+        
+        if ([(NSNumber *)dataDictionary[@"props"][@"testSerializeProperty"][@"y"] floatValue] != 0.6f)
             return NO;
         
         return YES;
@@ -100,6 +107,7 @@
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
     WSPRTestObject *testObjectToBeAdded = [[WSPRTestObject alloc] init];
+    testObjectToBeAdded.testSerializeProperty = CGPointMake(0.5f, 0.6f);
     WSPRClassRouter *classRouter = [_gatewayRouter routerAtPath:@"wisp.test.TestObject"];
     WSPRClassInstance *instance = [classRouter addInstance:testObjectToBeAdded];
     
