@@ -110,7 +110,6 @@
     if ([[property type] isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
     {
         //Look for instance in rpcController
-        WSPRRemoteObjectController *remoteObjectController = self.instance.rpcController;
         WSPRClassInstance *classInstance = [WSPRInstanceRegistry instanceModelForInstance:[object valueForKeyPath:keyPath] underRootRoute:[(WSPRClassRouter *)self.instance.rpcController rootRouter]];
         event.data = classInstance ? classInstance.instanceIdentifier : [NSNull null];
     }
