@@ -45,6 +45,10 @@
     return self;
 }
 
+-(void)dealloc
+{
+    [self flushInstances];
+}
 
 #pragma mark - WSPRRouteProtocol
 
