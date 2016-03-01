@@ -178,4 +178,9 @@
 
 }
 
+-(void)rpcDestructor
+{
+
+}
+
 @end
