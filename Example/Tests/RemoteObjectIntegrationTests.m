@@ -712,6 +712,44 @@
 }
 
 
+#pragma mark - Exception handling -
+
+#pragma mark Methods
+
+- (void)testExceptionInStaticMethodReturnsWisperError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"static0";
+    request.method = @"wisp.test.TestObject.append";
+    request.params = @[@"Hello ", @"world!"];
+    request.responseBlock = ^(WSPRResponse *response){
+        if (response.error)
+            [expectation fulfill];
+    };
+    
+    id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
+    
+    NSException *exception = [NSException exceptionWithName:@"mockException" reason:@"testing" userInfo:nil];
+    OCMExpect(ClassMethod([testObjectClassMock appendString:[OCMArg any] withString:[OCMArg any]])).andThrow(exception);
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    OCMVerifyAll(testObjectClassMock);
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+#pragma mark Create
+
+#pragma mark Events
+
+#pragma mark Destroy
+
+
 #pragma mark - Helpers
 
 - (void)testObjectInstanceWithCompletion:(void (^)(WSPRClassInstance *instance))completion
