@@ -142,6 +142,16 @@
     return classModel;
 }
 
+-(instancetype)init
+{
+    self = [super init];
+    if (self)
+    {
+        [[self class] mockCall];
+    }
+    return self;
+}
+
 -(instancetype)initWithTestPropertyValue:(NSString *)testString
 {
     self = [self init];
@@ -192,6 +202,11 @@
 -(void)rpcHandleInstanceEvent:(WSPREvent *)event
 {
 
+}
+
++(void)mockCall
+{
+    //This method is here to replace in mocks
 }
 
 
