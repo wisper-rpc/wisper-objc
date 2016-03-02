@@ -142,7 +142,7 @@
     {
         if (!remoteObjectCall.notification)
         {
-            WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainRPC andCode:WSPRErrorRPCInvalidMessageType];
+            WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCInvalidMessageType];
             error.message = @"Message type cannot be request when sending RemoteObject event, must be notification!";
             [self sendRPCError:error forRemoteObjectCall:remoteObjectCall asGlobal:YES];
             return;

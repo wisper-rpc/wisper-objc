@@ -11,7 +11,7 @@
 typedef NS_ENUM(NSInteger, WSPRErrorDomain)
 {
     WSPRErrorDomainJavaScript = 0,
-    WSPRErrorDomainRPC = 1,
+    WSPRErrorDomainWisper = 1,
     WSPRErrorDomainRemoteObject = 2,
     WSPRErrorDomainAction = 3,
     WSPRErrorDomainiOS_OSX = 10,

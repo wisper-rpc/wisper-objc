@@ -36,7 +36,7 @@
     if (serializationError && !object)
     {
         //We were supposed to handle the request but the JSON was malformatted
-        WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainRPC andCode:WSPRErrorRPCParseError];
+        WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCParseError];
         error.message = [serializationError localizedDescription];
         
         WSPRResponse *response = [WSPRResponse message];
@@ -75,7 +75,7 @@
     }
     else
     {
-        WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainRPC andCode:WSPRErrorRPCFormatError];
+        WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCFormatError];
         error.message = [NSString stringWithFormat:@"Could not parse message type from message: %@", jsonString];
         
         WSPRResponse *response = [[WSPRResponse alloc] init];
@@ -168,7 +168,7 @@
     }
     @catch (NSException *exception)
     {
-        WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainRPC andCode:WSPRErrorRPCParseError];
+        WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCParseError];
         error.message = @"JSON Parse error";
         error.data = @{
                        @"exception" : @{

@@ -98,7 +98,7 @@
     {
         case WSPRErrorDomainJavaScript:
             return @"JavaScript";
-        case WSPRErrorDomainRPC:
+        case WSPRErrorDomainWisper:
             return @"RPC";
         case WSPRErrorDomainRemoteObject:
             return @"RemoteObject";
@@ -141,7 +141,7 @@
             }
         }
             break;
-        case WSPRErrorDomainRPC:
+        case WSPRErrorDomainWisper:
         {
             WSPRErrorRPC errorCode = self.code;
             switch (errorCode)
