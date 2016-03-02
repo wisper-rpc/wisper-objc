@@ -7,6 +7,7 @@
 //
 
 #import "WSPRGateway.h"
+#import "WSPRExceptionHandler.h"
 
 #define WISPER_REQUEST_PREFIX @"WISPER_IOS_REQ-"
 
@@ -126,14 +127,25 @@
             
             if (request.responseBlock)
             {
-                request.responseBlock(response);
+                //Protect unknown code block execution
+                @try {
+                    request.responseBlock(response);
+                }
+                @catch (NSException *exception) {
+                    [WSPRExceptionHandler handleException:exception withMessage:message underGateway:self];
+                }
             }
         }
     }
     
     if ([self.delegate respondsToSelector:@selector(gateway:didReceiveMessage:)])
     {
-        [self.delegate gateway:self didReceiveMessage:message];
+        @try {
+            [self.delegate gateway:self didReceiveMessage:message];
+        }
+        @catch (NSException *exception) {
+            [WSPRExceptionHandler handleException:exception withMessage:message underGateway:self];
+        }
     }
 }
 
