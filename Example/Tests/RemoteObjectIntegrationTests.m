@@ -12,6 +12,7 @@
 #import "WSPRGatewayRouter.h"
 #import "WSPRClassRouter.h"
 #import "WSPRInstanceRegistry.h"
+#import "WSPRException.h"
 
 //TODO: Bad route test
 //TODO: Add exception/fail tests to everything!
@@ -734,16 +735,188 @@
     
     [self waitForExpectationsWithTimeout:0.1 handler:nil];
 }
+
+- (void)testExceptionInStaticMethodNotificationGeneratesWisperError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
-    NSException *exception = [NSException exceptionWithName:@"mockException" reason:@"testing" userInfo:nil];
-    OCMExpect(ClassMethod([testObjectClassMock appendString:[OCMArg any] withString:[OCMArg any]])).andThrow(exception);
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
-    [_gatewayRouter.gateway handleMessage:request];
+    WSPRNotification *notification = [[WSPRNotification alloc] init];
+    notification.method = @"wisp.test.TestObject.exceptionInMethodCall";
     
-    OCMVerifyAll(testObjectClassMock);
+    id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+    
+    OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)obj;
+        if (errorMessage.error)
+        {
+            [expectation fulfill];
+            return YES;
+        }
+        
+        return NO;
+    }]]);
+    
+    [_gatewayRouter.gateway handleMessage:notification];
+    
+    OCMVerifyAll(gatewayMock);
     
     [self waitForExpectationsWithTimeout:0.1 handler:nil];
 }
+
+- (void)testExceptionInStaticBlockReturnsWisperError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"static0";
+    request.method = @"wisp.test.TestObject.exceptionInMethodBlock";
+    request.responseBlock = ^(WSPRResponse *response){
+        if (response.error)
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testExceptionInStaticBlockNotificationGeneratesWisperError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRNotification *notification = [[WSPRNotification alloc] init];
+    notification.method = @"wisp.test.TestObject.exceptionInMethodBlock";
+    
+    id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+    
+    OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)obj;
+        if (errorMessage.error)
+        {
+            [expectation fulfill];
+            return YES;
+        }
+        
+        return NO;
+    }]]);
+    
+    [_gatewayRouter.gateway handleMessage:notification];
+    
+    OCMVerifyAll(gatewayMock);
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testExceptionInInstanceMethodReturnsWisperError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRRequest *request = [[WSPRRequest alloc] init];
+        request.requestIdentifier = @"instance0";
+        request.method = @"wisp.test.TestObject:exceptionInMethodCall";
+        request.params = @[instance.instanceIdentifier];
+        request.responseBlock = ^(WSPRResponse *response){
+            if (response.error)
+                [expectation fulfill];
+        };
+        
+        [_gatewayRouter.gateway handleMessage:request];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testExceptionInInstanceMethodNotificationGeneratesWisperError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRNotification *notification = [[WSPRNotification alloc] init];
+        notification.method = @"wisp.test.TestObject:exceptionInMethodCall";
+        notification.params = @[instance.instanceIdentifier];
+        id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+        
+        OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+            WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)obj;
+            if (errorMessage.error)
+            {
+                [expectation fulfill];
+                return YES;
+            }
+            
+            return NO;
+        }]]);
+        
+        [_gatewayRouter.gateway handleMessage:notification];
+        OCMVerifyAll(gatewayMock);
+    }];
+
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testExceptionInInstanceBlockReturnsWisperError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+    
+        WSPRRequest *request = [[WSPRRequest alloc] init];
+        request.requestIdentifier = @"instance0";
+        request.method = @"wisp.test.TestObject:exceptionInMethodBlock";
+        request.params = @[instance.instanceIdentifier];
+        request.responseBlock = ^(WSPRResponse *response){
+            if (response.error)
+                [expectation fulfill];
+        };
+        
+        [_gatewayRouter.gateway handleMessage:request];
+        
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testExceptionInInstanceBlockNotificationGeneratesWisperError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRNotification *notification = [[WSPRNotification alloc] init];
+        notification.method = @"wisp.test.TestObject:exceptionInMethodBlock";
+        notification.params = @[instance.instanceIdentifier];
+        
+        id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+        
+        OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+            WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)obj;
+            if (errorMessage.error)
+            {
+                [expectation fulfill];
+                return YES;
+            }
+            
+            return NO;
+        }]]);
+        
+        [_gatewayRouter.gateway handleMessage:notification];
+        
+        OCMVerifyAll(gatewayMock);
+    }];
+
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
 
 #pragma mark Create
 
