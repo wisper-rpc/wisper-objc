@@ -90,11 +90,22 @@
     return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:[self asDictionary] options:0 error:nil] encoding:NSASCIIStringEncoding];
 }
 
+
 #pragma mark - Enum to string helpers
 
 -(NSString *)domainName
 {
-    switch (self.domain)
+    return [[self class] domainNameFromDomain:self.domain];
+}
+
+-(NSString *)errorCodeName
+{
+    return [[self class] errorCodeNameForCode:self.code underDomain:self.domain];
+}
+
++(NSString *)domainNameFromDomain:(WSPRErrorDomain)domain
+{
+    switch (domain)
     {
         case WSPRErrorDomainJavaScript:
             return @"JavaScript";
@@ -114,14 +125,13 @@
     return @"";
 }
 
-
--(NSString *)errorCodeName
++(NSString *)errorCodeNameForCode:(NSInteger)code underDomain:(WSPRErrorDomain)domain
 {
-    switch (self.domain)
+    switch (domain)
     {
         case WSPRErrorDomainJavaScript:
         {
-            WSPRErrorJavascript errorCode = self.code;
+            WSPRErrorJavascript errorCode = code;
             switch (errorCode)
             {
                 case WSPRErrorJavascriptError:
@@ -143,7 +153,7 @@
             break;
         case WSPRErrorDomainWisper:
         {
-            WSPRErrorRPC errorCode = self.code;
+            WSPRErrorRPC errorCode = code;
             switch (errorCode)
             {
                 case WSPRErrorRPCError:
@@ -161,7 +171,7 @@
             break;
         case WSPRErrorDomainRemoteObject:
         {
-            WSPRErrorRemoteObject errorCode = self.code;
+            WSPRErrorRemoteObject errorCode = code;
             switch (errorCode)
             {
                 case WSPRErrorRemoteObjectMissingClass:
@@ -179,7 +189,7 @@
             break;
         case WSPRErrorDomainAction:
         {
-            WSPRErrorAction errorCode = self.code;
+            WSPRErrorAction errorCode = code;
             switch (errorCode) {
                 case WSPRErrorActionAppNotFound:
                     return @"AppNotFound";

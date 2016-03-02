@@ -154,4 +154,14 @@ typedef NS_ENUM(NSInteger, WSPRErrorAction)
  */
 -(NSString *)errorCodeName;
 
+/**
+ Domain as string representation.
+ */
++(NSString *)domainNameFromDomain:(WSPRErrorDomain)domain;
+
+/**
+ Error code as string representation.
+ */
++(NSString *)errorCodeNameForCode:(NSInteger)code underDomain:(WSPRErrorDomain)domain;
+
 @end
