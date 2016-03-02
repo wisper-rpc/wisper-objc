@@ -29,6 +29,7 @@
 @interface WSPRTestObject ()
 
 -(instancetype)initWithTestPropertyValue:(NSString *)testString;
++(void)mockCall;
 
 @end
 
@@ -919,6 +920,98 @@
 
 
 #pragma mark Create
+
+- (void)testExceptionInNormalCreate
+{
+    NSException *exception = [NSException exceptionWithName:@"testException" reason:@"raised for test purposes" userInfo:nil];
+
+    //Disable custom init method
+    WSPRClass *testObjectClassModel = [WSPRTestObject rpcRegisterClass];
+    testObjectClassModel.instanceMethods = @{};
+    
+    // mock class
+    id classMock = OCMClassMock([WSPRTestObject class]);
+    OCMStub([classMock rpcRegisterClass]).andReturn(testObjectClassModel);
+    OCMStub([classMock mockCall]).andThrow(exception);
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"create0";
+    request.method = @"wisp.test.TestObject~";
+    request.responseBlock = ^(WSPRResponse *response){
+        if (response.error)
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testExceptionInCustomCreate
+{
+    NSException *exception = [NSException exceptionWithName:@"testException" reason:@"raised for test purposes" userInfo:nil];
+    
+    //Disable block init method
+    WSPRClass *testObjectClassModel = [WSPRTestObject rpcRegisterClass];
+    [(WSPRClassMethod *)testObjectClassModel.instanceMethods[@"~"] setCallBlock:nil];
+    
+    // mock class
+    id classMock = OCMClassMock([WSPRTestObject class]);
+    OCMStub([classMock rpcRegisterClass]).andReturn(testObjectClassModel);
+    OCMStub([classMock mockCall]).andThrow(exception);
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"create0";
+    request.method = @"wisp.test.TestObject~";
+    request.responseBlock = ^(WSPRResponse *response){
+        if (response.error)
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testExceptionInBlockCreate
+{
+    NSException *exception = [NSException exceptionWithName:@"testException" reason:@"raised for test purposes" userInfo:nil];
+    
+    //Disable block init method
+    WSPRClass *testObjectClassModel = [WSPRTestObject rpcRegisterClass];
+    [(WSPRClassMethod *)testObjectClassModel.instanceMethods[@"~"] setCallBlock:^(id caller, WSPRClassInstance *instance, WSPRClassMethod *method, WSPRNotification *notification){
+        [exception raise];
+    }];
+    
+    // mock class
+    id classMock = OCMClassMock([WSPRTestObject class]);
+    OCMStub([classMock rpcRegisterClass]).andReturn(testObjectClassModel);
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"create0";
+    request.method = @"wisp.test.TestObject~";
+    request.responseBlock = ^(WSPRResponse *response){
+        if (response.error)
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
 
 #pragma mark Events
 
