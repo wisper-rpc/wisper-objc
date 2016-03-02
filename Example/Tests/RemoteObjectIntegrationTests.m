@@ -724,14 +724,16 @@
     
     WSPRRequest *request = [[WSPRRequest alloc] init];
     request.requestIdentifier = @"static0";
-    request.method = @"wisp.test.TestObject.append";
-    request.params = @[@"Hello ", @"world!"];
+    request.method = @"wisp.test.TestObject.exceptionInMethodCall";
     request.responseBlock = ^(WSPRResponse *response){
         if (response.error)
             [expectation fulfill];
     };
     
-    id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
     
     NSException *exception = [NSException exceptionWithName:@"mockException" reason:@"testing" userInfo:nil];
     OCMExpect(ClassMethod([testObjectClassMock appendString:[OCMArg any] withString:[OCMArg any]])).andThrow(exception);
