@@ -82,7 +82,7 @@
 
         WSPRTestObject *testObject = [(WSPRTestObject *)instance.instance initWithTestPropertyValue:request.params[0]];
         WSPRResponse *response = [request createResponse];
-        response.result = @{@"id":instance.instanceIdentifier, @"props":@{@"testProperty":testObject.testProperty}};
+        response.result = @{@"id":instance.instanceIdentifier, @"props":testObject.testProperty ?@{@"testProperty":testObject.testProperty} : @{}};
         request.responseBlock(response);
     };
     
