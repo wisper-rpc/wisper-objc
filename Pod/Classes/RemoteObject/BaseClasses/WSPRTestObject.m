@@ -95,7 +95,21 @@
     WSPRClassMethod *exceptionStaticMethod = [[WSPRClassMethod alloc] init];
     exceptionStaticMethod.mapName = @"exceptionInMethodCall";
     exceptionStaticMethod.selector = @selector(exceptionInMethodCall);
+
+    WSPRClassMethod *exceptionStaticBlock = [[WSPRClassMethod alloc] init];
+    exceptionStaticBlock.mapName = @"exceptionInMethodBlock";
+    exceptionStaticBlock.callBlock = ^(id caller, WSPRClassInstance *instance, WSPRClassMethod *theMethod, WSPRNotification *notification) {
+        NSException *exception = [NSException exceptionWithName:@"Test Exception" reason:@"Raised for test purposes" userInfo:nil];
+        [exception raise];
+    };
     
+    WSPRClassMethod *exceptionInstanceBlock = [[WSPRClassMethod alloc] init];
+    exceptionInstanceBlock.mapName = @"exceptionInMethodBlock";
+    exceptionInstanceBlock.callBlock = ^(id caller, WSPRClassInstance *instance, WSPRClassMethod *theMethod, WSPRNotification *notification) {
+        NSException *exception = [NSException exceptionWithName:@"Test Exception" reason:@"Raised for test purposes" userInfo:nil];
+        [exception raise];
+    };
+
     WSPRClassMethod *exceptionMethod = [[WSPRClassMethod alloc] init];
     exceptionMethod.mapName = @"exceptionInMethodCall";
     exceptionMethod.selector = @selector(exceptionInMethodCall);
@@ -115,10 +129,12 @@
     [classModel addStaticMethod:staticAppendMethod];
     [classModel addStaticMethod:exceptionStaticMethod];
     [classModel addStaticMethod:staticPassByReferenceMethod];
+    [classModel addStaticMethod:exceptionStaticBlock];
     [classModel addInstanceMethod:initWithArgsMethod];
     [classModel addInstanceMethod:appendMethod];
     [classModel addInstanceMethod:exceptionMethod];
     [classModel addInstanceMethod:passByReferenceMethod];
+    [classModel addInstanceMethod:exceptionInstanceBlock];
     [classModel addProperty:testProperty];
     [classModel addProperty:testPassByReferenceProperty];
     [classModel addProperty:testSerializeProperty];
