@@ -52,6 +52,50 @@
     [super tearDown];
 }
 
+#pragma mark - Bad Route
+
+- (void)testBadRequestRouteRespondsWithError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.method = @"no.route.for.message";
+    request.requestIdentifier = @"0";
+    request.params = @[@"Yup"];
+    request.responseBlock = ^(WSPRResponse *response) {
+        if (response.error)
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testBadNotificationRouteRespondsWithError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    WSPRNotification *notification = [[WSPRNotification alloc] init];
+    notification.method = @"no.route.for.message";
+    notification.params = @[@"Yup"];
+    
+    id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+    
+    OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)obj;
+        if (errorMessage.error) {
+            [expectation fulfill];
+            return YES;
+        }
+        return NO;
+    }]]);
+    
+    [_gatewayRouter.gateway handleMessage:notification];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
 
 #pragma mark - Registering
 
