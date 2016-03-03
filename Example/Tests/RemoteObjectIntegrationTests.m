@@ -1242,6 +1242,97 @@
 
 #pragma mark Destroy
 
+- (void)testRequestDestroyExceptionRemovesObjectAnyway
+{
+    NSException *exception = [NSException exceptionWithName:@"testException" reason:@"raised for test purposes" userInfo:nil];
+    NSException *exception2 = [NSException exceptionWithName:@"testException" reason:@"raised for test purposes" userInfo:nil];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        //Weak object should be nilled when destroyed
+        __weak id testObjectMock = OCMPartialMock(instance.instance);
+        __weak WSPRClassInstance *weakInstance = instance;
+        
+        //Copy instance ID so we have it after instance is removed
+        NSString *instanceId = instance.instanceIdentifier;
+        
+        //Throw on rpcDestructor
+        OCMExpect([testObjectMock rpcDestructor]).andThrow(exception);
+        
+        id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
+        OCMStub([testObjectClassMock mockCall]).andThrow(exception2);
+        
+        //Destroy the instance
+        WSPRRequest *request = [[WSPRRequest alloc] init];
+        request.requestIdentifier = @"destroy0";
+        request.method = @"wisp.test.TestObject:~";
+        request.params = @[instanceId];
+        request.responseBlock = ^(WSPRResponse *response){
+            [testObjectMock stopMocking]; //Really important to stop mocking here since removing KVO will not work otherwise
+            
+            if (![WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter])
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (!weakInstance) {
+                        [expectation fulfill];
+                    }
+                });
+        };
+        
+        [_gatewayRouter.gateway handleMessage:request];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
+}
+
+- (void)testNotifyDestroyExceptionRemovesObjectAnyway
+{
+    NSException *exception = [NSException exceptionWithName:@"testException" reason:@"raised for test purposes" userInfo:nil];
+    NSException *exception2 = [NSException exceptionWithName:@"testException" reason:@"raised for test purposes" userInfo:nil];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        //Weak object should be nilled when destroyed
+        id testObjectMock = OCMPartialMock(instance.instance);
+        __weak WSPRClassInstance *weakInstance = instance;
+        
+        //Copy instance ID so we have it after instance is removed
+        NSString *instanceId = instance.instanceIdentifier;
+        
+        //Throw on rpcDestructor
+        OCMExpect([testObjectMock rpcDestructor]).andThrow(exception);
+        
+        id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
+        OCMStub([testObjectClassMock mockCall]).andThrow(exception2);
+        
+        //Destroy the instance
+        WSPRNotification *notification = [[WSPRNotification alloc] init];
+        notification.method = @"wisp.test.TestObject:~";
+        notification.params = @[instanceId];
+        
+        //Start destroying
+        [_gatewayRouter.gateway handleMessage:notification];
+        
+        [testObjectMock stopMocking]; //Really important to stop mocking here since removing KVO will not work otherwise
+        
+        //Verify
+        OCMVerifyAll(testObjectMock);
+        if (![WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter])
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (!weakInstance) {
+                    [expectation fulfill];
+                }
+            });
+        }
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
+}
+
 
 #pragma mark - Helpers
 
