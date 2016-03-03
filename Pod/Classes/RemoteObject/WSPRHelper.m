@@ -35,7 +35,7 @@
     if ([paramType isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
     {
         //Argument should already be an instance or nil.
-        return argument == nil || [argument respondsToSelector:@selector(rpcController)];
+        return argument == nil || [argument respondsToSelector:@selector(classRouter)];
     }
     return NO;
 }
