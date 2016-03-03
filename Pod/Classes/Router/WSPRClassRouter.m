@@ -354,7 +354,7 @@
 
 -(WSPRClassInstance *)internalAddInstance:(id<WSPRClassProtocol>)instance
 {
-    instance.rpcController = self;
+    instance.classRouter = self;
     
     NSString *key = [NSString stringWithFormat:@"%p", instance];
     
@@ -386,7 +386,7 @@
     }
     
     //Second we remove the connections from the instance to the rest of wisper (we do this after -rpcDestructor so that the object still has references to the things it might need)
-    [instance.instance setRpcController:nil];
+    [instance.instance setClassRouter:nil];
     
     //Lastly we remove the last reference which in turn deallocates the instance.
     [WSPRInstanceRegistry removeInstance:instance underRootRoute:[self rootRouter]];

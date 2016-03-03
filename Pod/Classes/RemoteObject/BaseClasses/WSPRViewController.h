@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "WSPRClassInstance.h"
 #import "WSPRNotification.h"
-#import "WSPRRemoteObjectController.h"
+#import "WSPRClassRouter.h"
 
 /**
  Object intended for subclassing. This object will give boiler plate functionality for RPC which can be overridden for each subclass.

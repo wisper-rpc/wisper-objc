@@ -523,7 +523,7 @@
 
 -(WSPRClassInstance *)addRPCObjectInstance:(id<WSPRClassProtocol>)instance withRPCClass:(WSPRClass *)rpcClass
 {
-    instance.rpcController = self;
+    instance.classRouter = self;
     
     NSString *key = [NSString stringWithFormat:@"%p", instance];
     
@@ -548,7 +548,7 @@
 
     //Unregister
     rpcInstance.delegate = nil;
-    rpcInstance.instance.rpcController = nil;
+    rpcInstance.instance.classRouter = nil;
     
     //Remove the instance
     [_instanceMap removeObjectForKey:rpcInstance.instanceIdentifier];
@@ -582,7 +582,7 @@
     }
     
     //Second we remove the connections from the instance to the rest of the SDK (we do this after -rpcDestructor so that the object still has references to the AdSpace and other necessary objects)
-    [rpcClassInstance.instance setRpcController:nil];
+    [rpcClassInstance.instance setClassRouter:nil];
     
     //Lastly we remove the last reference which in turn deallocates the instance.
     [_instanceMap removeObjectForKey:rpcClassInstance.instanceIdentifier];

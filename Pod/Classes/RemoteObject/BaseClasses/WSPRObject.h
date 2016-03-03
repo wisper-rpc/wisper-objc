@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "WSPRClassInstance.h"
 #import "WSPRRequest.h"
-#import "WSPRRemoteObjectController.h"
+#import "WSPRClassRouter.h"
 
 /**
  Object intended for subclassing. This object will give a boiler plate functionality for RPC which can be overridden for each subclass.
