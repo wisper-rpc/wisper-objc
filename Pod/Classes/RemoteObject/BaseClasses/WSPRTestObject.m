@@ -162,6 +162,21 @@
     return self;
 }
 
++(void)mockCall
+{
+    //This method is here to replace in mocks for testing init and dealloc flows
+}
+
+-(void)dealloc
+{
+    [[self class] mockCall];
+}
+
+-(void)rpcDestructor
+{
+    
+}
+
 +(NSString *)echoString:(NSString *)message
 {
     return message;
@@ -202,11 +217,6 @@
 -(void)rpcHandleInstanceEvent:(WSPREvent *)event
 {
 
-}
-
-+(void)mockCall
-{
-    //This method is here to replace in mocks
 }
 
 
