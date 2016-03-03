@@ -48,10 +48,19 @@
 
 -(void)gateway:(WSPRGateway *)gateway didReceiveMessage:(WSPRMessage *)message
 {
+    if ([_delegate respondsToSelector:@selector(gateway:didReceiveMessage:)])
+        [_delegate gateway:gateway didReceiveMessage:message];
+
     if ([message isKindOfClass:[WSPRNotification class]])
     {
         [self route:message toPath:[(WSPRNotification *)message method]];
     }
+}
+
+-(void)gateway:(WSPRGateway *)gateway didOutputMessage:(NSString *)message
+{
+    if ([_delegate respondsToSelector:@selector(gateway:didOutputMessage:)])
+        [_delegate gateway:gateway didOutputMessage:message];
 }
 
 
