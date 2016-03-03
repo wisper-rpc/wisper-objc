@@ -18,6 +18,7 @@
  Take a message and route/handle it.
  @param message The message to route/handle
  @param The path to continue routing to. The standard way is to consume the first part of the path (up to the next ".") and pass the new path in the next route.
+ @warning Its ok for this method to throw exceptions so you should catch any ecxeptions and try to handle them by passing error responses to the other end point.
  */
 -(void)route:(WSPRMessage *)message toPath:(NSString *)path;
 

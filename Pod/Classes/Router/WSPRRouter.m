@@ -7,6 +7,7 @@
 //
 
 #import "WSPRRouter.h"
+#import "WSPRException.h"
 
 @interface WSPRRouter ()
 
@@ -75,7 +76,8 @@
     }
     else
     {
-        //TODO: Throw!
+        WSPRException *exception = [WSPRException exceptionWithErrorDomain:WSPRErrorDomainWisper code:WSPRErrorMissingProcedure originalException:nil andDescription:[NSString  stringWithFormat:@"No route for message with method: %@", message.method]];
+        [exception raise];
     }
 }
 
