@@ -62,7 +62,12 @@
             [self handleCreateInstance:message];
             break;
         case WSPRCallTypeDestroy:
-            [self handleDestroyInstance:message];
+            @try {
+                [self handleDestroyInstance:message];
+            }
+            @catch (NSException *exception) {
+                // Silence exception, an exception here should only be possible from dealloc in the remote object and we simply consider the object removed anyway
+            }
             break;
         case WSPRCallTypeStatic:
         {
@@ -354,7 +359,12 @@
     //First run the rpcDestructor method where we allow the object perform extra behaviour like removing modal views or similar.
     if ([instance.instance respondsToSelector:@selector(rpcDestructor)])
     {
-        [instance.instance rpcDestructor];
+        @try {
+            [instance.instance rpcDestructor];
+        }
+        @catch (NSException *exception) {
+            // Silence exception, we consider it OK for an object to throw in this method since we are destroying it anyway.
+        }
     }
     
     //Second we remove the connections from the instance to the rest of wisper (we do this after -rpcDestructor so that the object still has references to the things it might need)
