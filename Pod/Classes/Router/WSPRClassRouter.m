@@ -73,6 +73,10 @@
         {
             NSString *methodName = [WSPRHelper methodNameFromMethodString:message.method];
             WSPRClassMethod *staticMethod = self.classModel.staticMethods[methodName];
+            
+            if (!staticMethod)
+                [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject code:-1 originalException:nil andDescription:[NSString stringWithFormat:@"No such method: %@", message.method]] raise];
+            
             [self handleCallToMethod:staticMethod onInstance:nil fromNotification:message];
             break;
         }
@@ -80,6 +84,10 @@
         {
             NSString *methodName = [WSPRHelper methodNameFromMethodString:message.method];
             WSPRClassMethod *instanceMethod = self.classModel.instanceMethods[methodName];
+            
+            if (!instanceMethod)
+                [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject code:-1 originalException:nil andDescription:[NSString stringWithFormat:@"No such method: %@", message.method]] raise];
+            
             WSPRClassInstance *instance = [WSPRInstanceRegistry instanceWithId:[message.params firstObject] underRootRoute:[self rootRouter]];
             [self handleCallToMethod:instanceMethod onInstance:instance fromNotification:message];
             break;
