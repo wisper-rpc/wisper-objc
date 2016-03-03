@@ -234,6 +234,55 @@
     [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
+- (void)testDestroyNotifyInvalidInstance
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRNotification *notification = [[WSPRNotification alloc] init];
+        notification.method = @"wisp.test.TestObject:~";
+        notification.params = @[@"0x0INVALID"];
+        
+        id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+        OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+            WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)obj;
+            if (errorMessage.error)
+                return YES;
+            
+            return NO;
+        }]]);
+        
+        [_gatewayRouter.gateway handleMessage:notification];
+        
+        OCMVerifyAll(gatewayMock);
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testDestroyRequestInvalidInstance
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
+        
+        WSPRRequest *request = [[WSPRRequest alloc] init];
+        request.requestIdentifier = @"instance0";
+        request.method = @"wisp.test.TestObject:~";
+        request.params = @[@"0x0INVALID"];
+        request.responseBlock = ^(WSPRResponse *response){
+            if (response.error)
+                [expectation fulfill];
+        };
+        [_gatewayRouter.gateway handleMessage:request];
+    }];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+
 
 #pragma mark - Method invocation
 
