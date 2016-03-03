@@ -14,7 +14,6 @@
 #import "WSPRInstanceRegistry.h"
 #import "WSPRException.h"
 
-//TODO: Add tests for bad params
 //TODO: Add functionality for getting the same access as with blocks in methods by specifying special parameter types
 //TODO: Add router for blocks/functions
 //TODO: Create remote object for exposing routes that are available on one bridge to another
