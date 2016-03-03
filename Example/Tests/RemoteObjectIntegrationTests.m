@@ -303,6 +303,54 @@
     OCMVerifyAll(testObjectClassMock);
 }
 
+- (void)testNotifyStaticMethodBadNumberParams
+{
+    id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRNotification *notification = [[WSPRNotification alloc] init];
+    notification.method = @"wisp.test.TestObject.append";
+    notification.params = @[@"Hello ", @"world!", @"Poop!!"];
+    
+    id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+    OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)obj;
+        if (errorMessage.error)
+            return YES;
+        
+        return NO;
+    }]]);
+    
+    [_gatewayRouter.gateway handleMessage:notification];
+    
+    OCMVerifyAll(testObjectClassMock);
+}
+
+- (void)testNotifyStaticMethodBadParamType
+{
+    id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRNotification *notification = [[WSPRNotification alloc] init];
+    notification.method = @"wisp.test.TestObject.append";
+    notification.params = @[@"Hello ", @(10)];
+    
+    id gatewayMock = OCMPartialMock(_gatewayRouter.gateway);
+    OCMExpect([gatewayMock sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
+        WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)obj;
+        if (errorMessage.error)
+            return YES;
+        
+        return NO;
+    }]]);
+    
+    [_gatewayRouter.gateway handleMessage:notification];
+    
+    OCMVerifyAll(testObjectClassMock);
+}
+
 - (void)testNotifyInvalidStaticMethod
 {
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
@@ -336,6 +384,46 @@
     request.params = @[@"Hello ", @"world!"];
     request.responseBlock = ^(WSPRResponse *response){
         if ([(NSString *)response.result isEqualToString:@"Hello world!"])
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testRequestStaticMethodBadNumberParams
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"static0";
+    request.method = @"wisp.test.TestObject.append";
+    request.params = @[@"Hello ", @"world!", @"Poop!!"];
+    request.responseBlock = ^(WSPRResponse *response){
+        if (response.error)
+            [expectation fulfill];
+    };
+    
+    [_gatewayRouter.gateway handleMessage:request];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testRequestStaticMethodBadParamType
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    
+    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.requestIdentifier = @"static0";
+    request.method = @"wisp.test.TestObject.append";
+    request.params = @[@"Hello ", @(10)];
+    request.responseBlock = ^(WSPRResponse *response){
+        if (response.error)
             [expectation fulfill];
     };
     
