@@ -720,7 +720,7 @@
 
 - (void)testExceptionInStaticMethodReturnsWisperError
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
@@ -768,7 +768,7 @@
 
 - (void)testExceptionInStaticBlockReturnsWisperError
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
@@ -816,7 +816,7 @@
 
 - (void)testExceptionInInstanceMethodReturnsWisperError
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
         
@@ -866,7 +866,7 @@
 
 - (void)testExceptionInInstanceBlockReturnsWisperError
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"correct response"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [self testObjectInstanceWithCompletion:^(WSPRClassInstance *instance) {
     
@@ -934,7 +934,7 @@
     OCMStub([classMock rpcRegisterClass]).andReturn(testObjectClassModel);
     OCMStub([classMock mockCall]).andThrow(exception);
 
-    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
@@ -964,7 +964,7 @@
     OCMStub([classMock rpcRegisterClass]).andReturn(testObjectClassModel);
     OCMStub([classMock mockCall]).andThrow(exception);
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
@@ -995,7 +995,7 @@
     id classMock = OCMClassMock([WSPRTestObject class]);
     OCMStub([classMock rpcRegisterClass]).andReturn(testObjectClassModel);
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"instance created"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
