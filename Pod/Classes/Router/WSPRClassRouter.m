@@ -89,6 +89,10 @@
                 [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject code:-1 originalException:nil andDescription:[NSString stringWithFormat:@"No such method: %@", message.method]] raise];
             
             WSPRClassInstance *instance = [WSPRInstanceRegistry instanceWithId:[message.params firstObject] underRootRoute:[self rootRouter]];
+            
+            if (!instance)
+                [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject code:-1 originalException:nil andDescription:[NSString stringWithFormat:@"No instance with id: %@", [message.params firstObject]]] raise];
+
             [self handleCallToMethod:instanceMethod onInstance:instance fromNotification:message];
             break;
         }
