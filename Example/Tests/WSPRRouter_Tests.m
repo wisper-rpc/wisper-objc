@@ -157,5 +157,17 @@
     XCTAssertEqual([_router1 routerAtPath:@"r2.r3"], _router3, @"Router could not be found!");
 }
 
+- (void)testBadRequestRouteThrows
+{
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.method = @"no.route.for.message";
+    request.requestIdentifier = @"0";
+    request.params = @[@"Yup"];
+    request.responseBlock = ^(WSPRResponse *response) {
+    };
+    
+    XCTAssertThrows([_router1 route:request toPath:request.method], @"Bad route did not throw as expected!");
+}
+
 
 @end
