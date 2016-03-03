@@ -18,6 +18,7 @@
  Take a message and route/handle it.
  @param message The message to route/handle
  @param The path to continue routing to. The standard way is to consume the first part of the path (up to the next ".") and pass the new path in the next route.
+ @warning Its ok for this method to throw exceptions so you should catch any ecxeptions and try to handle them by passing error responses to the other end point.
  */
 -(void)route:(WSPRMessage *)message toPath:(NSString *)path;
 
@@ -38,6 +39,10 @@
 
 @end
 
+
+/**
+ *  An object that receives and routes messages to other known routes or reverse up to its known parent.
+ */
 @interface WSPRRouter : NSObject <WSPRRouteProtocol>
 
 @property (nonatomic, strong) NSMutableDictionary *routes;
@@ -50,6 +55,18 @@
  */
 +(NSArray *)splitPath:(NSString *)path;
 
--(instancetype)initWithNameSpace:(NSString *)routeNamespace;
+/**
+ *  Gets the root router of the whole routing tree. This is usually some kind of gateway.
+ *  The root is found by recursively looping through all parents until we reach the top level.
+ *  @return The root router.
+ */
+-(id<WSPRRouteProtocol>)rootRouter;
+
+/**
+ *  Returns the router for a specific path under this router
+ *  @param path The path you want to look up.
+ *  @return An instance implementing the route protocol if found, otherwise nil.
+ */
+-(id<WSPRRouteProtocol>)routerAtPath:(NSString *)path;
 
 @end

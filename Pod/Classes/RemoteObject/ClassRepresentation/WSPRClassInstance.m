@@ -7,8 +7,9 @@
 //
 
 #import "WSPRClassInstance.h"
-#import "WSPRRemoteObjectController.h"
 #import "WSPRHelper.h"
+#import "WSPRInstanceRegistry.h"
+#import "WSPRClassRouter.h"
 
 @interface WSPRClassInstance ()
 
@@ -108,9 +109,7 @@
     if ([[property type] isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
     {
         //Look for instance in rpcController
-        WSPRRemoteObjectController *remoteObjectController = self.instance.rpcController;
-        WSPRClassInstance *classInstance = [remoteObjectController getRPCClassInstanceForInstance:[object valueForKeyPath:keyPath]];
-        
+        WSPRClassInstance *classInstance = [WSPRInstanceRegistry instanceModelForInstance:[object valueForKeyPath:keyPath] underRootRoute:[(WSPRClassRouter *)self.instance.classRouter rootRouter]];
         event.data = classInstance ? classInstance.instanceIdentifier : [NSNull null];
     }
     
@@ -139,7 +138,7 @@
             else
             {
                 //Lookup instance
-                WSPRClassInstance *classInstanceModel = [self.instance.rpcController getRPCClassInstanceForInstanceIdentifier:event.data];
+                WSPRClassInstance *classInstanceModel = [WSPRInstanceRegistry instanceWithId:event.data underRootRoute:[(WSPRClassRouter *)self.instance.classRouter rootRouter]];
                 
                 if (classInstanceModel)
                 {

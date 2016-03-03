@@ -8,7 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import "WSPRClassMethod.h"
-#import "WSPRRemoteObjectCall.h"
+
+typedef enum {
+    WSPRCallTypeUnknown,
+    WSPRCallTypeCreate,
+    WSPRCallTypeDestroy,
+    WSPRCallTypeStatic,
+    WSPRCallTypeStaticEvent,
+    WSPRCallTypeInstance,
+    WSPRCallTypeInstanceEvent
+} WSPRCallType;
+
 
 /**
  Helper class designed to maintain functions that parses and validates various Wisper related objects.

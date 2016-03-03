@@ -13,7 +13,7 @@
 #import "WSPRClassProperty.h"
 
 @class WSPRClass;
-@class WSPRRemoteObjectController;
+@class WSPRClassRouter;
 
 /**
  Implementation protocol that must be implemented to enable RPC functionality for any class.
@@ -26,7 +26,7 @@
  @discussion This is handled automatically by all subclasses of WSRPCObject.
  @see WSRPCObject
  */
-@property (nonatomic, assign) WSPRRemoteObjectController *rpcController;
+@property (nonatomic, assign) WSPRClassRouter *classRouter;
 
 /**
  Will be called by the RPCController when a class is being registered to get a model describing what methods are static/instance available.

@@ -7,6 +7,7 @@
 //
 
 #import "WSPRViewController.h"
+#import "WSPRInstanceRegistry.h"
 
 @interface WSPRViewController ()
 
@@ -15,7 +16,7 @@
 @end
 
 @implementation WSPRViewController
-@synthesize rpcController = _rpcController;
+@synthesize classRouter = _classRouter;
 @synthesize rpcClassInstance = _rpcClassInstance;
 
 +(WSPRClass *)rpcRegisterClass
@@ -32,7 +33,7 @@
     {
         return _rpcClassInstance;
     }
-    _rpcClassInstance = [self.rpcController getRPCClassInstanceForInstance:self];
+    _rpcClassInstance = [WSPRInstanceRegistry instanceModelForInstance:self underRootRoute:[self.classRouter rootRouter]];
     return _rpcClassInstance;
 }
 
@@ -49,10 +50,10 @@
 
 -(void)rpcSendEvent:(WSPREvent *)event
 {
-    if (!event || !self.rpcController || self.isDestroying)
+    if (!event || !self.classRouter || self.isDestroying)
         return;
     
-    [self.rpcController sendMessage:[event createNotification]];
+    [self.classRouter reverse:[event createNotification] fromPath:nil];
 }
 
 -(WSPREvent *)rpcCreateInstanceEvent

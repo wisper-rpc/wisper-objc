@@ -11,7 +11,7 @@
 typedef NS_ENUM(NSInteger, WSPRErrorDomain)
 {
     WSPRErrorDomainJavaScript = 0,
-    WSPRErrorDomainRPC = 1,
+    WSPRErrorDomainWisper = 1,
     WSPRErrorDomainRemoteObject = 2,
     WSPRErrorDomainAction = 3,
     WSPRErrorDomainiOS_OSX = 10,
@@ -153,5 +153,15 @@ typedef NS_ENUM(NSInteger, WSPRErrorAction)
  Error code as string representation.
  */
 -(NSString *)errorCodeName;
+
+/**
+ Domain as string representation.
+ */
++(NSString *)domainNameFromDomain:(WSPRErrorDomain)domain;
+
+/**
+ Error code as string representation.
+ */
++(NSString *)errorCodeNameForCode:(NSInteger)code underDomain:(WSPRErrorDomain)domain;
 
 @end

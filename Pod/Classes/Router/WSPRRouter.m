@@ -7,6 +7,7 @@
 //
 
 #import "WSPRRouter.h"
+#import "WSPRException.h"
 
 @interface WSPRRouter ()
 
@@ -27,14 +28,36 @@
     return self;
 }
 
--(instancetype)initWithNameSpace:(NSString *)routeNamespace
+-(id<WSPRRouteProtocol>)rootRouter
 {
-    self = [self init];
-    if (self)
-    {
-        self.routeNamespace = routeNamespace;
+    id<WSPRRouteProtocol> route = self;
+    while (route.parentRoute)
+    {        
+        route = route.parentRoute;
     }
-    return self;
+    return route;
+}
+
+-(id<WSPRRouteProtocol>)routerAtPath:(NSString *)path
+{
+    WSPRRouter *router = self;
+    NSString *currentPath = path;
+    
+    NSArray *splitPath = [[self class] splitPath:currentPath];
+    NSString *step = [splitPath firstObject];
+
+    while (router.routes[step])
+    {
+        //Move to new ruter
+        router = [router.routes[step] isKindOfClass:[WSPRRouter class]] ? router.routes[step] : nil;
+        
+        //Find next
+        currentPath = splitPath.count == 2 ? [splitPath lastObject] : nil;
+        splitPath = [[self class] splitPath:currentPath];
+        step = [splitPath firstObject];
+
+    }
+    return router;
 }
 
 
@@ -53,7 +76,8 @@
     }
     else
     {
-        //TODO: Throw!
+        WSPRException *exception = [WSPRException exceptionWithErrorDomain:WSPRErrorDomainWisper code:WSPRErrorMissingProcedure originalException:nil andDescription:[NSString  stringWithFormat:@"No route for message with method: %@", message.method]];
+        [exception raise];
     }
 }
 
@@ -82,19 +106,20 @@
     NSArray *splitPath = [[self class] splitPath:path];
     NSString *step = [splitPath firstObject];
     NSString *rest = splitPath.count == 2 ? [splitPath lastObject] : nil;
+    
+    if (!rest)
+    {
+        self.routes[step] = route;
+        [route setParentRoute:self];
+        [route setRouteNamespace:step];
+        return;
+    }
 
     id<WSPRRouteProtocol> existing = self.routes[step];
     if (!existing)
     {
-        if (!rest)
-        {
-            self.routes[step] = route;
-            [route setParentRoute:self];
-            if (![route routeNamespace])
-                [route setRouteNamespace:step];
-            return;
-        }
-        existing = [[WSPRRouter alloc] initWithNameSpace:step];
+        existing = [[WSPRRouter alloc] init];
+        [existing setRouteNamespace:step];
         [existing setParentRoute:self];
         self.routes[step] = existing;
     }
@@ -104,10 +129,22 @@
 
 #pragma mark - Helpers
 
-+(NSArray *)splitPath:(NSString *)path
++(NSArray *)splitPath:(NSString *)inPath
 {
+    if (!inPath)
+        return @[];
+        
+    NSString *path = inPath;
+    NSCharacterSet *specialMarkers = [NSCharacterSet characterSetWithCharactersInString:@":~!"];
+    
+    NSRange specialMarkerRange = [path rangeOfCharacterFromSet:specialMarkers];
+    if (specialMarkerRange.location != NSNotFound)
+    {
+        path = [path substringToIndex:specialMarkerRange.location];
+    }
+    
     NSRange range = [path rangeOfString:@"."];
-
+    
     if (range.location != NSNotFound)
     {
         NSString *step = [path substringToIndex:range.location];
@@ -116,6 +153,15 @@
         return @[step, rest];
     }
     return @[path];
+}
+
+-(NSString *)description
+{
+    return [@{
+              @"type": NSStringFromClass([self class]),
+              @"namespace" : self.routeNamespace ? : @"",
+              @"routes" : [self.routes allKeys] ? : @[]
+              } description];
 }
 
 

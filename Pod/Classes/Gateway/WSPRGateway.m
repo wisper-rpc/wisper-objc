@@ -7,6 +7,7 @@
 //
 
 #import "WSPRGateway.h"
+#import "WSPRExceptionHandler.h"
 
 #define WISPER_REQUEST_PREFIX @"WISPER_IOS_REQ-"
 
@@ -36,7 +37,7 @@
     if (serializationError && !object)
     {
         //We were supposed to handle the request but the JSON was malformatted
-        WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainRPC andCode:WSPRErrorRPCParseError];
+        WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCParseError];
         error.message = [serializationError localizedDescription];
         
         WSPRResponse *response = [WSPRResponse message];
@@ -75,7 +76,7 @@
     }
     else
     {
-        WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainRPC andCode:WSPRErrorRPCFormatError];
+        WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCFormatError];
         error.message = [NSString stringWithFormat:@"Could not parse message type from message: %@", jsonString];
         
         WSPRResponse *response = [[WSPRResponse alloc] init];
@@ -126,14 +127,25 @@
             
             if (request.responseBlock)
             {
-                request.responseBlock(response);
+                //Protect unknown code block execution
+                @try {
+                    request.responseBlock(response);
+                }
+                @catch (NSException *exception) {
+                    [WSPRExceptionHandler handleException:exception withMessage:message underGateway:self];
+                }
             }
         }
     }
     
     if ([self.delegate respondsToSelector:@selector(gateway:didReceiveMessage:)])
     {
-        [self.delegate gateway:self didReceiveMessage:message];
+        @try {
+            [self.delegate gateway:self didReceiveMessage:message];
+        }
+        @catch (NSException *exception) {
+            [WSPRExceptionHandler handleException:exception withMessage:message underGateway:self];
+        }
     }
 }
 
@@ -168,7 +180,7 @@
     }
     @catch (NSException *exception)
     {
-        WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainRPC andCode:WSPRErrorRPCParseError];
+        WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCParseError];
         error.message = @"JSON Parse error";
         error.data = @{
                        @"exception" : @{
