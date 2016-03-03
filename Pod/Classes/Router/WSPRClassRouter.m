@@ -62,6 +62,11 @@
             [self handleCreateInstance:message];
             break;
         case WSPRCallTypeDestroy:
+        {
+            WSPRClassInstance *wisperInstance = [WSPRInstanceRegistry instanceWithId:[message.params firstObject] underRootRoute:[self rootRouter]];
+            if (!wisperInstance)
+                [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject code:-1 originalException:nil andDescription:[NSString stringWithFormat:@"No instance with id: %@", [message.params firstObject]]] raise];
+            
             @try {
                 [self handleDestroyInstance:message];
             }
@@ -69,6 +74,7 @@
                 // Silence exception, an exception here should only be possible from dealloc in the remote object and we simply consider the object removed anyway
             }
             break;
+        }
         case WSPRCallTypeStatic:
         {
             NSString *methodName = [WSPRHelper methodNameFromMethodString:message.method];
