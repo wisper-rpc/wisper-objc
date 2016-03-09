@@ -92,7 +92,7 @@
         }
         else
         {
-            [self.parentRoute reverse:message fromPath:[[NSString stringWithFormat:@"%@.", self.routeNamespace] stringByAppendingString:path]];
+            [self.parentRoute reverse:message fromPath:[NSString stringWithFormat:@"%@.%@", self.routeNamespace, path]];
         }
     }
     else
