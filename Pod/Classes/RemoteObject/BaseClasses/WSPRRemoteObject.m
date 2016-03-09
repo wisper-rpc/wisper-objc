@@ -38,6 +38,11 @@
     return self;
 }
 
+-(void)dealloc
+{
+    [self _destroyRemoteObject];
+}
+
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
     NSMethodSignature *methodSignature = [[self class] instanceMethodSignatureForSelector:aSelector];
@@ -166,6 +171,14 @@
         }
     };
     [self.gateway sendMessage:request];
+}
+
+-(void)_destroyRemoteObject
+{
+    WSPRNotification *destroyNotification = [[WSPRNotification alloc] init];
+    destroyNotification.method = [NSString stringWithFormat:@"%@:~", self.mapName];
+    destroyNotification.params = @[self.instanceIdentifier];
+    [self.gateway sendMessage:destroyNotification];
 }
 
 
