@@ -175,6 +175,9 @@
 
 -(void)_destroyRemoteObject
 {
+    if (!self.instanceIdentifier)
+        return;
+    
     WSPRNotification *destroyNotification = [[WSPRNotification alloc] init];
     destroyNotification.method = [NSString stringWithFormat:@"%@:~", self.mapName];
     destroyNotification.params = @[self.instanceIdentifier];
