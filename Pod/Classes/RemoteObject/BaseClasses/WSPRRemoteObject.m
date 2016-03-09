@@ -161,13 +161,28 @@
 
 -(void)_initRemoteObjectWithParams:(NSArray *)params
 {
+    __weak WSPRRemoteObject *weakSelf = self;
+    __weak WSPRGateway *weakGateway = self.gateway;
+    NSString *mapName = self.mapName; //Will be retained for the lifetime of the response block
+    
     WSPRRequest *request = [[WSPRRequest alloc] init];
-    request.method = [NSString stringWithFormat:@"%@~", self.mapName];
+    request.method = [NSString stringWithFormat:@"%@~", mapName];
     request.params = params ? : @[];
     request.responseBlock = ^(WSPRResponse *response) {
-        if ([response isKindOfClass:[WSPRResponse class]])
+        if ([response isKindOfClass:[WSPRResponse class]] && response.result)
         {
-            self.instanceIdentifier = ((NSDictionary *)response.result)[@"id"];
+            if (weakSelf)
+            {
+                weakSelf.instanceIdentifier = ((NSDictionary *)response.result)[@"id"];
+            }
+            else
+            {
+                //TODO: Cover this case with unit test
+                WSPRNotification *destroyNotification = [[WSPRNotification alloc] init];
+                destroyNotification.method = [NSString stringWithFormat:@"%@:~", mapName];
+                destroyNotification.params = @[((NSDictionary *)response.result)[@"id"]];
+                [weakGateway sendMessage:destroyNotification];
+            }
         }
     };
     [self.gateway sendMessage:request];
