@@ -6,7 +6,7 @@
 //
 //
 
-#import <Wisper/WSPRRouter.h>
+#import "WSPRRouter.h"
 #import "WSPRClassMethod.h"
 
 @interface WSPRFunctionRouter : WSPRRouter
