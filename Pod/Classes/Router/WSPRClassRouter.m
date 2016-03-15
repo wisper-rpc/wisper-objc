@@ -250,7 +250,14 @@
             WSPRRequest *request = (WSPRRequest *)notification;
             WSPRResponse *response = [request createResponse];
             response.result = result;
+            response.error = error;
             request.responseBlock(response);
+        }
+        else if (error)
+        {
+            WSPRErrorMessage *errorMessage = [WSPRErrorMessage message];
+            errorMessage.error = error;
+            [self reverse:errorMessage fromPath:nil];
         }
     }];
 }
