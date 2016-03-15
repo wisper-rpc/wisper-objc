@@ -72,7 +72,7 @@
     [self waitForExpectationsWithTimeout:0.1 handler:nil];
 }
 
-- (void)testFunctionRouterThrowsIfBlock
+- (void)testFunctionRouterThrowsIfBlockIsMissing
 {
     WSPRNotification *notification = [[WSPRNotification alloc] init];
     notification.method = @"a.b.block.other.route.stuff";
