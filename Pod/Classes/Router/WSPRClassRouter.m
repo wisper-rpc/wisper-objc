@@ -178,7 +178,7 @@
         }
         else
         {
-            [self invokeMethod:createMethod withParams:message.params onTarget:instance completion:^(id result) {
+            [self invokeMethod:createMethod withParams:message.params onTarget:instance completion:^(id result, WSPRError *error) {
                 if ([message isKindOfClass:[WSPRRequest class]])
                 {
                     WSPRRequest *request = (WSPRRequest *)message;
@@ -243,7 +243,7 @@
         return;
     }
     
-    [self invokeMethod:method withParams:instance ? [notification.params subarrayWithRange:NSMakeRange(1, notification.params.count-1)] : notification.params onTarget:instance ? instance.instance : (Class)self.classModel.classRef completion:^(id result) {
+    [self invokeMethod:method withParams:instance ? [notification.params subarrayWithRange:NSMakeRange(1, notification.params.count-1)] : notification.params onTarget:instance ? instance.instance : (Class)self.classModel.classRef completion:^(id result, WSPRError *error) {
         
         if ([notification isKindOfClass:[WSPRRequest class]])
         {
@@ -261,12 +261,13 @@
  *  @param target A pointer to the actual instance or static class to run invoke on.
  *  @param completion The returned value of the method
  */
--(void)invokeMethod:(WSPRClassMethod *)method withParams:(NSArray *)params onTarget:(id)target completion:(void(^)(id result))completion
+-(void)invokeMethod:(WSPRClassMethod *)method withParams:(NSArray *)params onTarget:(id)target completion:(void(^)(id result, WSPRError *error))completion
 {
     //Create an invocation
     NSMethodSignature *methodSignature = [target methodSignatureForSelector:method.selector];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
     __unsafe_unretained id returnedObject = nil;
+    WSPRAsyncReturnBlock asyncReturnBlock = nil;
     
     //Retain all arguments when calling the method (ARC fix)
     [invocation retainArguments];
@@ -342,7 +343,10 @@
         [invocation getReturnValue:&returnedObject];
     }
     
-    completion(returnedObject);
+    if (!asyncReturnBlock)
+    {
+        completion(returnedObject, nil);
+    }
 }
 
 -(WSPRClassInstance *)internalAddInstance:(id<WSPRClassProtocol>)instance
