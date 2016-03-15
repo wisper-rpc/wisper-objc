@@ -52,5 +52,11 @@
 
 -(NSString *)passByReference:(id<WSPRClassProtocol>)instance;
 
++(BOOL)passCaller:(id)caller;
+
++(void)passAsyncReturnBlock:(WSPRAsyncReturnBlock)asyncReturnBlock;
+
++(void)passAsyncReturnBlock:(WSPRAsyncReturnBlock)asyncReturnBlock andCaller:(id)caller;
+
 
 @end

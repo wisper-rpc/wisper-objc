@@ -124,6 +124,13 @@
     passByReferenceMethod.paramTypes = @[WSPR_PARAM_TYPE_INSTANCE];
     passByReferenceMethod.selector = @selector(passByReference:);
     
+    
+    [classModel addStaticMethod:[[WSPRClassMethod alloc] initWithMapName:@"passCaller" selector:@selector(passCaller:) andParamTypes:@[WSPR_PARAM_TYPE_CALLER]]];
+    
+    [classModel addStaticMethod:[[WSPRClassMethod alloc] initWithMapName:@"passAsyncReturnBlock" selector:@selector(passAsyncReturnBlock:) andParamTypes:@[WSPR_PARAM_TYPE_ASYNC_RETURN_BLOCK]]];
+    
+    [classModel addStaticMethod:[[WSPRClassMethod alloc] initWithMapName:@"passAsyncReturnBlockAndCaller" selector:@selector(passAsyncReturnBlock:andCaller:) andParamTypes:@[WSPR_PARAM_TYPE_ASYNC_RETURN_BLOCK, WSPR_PARAM_TYPE_CALLER]]];
+    
     [classModel addStaticMethod:echoMethod];
     [classModel addStaticMethod:echoStringMethod];
     [classModel addStaticMethod:staticAppendMethod];
@@ -212,6 +219,25 @@
 -(NSString *)passByReference:(id<WSPRClassProtocol>)instance
 {
     return [instance description];
+}
+
++(BOOL)passCaller:(id)caller
+{
+    return caller ? YES : NO;
+}
+
++(void)passAsyncReturnBlock:(WSPRAsyncReturnBlock)asyncReturnBlock
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        asyncReturnBlock(@(YES), nil);
+    });
+}
+
++(void)passAsyncReturnBlock:(WSPRAsyncReturnBlock)asyncReturnBlock andCaller:(id)caller
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        asyncReturnBlock(@(caller ? YES : NO), nil);
+    });
 }
 
 -(void)rpcHandleInstanceEvent:(WSPREvent *)event
