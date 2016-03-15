@@ -10,6 +10,14 @@
 
 @implementation WSPRNotification
 
+-(id)copyWithZone:(NSZone *)zone
+{
+    WSPRNotification *newNotification = [super copyWithZone:zone];
+    newNotification.method = [_method copyWithZone:zone];
+    newNotification.params = [_params copyWithZone:zone];
+    return newNotification;
+}
+
 -(id)initWithDictionary:(NSDictionary *)dictionary
 {
     self = [self init];

@@ -12,6 +12,9 @@
 
 +(WSPRMessage *)messageFromDictionary:(NSDictionary *)dictionary
 {
+    if (!dictionary)
+        return nil;
+    
     WSPRGatewayMessageType type = [self messageTypeFromMessageDictionary:dictionary];
     switch (type)
     {
@@ -35,6 +38,9 @@
 
 +(WSPRGatewayMessageType)messageTypeFromMessageDictionary:(NSDictionary *)message
 {
+    if (!message)
+        return WSPRGatewayMessageTypeUndefined;
+        
     if (message[@"method"] && message[@"params"])
     {
         if (message[@"id"])

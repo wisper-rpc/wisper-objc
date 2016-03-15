@@ -10,6 +10,13 @@
 
 @implementation WSPRErrorMessage
 
+-(id)copyWithZone:(NSZone *)zone
+{
+    WSPRErrorMessage *newError = [super copyWithZone:zone];
+    newError.error = [_error copyWithZone:zone]; //Do not copy this since it might not conform to NSCopying protocol
+    return newError;
+}
+
 -(id)initWithDictionary:(NSDictionary *)dictionary
 {
     self = [self init];

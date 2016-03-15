@@ -10,6 +10,16 @@
 
 @implementation WSPRError
 
+-(id)copyWithZone:(NSZone *)zone
+{
+    WSPRError *newError = [[self class] allocWithZone:zone];
+    newError.domain = _domain;
+    newError.code = _code;
+    newError.message = [_message copyWithZone:zone];
+    newError.data = [_data copyWithZone:zone];
+    newError.underlyingError = [_underlyingError copyWithZone:zone];
+    return newError;
+}
 
 +(instancetype)error
 {
