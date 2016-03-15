@@ -14,6 +14,17 @@
 #define WSPR_PARAM_TYPE_ARRAY @"ARRAY"
 #define WSPR_PARAM_TYPE_DICTIONARY @"OBJECT"
 #define WSPR_PARAM_TYPE_INSTANCE @"INSTANCE"
+#define WSPR_PARAM_TYPE_CALLER @"CALLER"
+#define WSPR_PARAM_TYPE_ASYNC_RETURN_BLOCK @"ASYNC_RETURN_BLOCK"
+
+/**
+ *  Block that should be used when defining method arguments to make WSPRClassRouter wait until the block is called to return a response to a wisper request. 
+ *  This essentially means you can do asynchronous jobs in your regular methods and ask for this block as an argument to your function. 
+ *  Remember that you must always call the block no matter what happens.
+ *  @param result The result of invoking a method. Think of it as the return value of the method invocation.
+ *  @param error  In case you run in to problems and can not complete your method you need to pass an error here.
+ */
+typedef void (^WSPRAsyncReturnBlock)(id result, WSPRError *error);
 
 @class WSPRClassMethod;
 @class WSPRClassInstance;
