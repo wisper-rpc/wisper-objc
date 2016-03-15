@@ -10,6 +10,15 @@
 
 @implementation WSPRResponse
 
+-(id)copyWithZone:(NSZone *)zone
+{
+    WSPRResponse *newResponse = [super copyWithZone:zone];
+    newResponse.requestIdentifier = [_requestIdentifier copyWithZone:zone];
+    newResponse.result = _result; //Do not copy this since it might not conform to NSCopying protocol
+    return newResponse;
+}
+
+
 -(id)initWithDictionary:(NSDictionary *)dictionary
 {
     self = [self init];

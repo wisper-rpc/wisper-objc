@@ -10,6 +10,14 @@
 
 @implementation WSPRRequest
 
+-(id)copyWithZone:(NSZone *)zone
+{
+    WSPRRequest *newRequest = [super copyWithZone:zone];
+    newRequest.requestIdentifier = [_requestIdentifier copyWithZone:zone];
+    newRequest.responseBlock = [_responseBlock copyWithZone:zone];
+    return newRequest;
+}
+
 -(id)initWithDictionary:(NSDictionary *)dictionary
 {
     self = [super initWithDictionary:dictionary];

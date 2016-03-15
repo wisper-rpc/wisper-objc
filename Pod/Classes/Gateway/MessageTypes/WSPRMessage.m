@@ -10,6 +10,11 @@
 
 @implementation WSPRMessage
 
+-(id)copyWithZone:(NSZone *)zone
+{
+    return [[self class] allocWithZone:zone];
+}
+
 +(instancetype)message
 {
     return [self messageWithDictionary:nil];
