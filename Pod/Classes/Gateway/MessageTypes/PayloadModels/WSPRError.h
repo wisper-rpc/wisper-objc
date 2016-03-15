@@ -60,7 +60,7 @@ typedef NS_ENUM(NSInteger, WSPRErrorAction)
  Object to represent an error as part of a WSPRResponse.
  @see WSPRGateway
  */
-@interface WSPRError : NSObject
+@interface WSPRError : NSObject <NSCopying>
 
 /**
  The error domain of this error.
