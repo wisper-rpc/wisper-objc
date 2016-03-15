@@ -279,7 +279,17 @@
     [invocation setTarget:target];
     
     //Param count validation
-    if (method.paramTypes && method.paramTypes.count != params.count)
+    NSInteger expectedNumberOfMethodParams = method.paramTypes.count;
+    for (NSString *paramType in method.paramTypes)
+    {
+        if ([paramType isEqualToString:WSPR_PARAM_TYPE_ASYNC_RETURN_BLOCK] || [paramType isEqualToString:WSPR_PARAM_TYPE_CALLER])
+        {
+            expectedNumberOfMethodParams--;
+        }
+    }
+    
+    //Param count validation
+    if (method.paramTypes && expectedNumberOfMethodParams != params.count)
     {
         [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
                                             code:WSPRErrorRemoteObjectInvalidArguments
@@ -287,35 +297,55 @@
                                   andDescription:[NSString stringWithFormat:@"Number of arguments does not match receiving procedure. Expected: %lu, Got: %lu", (unsigned long)method.paramTypes.count, (unsigned long)params.count]] raise];
     }
     
-    for (NSUInteger i = 0; i < params.count; i++)
+    NSInteger messageParamIndex = 0;
+    NSInteger argumentIndex = 0;
+    for (NSString *paramType in method.paramTypes)
     {
         __unsafe_unretained id argument = nil;
         
-        if ([method.paramTypes[i] isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
+        if ([paramType isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
         {
             //Accept NSNull
-            if (![params[i] isKindOfClass:[NSNull class]])
+            if (![params[messageParamIndex] isKindOfClass:[NSNull class]])
             {
                 //Lookup instance
-                WSPRClassInstance *instanceModel = [WSPRInstanceRegistry instanceWithId:params[i] underRootRoute:[self rootRouter]];
+                WSPRClassInstance *instanceModel = [WSPRInstanceRegistry instanceWithId:params[messageParamIndex] underRootRoute:[self rootRouter]];
                 
                 if (!instanceModel)
                 {
                     [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
                                                         code:WSPRErrorRemoteObjectInvalidArguments
                                            originalException:nil
-                                              andDescription:[NSString stringWithFormat:@"No reference for ID: %@", params[i]]] raise];
+                                              andDescription:[NSString stringWithFormat:@"No reference for ID: %@", params[messageParamIndex]]] raise];
                 }
                 argument = instanceModel.instance;
             }
+            messageParamIndex++;
+        }
+        else if ([paramType isEqualToString:WSPR_PARAM_TYPE_CALLER])
+        {
+            argument = self;
+        }
+        else if ([paramType isEqualToString:WSPR_PARAM_TYPE_ASYNC_RETURN_BLOCK])
+        {
+            __block BOOL calledOnce = NO;
+            asyncReturnBlock = ^(id result, WSPRError *error) {
+                if (calledOnce)
+                    return;
+                
+                calledOnce = YES;
+                completion(result, error);
+            };
+            argument = asyncReturnBlock;
         }
         else
         {
-            argument = params[i];
+            argument = params[messageParamIndex];
+            messageParamIndex++;
         }
         
         //Individual argument validation
-        if (![WSPRHelper paramType:method.paramTypes[i] matchesArgument:argument])
+        if (![WSPRHelper paramType:paramType matchesArgument:argument])
         {
             [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
                                                 code:WSPRErrorRemoteObjectInvalidArguments
@@ -323,7 +353,8 @@
                                       andDescription:[NSString stringWithFormat:@"Argument type sent to procedure does not match expected type. Expected arguments: %@", method.paramTypes]] raise];
         }
         
-        [invocation setArgument:&argument atIndex:i + 2]; //arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
+        [invocation setArgument:&argument atIndex:argumentIndex + 2]; //arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
+        argumentIndex++;
     }
     
     //try the invocation and listen for any exception
