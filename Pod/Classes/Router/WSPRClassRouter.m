@@ -178,17 +178,17 @@
         }
         else
         {
-            [self invokeMethod:createMethod withParams:message.params onTarget:instance];
-            
-            if ([message isKindOfClass:[WSPRRequest class]])
-            {
-                WSPRRequest *request = (WSPRRequest *)message;
-                
-                //Make the response
-                WSPRResponse *response = [request createResponse];
-                response.result = @{@"id" : wisperInstance.instanceIdentifier, @"props" : [self nonNilPropsFromInstance:wisperInstance]};
-                request.responseBlock(response);
-            }
+            [self invokeMethod:createMethod withParams:message.params onTarget:instance completion:^(id result) {
+                if ([message isKindOfClass:[WSPRRequest class]])
+                {
+                    WSPRRequest *request = (WSPRRequest *)message;
+                    
+                    //Make the response
+                    WSPRResponse *response = [request createResponse];
+                    response.result = @{@"id" : wisperInstance.instanceIdentifier, @"props" : [self nonNilPropsFromInstance:wisperInstance]};
+                    request.responseBlock(response);
+                }
+            }];
         }
     }
     else
@@ -243,15 +243,16 @@
         return;
     }
     
-    id result = [self invokeMethod:method withParams:instance ? [notification.params subarrayWithRange:NSMakeRange(1, notification.params.count-1)] : notification.params onTarget:instance ? instance.instance : (Class)self.classModel.classRef];
-    
-    if ([notification isKindOfClass:[WSPRRequest class]])
-    {
-        WSPRRequest *request = (WSPRRequest *)notification;
-        WSPRResponse *response = [request createResponse];
-        response.result = result;
-        request.responseBlock(response);
-    }
+    [self invokeMethod:method withParams:instance ? [notification.params subarrayWithRange:NSMakeRange(1, notification.params.count-1)] : notification.params onTarget:instance ? instance.instance : (Class)self.classModel.classRef completion:^(id result) {
+        
+        if ([notification isKindOfClass:[WSPRRequest class]])
+        {
+            WSPRRequest *request = (WSPRRequest *)notification;
+            WSPRResponse *response = [request createResponse];
+            response.result = result;
+            request.responseBlock(response);
+        }
+    }];
 }
 
 /**
@@ -260,7 +261,7 @@
  *  @param target A pointer to the actual instance or static class to run invoke on.
  *  @param completion The returned value of the method
  */
--(id)invokeMethod:(WSPRClassMethod *)method withParams:(NSArray *)params onTarget:(id)target
+-(void)invokeMethod:(WSPRClassMethod *)method withParams:(NSArray *)params onTarget:(id)target completion:(void(^)(id result))completion
 {
     //Create an invocation
     NSMethodSignature *methodSignature = [target methodSignatureForSelector:method.selector];
@@ -279,13 +280,12 @@
     //Param count validation
     if (method.paramTypes && method.paramTypes.count != params.count)
     {
-        WSPRException *exception = [WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
-                                                                      code:WSPRErrorRemoteObjectInvalidArguments
-                                                         originalException:nil
-                                                            andDescription:[NSString stringWithFormat:@"Number of arguments does not match receiving procedure. Expected: %lu, Got: %lu", (unsigned long)method.paramTypes.count, (unsigned long)params.count]];
-        [exception raise];
-        return nil;
+        [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
+                                            code:WSPRErrorRemoteObjectInvalidArguments
+                               originalException:nil
+                                  andDescription:[NSString stringWithFormat:@"Number of arguments does not match receiving procedure. Expected: %lu, Got: %lu", (unsigned long)method.paramTypes.count, (unsigned long)params.count]] raise];
     }
+    
     for (NSUInteger i = 0; i < params.count; i++)
     {
         __unsafe_unretained id argument = nil;
@@ -300,12 +300,10 @@
                 
                 if (!instanceModel)
                 {
-                    WSPRException *exception = [WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
-                                                                                  code:WSPRErrorRemoteObjectInvalidArguments
-                                                                     originalException:nil
-                                                                        andDescription:[NSString stringWithFormat:@"No reference for ID: %@", params[i]]];
-                    [exception raise];
-                    return nil;
+                    [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
+                                                        code:WSPRErrorRemoteObjectInvalidArguments
+                                           originalException:nil
+                                              andDescription:[NSString stringWithFormat:@"No reference for ID: %@", params[i]]] raise];
                 }
                 argument = instanceModel.instance;
             }
@@ -318,12 +316,10 @@
         //Individual argument validation
         if (![WSPRHelper paramType:method.paramTypes[i] matchesArgument:argument])
         {
-            WSPRException *exception = [WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
-                                                                          code:WSPRErrorRemoteObjectInvalidArguments
-                                                             originalException:nil
-                                                                andDescription:[NSString stringWithFormat:@"Argument type sent to procedure does not match expected type. Expected arguments: %@", method.paramTypes]];
-            [exception raise];
-            return nil;
+            [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
+                                                code:WSPRErrorRemoteObjectInvalidArguments
+                                   originalException:nil
+                                      andDescription:[NSString stringWithFormat:@"Argument type sent to procedure does not match expected type. Expected arguments: %@", method.paramTypes]] raise];
         }
         
         [invocation setArgument:&argument atIndex:i + 2]; //arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
@@ -334,13 +330,10 @@
         [invocation invoke];
     }
     @catch (NSException *exception) {
-        WSPRException *wisperException = [WSPRException exceptionWithErrorDomain:WSPRErrorDomainiOS_OSX
-                                                                            code:-1
-                                                               originalException:exception
-                                                                  andDescription:@"Method Invocation Error"];
-        [wisperException raise];
-        return nil;
-        
+        [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainiOS_OSX
+                                           code:-1
+                              originalException:exception
+                                 andDescription:@"Method Invocation Error"] raise];
     }
     
     BOOL isVoidReturn = (strncmp([methodSignature methodReturnType], "v", 1) == 0);
@@ -349,7 +342,7 @@
         [invocation getReturnValue:&returnedObject];
     }
     
-    return returnedObject;
+    completion(returnedObject);
 }
 
 -(WSPRClassInstance *)internalAddInstance:(id<WSPRClassProtocol>)instance
