@@ -284,5 +284,43 @@
     XCTAssertNil(weakClassRouter);
 }
 
+- (void)testSpecialParamsAreInserted
+{
+    WSPRNotification *notification = [WSPRNotification message];
+    notification.method = @"TestObject.passAsyncReturnBlockAndCaller";
+    
+    id testObjectClassMock = OCMClassMock([WSPRTestObject class]);
+    OCMExpect(ClassMethod([testObjectClassMock passAsyncReturnBlock:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:NSClassFromString(@"NSBlock")];
+    }] andCaller:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[WSPRClassRouter class]];
+    }]]));
+    
+    WSPRClassRouter *classRouter = [[WSPRClassRouter alloc] initWithClass:[WSPRTestObject class]];
+    [classRouter route:notification toPath:@""];
+    
+    OCMVerifyAll(testObjectClassMock);
+}
+
+- (void)testAsyncMethodCanBeIvoked
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    WSPRRequest *request = [WSPRRequest message];
+    request.method = @"TestObject.passAsyncReturnBlock";
+    request.responseBlock = ^(WSPRResponse *response){
+        if ([(NSNumber *)response.result boolValue])
+        {
+            [expectation fulfill];
+        }
+    };
+    
+    WSPRClassRouter *classRouter = [[WSPRClassRouter alloc] initWithClass:[WSPRTestObject class]];
+    [classRouter route:request toPath:@""];
+    
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
+
 
 @end
