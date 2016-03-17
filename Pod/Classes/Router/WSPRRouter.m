@@ -9,10 +9,6 @@
 #import "WSPRRouter.h"
 #import "WSPRException.h"
 
-@interface WSPRRouter ()
-
-@end
-
 @implementation WSPRRouter
 
 @synthesize parentRoute = _parentRoute;
@@ -26,6 +22,15 @@
         self.routes = [NSMutableDictionary dictionary];
     }
     return self;
+}
+
+-(void)dealloc
+{
+    //Remove all child route's parent pointers
+    for (id<WSPRRouteProtocol>route in [self.routes allValues])
+    {
+        [route setParentRoute:nil];
+    }
 }
 
 -(id<WSPRRouteProtocol>)rootRouter
