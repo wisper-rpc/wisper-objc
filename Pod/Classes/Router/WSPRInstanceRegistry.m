@@ -101,6 +101,40 @@
     }
 }
 
+//TODO: Cover with tests
++(void)forceRemoveInstance:(WSPRClassInstance *)instance
+{
+    for (NSMutableDictionary *instanceDomain in [[[self sharedInstance] instances] allValues])
+    {
+        WSPRClassInstance *instanceToBeRemoved = [instanceDomain objectForKey:instance.instanceIdentifier];
+        
+        //Check if it is this exact instance even though the IDs are the same
+        if (instanceToBeRemoved == instance)
+        {
+            [instanceDomain removeObjectForKey:instance.instanceIdentifier];
+        }
+    }
+}
+
+//TODO: Cover with tests
++(void)forceRemoveInstanceWithId:(NSString *)identifier
+{
+    for (NSMutableDictionary *instanceDomain in [[[self sharedInstance] instances] allValues])
+    {
+        [instanceDomain removeObjectForKey:identifier];
+    }
+}
+
+//TODO: Cover with tests
++(void)flushInstancesUnderRootRoute:(id<WSPRRouteProtocol>)rootRoute
+{
+    NSMutableDictionary *instances = [self instancesUnderRootRoute:rootRoute];
+    for (WSPRClassInstance *instance in [instances allValues])
+    {
+        [self removeInstance:instance underRootRoute:rootRoute];
+    }
+}
+
 
 #pragma mark - Helpers
 

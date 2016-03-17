@@ -66,5 +66,27 @@
  */
 +(void)removeInstance:(WSPRClassInstance *)instance underRootRoute:(id<WSPRRouteProtocol>)rootRoute;
 
+/**
+ *  Removes an instance regardless of knowing the root route.
+ *
+ *  @param instance The instance you want to remove.
+ */
++(void)forceRemoveInstance:(WSPRClassInstance *)instance;
+
+/**
+ *  Removes any instances with the passed identifier under all root route domains.
+ *  If all instances (no matter the domain) have unique Ids. 
+ *
+ *  @param identifier The identifier of the instance you want to remove.
+ */
++(void)forceRemoveInstanceWithId:(NSString *)identifier;
+
+/**
+ *  Flushes all instances registered under a root route.
+ *
+ *  @param rootRoute The root route you want to flush all instances for.
+ */
++(void)flushInstancesUnderRootRoute:(id<WSPRRouteProtocol>)rootRoute;
+
 
 @end
