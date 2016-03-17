@@ -49,6 +49,7 @@
 
 -(void)dealloc
 {
+    //Flush all instances owned directly by this router
     [self flushInstances];
 }
 
@@ -463,6 +464,12 @@
     {
         WSPRClassInstance *instance = [WSPRInstanceRegistry instanceWithId:key underRootRoute:[self rootRouter]];
         [self removeInstance:instance];
+        
+        //Instance could not be found (most likely since root router was deallocated)
+        if (!instance)
+        {
+            [WSPRInstanceRegistry forceRemoveInstanceWithId:key];
+        }
     }
 }
 
