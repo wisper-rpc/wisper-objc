@@ -321,6 +321,6 @@
     [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
 
-
+//TODO: Add test where deallocating a gateway router should destroy all paths below and manage to clean up all instances correctly.
 
 @end
