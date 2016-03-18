@@ -10,11 +10,6 @@
 
 @implementation WSPRClass
 
--(NSString *)mapName
-{
-    return _mapName ? : NSStringFromClass(_classRef);
-}
-
 -(void)addStaticMethod:(WSPRClassMethod *)staticMethod
 {
     NSMutableDictionary *staticMethods = [NSMutableDictionary dictionaryWithDictionary:self.staticMethods ? : @{}];
@@ -40,7 +35,6 @@
 {
     return [@{
               @"classRef" : NSStringFromClass(_classRef) ? : @"",
-              @"mapName" : _mapName ? : @"",
               @"staticMethods" : _staticMethods ? : @{},
               @"instanceMethods" : _instanceMethods ? : @{},
               @"properties" : _properties ? :@{}

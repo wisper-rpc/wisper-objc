@@ -22,7 +22,6 @@
 {
     WSPRClass *rpcObjectClass = [[WSPRClass alloc] init];
     rpcObjectClass.classRef = [self class];
-    rpcObjectClass.mapName = @"WSPRClass";
     return rpcObjectClass;
 }
 
@@ -45,19 +44,8 @@
     self.isDestroying = YES;
 }
 
-#pragma mark - RPCEvent methods
 
--(void)rpcCallRemoteMethod:(NSString *)methodName withParams:(NSArray *)params responseBlock:(ResponseBlock)responseBlock
-{
-    NSMutableArray *idAndParams = [NSMutableArray arrayWithObject:self.rpcClassInstance.instanceIdentifier];
-    [idAndParams addObjectsFromArray:params];
-    
-    WSPRRequest *request = [[WSPRRequest alloc] init];
-    request.method = [NSString stringWithFormat:@"%@:%@", self.rpcClassInstance.rpcClass.mapName, methodName];
-    request.params = [NSArray arrayWithArray:idAndParams];
-    request.responseBlock = responseBlock;
-    [self.classRouter reverse:request fromPath:nil];
-}
+#pragma mark - RPCEvent methods
 
 -(void)rpcSendEvent:(WSPREvent *)event
 {
@@ -74,7 +62,6 @@
     
     WSPREvent *event = [[WSPREvent alloc] init];
     event.instanceIdentifier = self.rpcClassInstance.instanceIdentifier;
-    event.mapName = self.rpcClassInstance.rpcClass.mapName;
     return event;
 }
 
@@ -84,7 +71,6 @@
         return nil;
 
     WSPREvent *event = [[WSPREvent alloc] init];
-    event.mapName = self.rpcClassInstance.rpcClass.mapName;
     return event;
 }
 

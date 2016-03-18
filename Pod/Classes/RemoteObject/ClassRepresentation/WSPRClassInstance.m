@@ -101,7 +101,6 @@
     
     WSPREvent *event = [[WSPREvent alloc] init];
     event.instanceIdentifier = self.instanceIdentifier;
-    event.mapName = _rpcClass.mapName;
     event.name = [property mapName];
     event.data = [object valueForKeyPath:keyPath];
     

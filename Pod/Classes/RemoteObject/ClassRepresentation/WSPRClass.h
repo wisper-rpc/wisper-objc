@@ -69,13 +69,6 @@
 @property (nonatomic, assign) Class<WSPRClassProtocol> classRef;
 
 /**
- This will be used when mapping incoming requests against classes. You could strip the prefix of a class here to make it pretty for the caller ;)
- The mapname must be uniqe, otherwise the latest class registered in the RPCController will be the only available with the mapName.
- If nil the getter will return the classRef as a string.
- */
-@property (nonatomic, strong) NSString *mapName;
-
-/**
  Map of available static methods for this class to be invoked over the RPC interface. 
  Dictionary uses the mapName of the method for the key.
  Holds instances of WSPRClassMethod.
