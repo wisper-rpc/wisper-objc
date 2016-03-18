@@ -23,7 +23,6 @@
 {
     WSPRClass *rpcObjectClass = [[WSPRClass alloc] init];
     rpcObjectClass.classRef = [self class];
-    rpcObjectClass.mapName = @"WSPRClass";
     return rpcObjectClass;
 }
 
@@ -63,7 +62,6 @@
     
     WSPREvent *event = [[WSPREvent alloc] init];
     event.instanceIdentifier = self.rpcClassInstance.instanceIdentifier;
-    event.mapName = self.rpcClassInstance.rpcClass.mapName;
     return event;
 }
 
@@ -73,7 +71,6 @@
         return nil;
     
     WSPREvent *event = [[WSPREvent alloc] init];
-    event.mapName = self.rpcClassInstance.rpcClass.mapName;
     return event;
 }
 
