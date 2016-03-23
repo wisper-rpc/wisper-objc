@@ -50,6 +50,7 @@
     
     NSArray *splitPath = [[self class] splitPath:currentPath];
     NSString *step = [splitPath firstObject];
+    NSString *rest = [splitPath count] == 2 ? [splitPath lastObject] : nil;
 
     while (router.routes[step])
     {
@@ -60,9 +61,9 @@
         currentPath = splitPath.count == 2 ? [splitPath lastObject] : nil;
         splitPath = [[self class] splitPath:currentPath];
         step = [splitPath firstObject];
-
     }
-    return router;
+        
+    return step ? nil : router;
 }
 
 
