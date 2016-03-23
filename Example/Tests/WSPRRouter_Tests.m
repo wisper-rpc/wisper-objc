@@ -157,6 +157,12 @@
     XCTAssertEqual([_router1 routerAtPath:@"r2.r3"], _router3, @"Router could not be found!");
 }
 
+- (void)testGetRouterAtPathReturnsNilIfPathCouldNotBeFound
+{
+    [_router1 exposeRoute:_router3 onPath:@"r2.r3"];
+    XCTAssertNil([_router1 routerAtPath:@"r2.r3.r4"], @"Router could not be found!");
+}
+
 - (void)testBadRequestRouteThrows
 {
     WSPRRequest *request = [[WSPRRequest alloc] init];
