@@ -43,7 +43,7 @@
 - (void)testInitSetsWisperClassModel
 {
     WSPRClassRouter *classRouter = [[WSPRClassRouter alloc] initWithClass:[WSPRObject class]];
-    XCTAssert([classRouter.classModel.mapName isEqualToString:@"WSPRClass"], @"Class model not set correctly on init!");
+    XCTAssertEqual(classRouter.classModel.classRef, [WSPRObject class], @"Class model not set correctly on init!");
 }
 
 - (void)testAddInstance
