@@ -8,12 +8,21 @@
 
 #import <Foundation/Foundation.h>
 #import "WSPRGateway.h"
+#import "WSPREvent.h"
+
+@protocol WSPRRemoteObjectEventProtocol <NSObject>
+
++(void)rpcHandleStaticEvent:(WSPREvent *)event;
+-(void)rpcHandleInstanceEvent:(WSPREvent *)event;
+
+@end
+
 
 /**
  * Object intended to be the remote instance representative. You can start calling methods even before the remote 
  * is initialized. All messages will be queued up and run sequentially as soon as the remote is ready.
  */
-@interface WSPRRemoteObject : NSObject
+@interface WSPRRemoteObject : NSObject <WSPRRemoteObjectEventProtocol>
 
 /**
  *  When enabled any call to this class will generate a Wisper Notification to the implementation object.

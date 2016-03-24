@@ -7,6 +7,8 @@
 //
 
 #import "WSPRRemoteObject.h"
+#import "WSPRRemoteObjectEventFunctionRouter.h"
+#import "WSPRGatewayRouter.h"
 
 @interface WSPRRemoteObject ()
 
@@ -34,12 +36,14 @@
         self._wisperInstanceNotificationQueue = [NSMutableArray array];
         [self setAutomaticRemoteForwardingEnabled:YES];
         [self _initRemoteObjectWithParams:nil];
+        [self _registerEventRouter];
     }
     return self;
 }
 
 -(void)dealloc
 {
+    [self _unregisterEventRouter];
     [self _destroyRemoteObject];
 }
 
@@ -156,6 +160,16 @@
     [self.gateway sendMessage:notification];
 }
 
++(void)rpcHandleStaticEvent:(WSPREvent *)event
+{
+    //Override in subclass
+}
+
+-(void)rpcHandleInstanceEvent:(WSPREvent *)event
+{
+    //Override in subclass
+}
+
 
 #pragma mark - Private Actions
 
@@ -197,6 +211,40 @@
     destroyNotification.method = [NSString stringWithFormat:@"%@:~", self.mapName];
     destroyNotification.params = @[self.instanceIdentifier];
     [self.gateway sendMessage:destroyNotification];
+}
+
+-(void)_registerEventRouter
+{
+    WSPRGatewayRouter *gatewayRouter = nil; //TODO: Get it on init?
+    
+    //See if we have an event router already
+    WSPRRouter *eventRouter = [gatewayRouter routerAtPath:self.mapName];
+    if (!eventRouter)
+    {
+        //No existing router so we create one
+        eventRouter = [[WSPRRemoteObjectEventFunctionRouter alloc] initWithRemoteObjectClass:[self class]];
+        [gatewayRouter exposeRoute:eventRouter onPath:self.mapName];
+    }
+    
+    //Register for events
+    if ([eventRouter isKindOfClass:[WSPRRemoteObjectEventFunctionRouter class]])
+    {
+        [(WSPRRemoteObjectEventFunctionRouter *)eventRouter registerRemoteObjectInstance:self];
+    }
+}
+
+-(void)_unregisterEventRouter
+{
+    WSPRGatewayRouter *gatewayRouter = nil; //TODO: Get it on init?
+
+    //See if we have an event router already
+    WSPRRouter *eventRouter = [gatewayRouter routerAtPath:self.mapName];
+
+    //Unregister for events
+    if ([eventRouter isKindOfClass:[WSPRRemoteObjectEventFunctionRouter class]])
+    {
+        [(WSPRRemoteObjectEventFunctionRouter *)eventRouter unregisterRemoteObjectInstance:self];
+    }
 }
 
 
