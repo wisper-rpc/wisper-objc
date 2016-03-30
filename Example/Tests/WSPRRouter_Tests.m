@@ -163,16 +163,39 @@
     XCTAssertNil([_router1 routerAtPath:@"r2.r3.r4"], @"Router could not be found!");
 }
 
-- (void)testBadRequestRouteThrows
+- (void)testBadRequestRouteRespondsWithError
 {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
     WSPRRequest *request = [[WSPRRequest alloc] init];
     request.method = @"no.route.for.message";
     request.requestIdentifier = @"0";
     request.params = @[@"Yup"];
     request.responseBlock = ^(WSPRResponse *response) {
+        if (response.error)
+            [expectation fulfill];
     };
     
-    XCTAssertThrows([_router1 route:request toPath:request.method], @"Bad route did not throw as expected!");
+    [_router1 route:request toPath:request.method];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testBadNotificationRouteSendsError
+{
+    WSPRNotification *notification = [[WSPRNotification alloc] init];
+    notification.method = @"no.route.for.message";
+    notification.params = @[@"Yup"];
+
+    id routerMock = OCMPartialMock(_router1);
+    
+    OCMExpect([routerMock reverse:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[WSPRErrorMessage class]];
+    }] fromPath:[OCMArg any]]);
+    
+    [_router1 route:notification toPath:notification.method];
+    
+    OCMVerifyAll(routerMock);
 }
 
 

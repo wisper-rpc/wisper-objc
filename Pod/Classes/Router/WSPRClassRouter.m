@@ -66,7 +66,12 @@
         {
             WSPRClassInstance *wisperInstance = [WSPRInstanceRegistry instanceWithId:[message.params firstObject] underRootRoute:[self rootRouter]];
             if (!wisperInstance)
-                [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject code:-1 originalException:nil andDescription:[NSString stringWithFormat:@"No instance with id: %@", [message.params firstObject]]] raise];
+            {
+                WSPRError *error = [[WSPRError alloc] init];
+                error.message = [NSString stringWithFormat:@"No instance with id: %@", [message.params firstObject]];
+                [self respondToMessage:message withError:error];
+                return;
+            }
             
             @try {
                 [self handleDestroyInstance:message];
@@ -82,7 +87,12 @@
             WSPRClassMethod *staticMethod = self.classModel.staticMethods[methodName];
             
             if (!staticMethod)
-                [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject code:-1 originalException:nil andDescription:[NSString stringWithFormat:@"No such method: %@", message.method]] raise];
+            {
+                WSPRError *error = [[WSPRError alloc] init];
+                error.message = [NSString stringWithFormat:@"No such method: %@", message.method];
+                [self respondToMessage:message withError:error];
+                return;
+            }
             
             [self handleCallToMethod:staticMethod onInstance:nil fromNotification:message];
             break;
@@ -93,12 +103,22 @@
             WSPRClassMethod *instanceMethod = self.classModel.instanceMethods[methodName];
             
             if (!instanceMethod)
-                [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject code:-1 originalException:nil andDescription:[NSString stringWithFormat:@"No such method: %@", message.method]] raise];
+            {
+                WSPRError *error = [[WSPRError alloc] init];
+                error.message = [NSString stringWithFormat:@"No such method: %@", message.method];
+                [self respondToMessage:message withError:error];
+                return;
+            }
             
             WSPRClassInstance *instance = [WSPRInstanceRegistry instanceWithId:[message.params firstObject] underRootRoute:[self rootRouter]];
             
             if (!instance)
-                [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject code:-1 originalException:nil andDescription:[NSString stringWithFormat:@"No instance with id: %@", [message.params firstObject]]] raise];
+            {
+                WSPRError *error = [[WSPRError alloc] init];
+                error.message = [NSString stringWithFormat:@"No instance with id: %@", [message.params firstObject]];
+                [self respondToMessage:message withError:error];
+                return;
+            }
 
             [self handleCallToMethod:instanceMethod onInstance:instance fromNotification:message];
             break;
@@ -180,6 +200,12 @@
         else
         {
             [self invokeMethod:createMethod withParams:message.params onTarget:instance completion:^(id result, WSPRError *error) {
+                if (error)
+                {
+                    [self respondToMessage:message withError:error];
+                    return;
+                }
+                
                 if ([message isKindOfClass:[WSPRRequest class]])
                 {
                     WSPRRequest *request = (WSPRRequest *)message;
@@ -187,6 +213,7 @@
                     //Make the response
                     WSPRResponse *response = [request createResponse];
                     response.result = @{@"id" : wisperInstance.instanceIdentifier, @"props" : [self nonNilPropsFromInstance:wisperInstance]};
+                    response.error = error;
                     request.responseBlock(response);
                 }
             }];
@@ -245,20 +272,18 @@
     }
     
     [self invokeMethod:method withParams:instance ? [notification.params subarrayWithRange:NSMakeRange(1, notification.params.count-1)] : notification.params onTarget:instance ? instance.instance : (Class)self.classModel.classRef completion:^(id result, WSPRError *error) {
+        if (error)
+        {
+            [self respondToMessage:notification withError:error];
+            return;
+        }
         
         if ([notification isKindOfClass:[WSPRRequest class]])
         {
             WSPRRequest *request = (WSPRRequest *)notification;
             WSPRResponse *response = [request createResponse];
             response.result = result;
-            response.error = error;
             request.responseBlock(response);
-        }
-        else if (error)
-        {
-            WSPRErrorMessage *errorMessage = [WSPRErrorMessage message];
-            errorMessage.error = error;
-            [self reverse:errorMessage fromPath:nil];
         }
     }];
 }
@@ -299,10 +324,10 @@
     //Param count validation
     if (method.paramTypes && expectedNumberOfMethodParams != params.count)
     {
-        [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
-                                            code:WSPRErrorRemoteObjectInvalidArguments
-                               originalException:nil
-                                  andDescription:[NSString stringWithFormat:@"Number of arguments does not match receiving procedure. Expected: %lu, Got: %lu", (unsigned long)method.paramTypes.count, (unsigned long)params.count]] raise];
+        WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainRemoteObject andCode:WSPRErrorRemoteObjectInvalidArguments];
+        error.message = [NSString stringWithFormat:@"Number of arguments does not match receiving procedure. Expected: %lu, Got: %lu", (unsigned long)method.paramTypes.count, (unsigned long)params.count];
+        completion(nil, error);
+        return;
     }
     
     NSInteger messageParamIndex = 0;
@@ -321,10 +346,10 @@
                 
                 if (!instanceModel)
                 {
-                    [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
-                                                        code:WSPRErrorRemoteObjectInvalidArguments
-                                           originalException:nil
-                                              andDescription:[NSString stringWithFormat:@"No reference for ID: %@", params[messageParamIndex]]] raise];
+                    WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainRemoteObject andCode:WSPRErrorRemoteObjectInvalidArguments];
+                    error.message = [NSString stringWithFormat:@"No reference for ID: %@", params[messageParamIndex]];
+                    completion(nil, error);
+                    return;
                 }
                 argument = instanceModel.instance;
             }
@@ -355,10 +380,10 @@
         //Individual argument validation
         if (![WSPRHelper paramType:paramType matchesArgument:argument])
         {
-            [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainRemoteObject
-                                                code:WSPRErrorRemoteObjectInvalidArguments
-                                   originalException:nil
-                                      andDescription:[NSString stringWithFormat:@"Argument type sent to procedure does not match expected type. Expected arguments: %@", method.paramTypes]] raise];
+            WSPRError *error = [WSPRError errorWithDomain:WSPRErrorDomainRemoteObject andCode:WSPRErrorRemoteObjectInvalidArguments];
+            error.message = [NSString stringWithFormat:@"Argument type sent to procedure does not match expected type. Expected arguments: %@", method.paramTypes];
+            completion(nil, error);
+            return;
         }
         
         [invocation setArgument:&argument atIndex:argumentIndex + 2]; //arguments 0 and 1 are self and _cmd respectively, automatically set by NSInvocation
@@ -370,10 +395,12 @@
         [invocation invoke];
     }
     @catch (NSException *exception) {
-        [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainiOS_OSX
-                                           code:-1
-                              originalException:exception
-                                 andDescription:@"Method Invocation Error"] raise];
+        WSPRError *errorFromException = [[WSPRException exceptionWithErrorDomain:WSPRErrorDomainiOS_OSX
+                                                                            code:-1
+                                                               originalException:exception
+                                                                  andDescription:@"Method Invocation Error"] wisperError];
+        completion(nil, errorFromException);
+        return;
     }
     
     BOOL isVoidReturn = (strncmp([methodSignature methodReturnType], "v", 1) == 0);
