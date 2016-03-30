@@ -8,6 +8,8 @@
 
 #import "WSPRRouter.h"
 #import "WSPRException.h"
+#import "WSPRErrorMessage.h"
+#import "WSPRRequest.h"
 
 @implementation WSPRRouter
 
@@ -82,8 +84,9 @@
     }
     else
     {
-        WSPRException *exception = [WSPRException exceptionWithErrorDomain:WSPRErrorDomainWisper code:WSPRErrorMissingProcedure originalException:nil andDescription:[NSString  stringWithFormat:@"No route for message with method: %@", message.method]];
-        [exception raise];
+        WSPRError *error = [[WSPRError alloc] init];
+        error.message = [NSString  stringWithFormat:@"No route for message with method: %@", message.method];
+        [self respondToMessage:message withError:error];
     }
 }
 
@@ -134,6 +137,23 @@
 }
 
 #pragma mark - Helpers
+
+-(void)respondToMessage:(WSPRMessage *)message withError:(WSPRError *)error
+{
+    if ([message isKindOfClass:[WSPRRequest class]])
+    {
+        WSPRRequest *request = (WSPRRequest *)message;
+        WSPRResponse *response = [request createResponse];
+        response.error = error;
+        request.responseBlock(response);
+    }
+    else
+    {
+        WSPRErrorMessage *errorMessage = [[WSPRErrorMessage alloc] init];
+        errorMessage.error = error;
+        [self reverse:errorMessage fromPath:nil];
+    }
+}
 
 +(NSArray *)splitPath:(NSString *)inPath
 {

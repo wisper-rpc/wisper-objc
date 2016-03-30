@@ -48,6 +48,15 @@
 @property (nonatomic, strong) NSMutableDictionary *routes;
 
 /**
+ *  Convenience method meant for subclassing that simply responds to a message by either a response error 
+ *  or error message depending on the original message type.
+ *
+ *  @param message The original message
+ *  @param error   The error you want to respond with
+ */
+-(void)respondToMessage:(WSPRMessage *)message withError:(WSPRError *)error;
+
+/**
  *  Splits a wisper method path into two strings.
  *  First a step and then a rest string.
  *  @param path The path you want to split ex. "wisper.layout.View"
