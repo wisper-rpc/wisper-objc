@@ -83,7 +83,15 @@
     WSPRRouter *router = [[WSPRRouter alloc] init];
     [router exposeRoute:functionRouter onPath:@"a.b.block"];
     
-    XCTAssertThrows([router route:notification toPath:notification.method], @"Expected route to throw due to missing block");
+    id routerMock = OCMPartialMock(router);
+    
+    OCMExpect([routerMock reverse:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[WSPRErrorMessage class]];
+    }] fromPath:[OCMArg any]]);
+    
+    [router route:notification toPath:notification.method];
+    
+    OCMVerifyAll(routerMock);
 }
 
 @end
