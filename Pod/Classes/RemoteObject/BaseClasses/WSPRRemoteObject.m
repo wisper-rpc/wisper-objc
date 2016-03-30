@@ -14,7 +14,7 @@
 
 @property (nonatomic, strong) NSString *instanceIdentifier;
 @property (nonatomic, strong) NSString *mapName;
-@property (nonatomic, strong) WSPRGateway *gateway;
+@property (nonatomic, strong) WSPRGatewayRouter *gatewayRouter;
 
 @property (nonatomic, strong) NSMutableArray *_wisperInstanceNotificationQueue;
 
@@ -26,13 +26,13 @@
 #pragma mark - Lifecycle
 
 //Disallow just init so that we can be sure that mapName and gateWay are present? Or we can have a check in the method calls.
--(instancetype)initWithMapName:(NSString *)mapName andGateway:(WSPRGateway *)gateway
+-(instancetype)initWithMapName:(NSString *)mapName andGatewayRouter:(WSPRGatewayRouter *)gatewayRouter
 {
     self = [super init];
     if (self)
     {
         self.mapName = mapName;
-        self.gateway = gateway;
+        self.gatewayRouter = gatewayRouter;
         self._wisperInstanceNotificationQueue = [NSMutableArray array];
         [self setAutomaticRemoteForwardingEnabled:YES];
         [self _initRemoteObjectWithParams:nil];
@@ -121,7 +121,7 @@
         completion(response.result, response.error);
     };
     
-    [self.gateway sendMessage:request];
+    [self.gatewayRouter.gateway sendMessage:request];
 }
 
 -(void)_wisperCallInstanceMethod:(NSString *)method withParams:(NSArray *)params
@@ -139,7 +139,7 @@
     notification.method = [NSString stringWithFormat:@"%@.%@", self.mapName, method];
     notification.params = params;
     
-    [self.gateway sendMessage:notification];
+    [self.gatewayRouter.gateway sendMessage:notification];
 }
 
 -(void)_wisperSendInstanceEventWithName:(NSString *)name andValue:(NSObject *)value
@@ -157,7 +157,7 @@
     notification.method = [NSString stringWithFormat:@"%@!", self.mapName];
     notification.params = @[name, value];
     
-    [self.gateway sendMessage:notification];
+    [self.gatewayRouter.gateway sendMessage:notification];
 }
 
 +(void)rpcHandleStaticEvent:(WSPREvent *)event
@@ -176,7 +176,7 @@
 -(void)_initRemoteObjectWithParams:(NSArray *)params
 {
     __weak WSPRRemoteObject *weakSelf = self;
-    __weak WSPRGateway *weakGateway = self.gateway;
+    __weak WSPRGateway *weakGateway = self.gatewayRouter.gateway;
     NSString *mapName = self.mapName; //Will be retained for the lifetime of the response block
     
     WSPRRequest *request = [[WSPRRequest alloc] init];
@@ -199,7 +199,7 @@
             }
         }
     };
-    [self.gateway sendMessage:request];
+    [self.gatewayRouter.gateway sendMessage:request];
 }
 
 -(void)_destroyRemoteObject
@@ -210,20 +210,18 @@
     WSPRNotification *destroyNotification = [[WSPRNotification alloc] init];
     destroyNotification.method = [NSString stringWithFormat:@"%@:~", self.mapName];
     destroyNotification.params = @[self.instanceIdentifier];
-    [self.gateway sendMessage:destroyNotification];
+    [self.gatewayRouter.gateway sendMessage:destroyNotification];
 }
 
 -(void)_registerEventRouter
 {
-    WSPRGatewayRouter *gatewayRouter = nil; //TODO: Get it on init?
-    
     //See if we have an event router already
-    WSPRRouter *eventRouter = [gatewayRouter routerAtPath:self.mapName];
+    WSPRRouter *eventRouter = [self.gatewayRouter routerAtPath:self.mapName];
     if (!eventRouter)
     {
         //No existing router so we create one
         eventRouter = [[WSPRRemoteObjectEventFunctionRouter alloc] initWithRemoteObjectClass:[self class]];
-        [gatewayRouter exposeRoute:eventRouter onPath:self.mapName];
+        [self.gatewayRouter exposeRoute:eventRouter onPath:self.mapName];
     }
     
     //Register for events
@@ -235,10 +233,8 @@
 
 -(void)_unregisterEventRouter
 {
-    WSPRGatewayRouter *gatewayRouter = nil; //TODO: Get it on init?
-
     //See if we have an event router already
-    WSPRRouter *eventRouter = [gatewayRouter routerAtPath:self.mapName];
+    WSPRRouter *eventRouter = [self.gatewayRouter routerAtPath:self.mapName];
 
     //Unregister for events
     if ([eventRouter isKindOfClass:[WSPRRemoteObjectEventFunctionRouter class]])
@@ -260,7 +256,7 @@
     }
     
     WSPRNotification *instanceNotification = [self _insertInstanceIdentifierInParamsForNotification:notification];
-    [self.gateway sendMessage:instanceNotification];
+    [self.gatewayRouter.gateway sendMessage:instanceNotification];
 }
 
 -(void)_wisperSendQueuedInstanceNotifications
