@@ -17,6 +17,7 @@
 		5F2F32EF1BC8703D0069D8E9 /* WSPRGateway_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E41BC86E460069D8E9 /* WSPRGateway_Tests.m */; };
 		5F2F32F11BC8703D0069D8E9 /* WSPRRouter_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2F32E61BC86E460069D8E9 /* WSPRRouter_Tests.m */; };
 		5F41A14C1C57C3EE007F7EEC /* WSPRRemoteObject_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F41A14B1C57C3EE007F7EEC /* WSPRRemoteObject_Tests.m */; };
+		5FED673E1CAA83600003B6EA /* WSPRRemoteObjectEventFunctionRouter_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FED673D1CAA835F0003B6EA /* WSPRRemoteObjectEventFunctionRouter_Tests.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -57,6 +58,7 @@
 		5F2F32E61BC86E460069D8E9 /* WSPRRouter_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRRouter_Tests.m; sourceTree = "<group>"; };
 		5F2F32E71BC86E460069D8E9 /* WSPRClassInstance_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRClassInstance_Tests.m; sourceTree = "<group>"; };
 		5F41A14B1C57C3EE007F7EEC /* WSPRRemoteObject_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRRemoteObject_Tests.m; sourceTree = "<group>"; };
+		5FED673D1CAA835F0003B6EA /* WSPRRemoteObjectEventFunctionRouter_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRRemoteObjectEventFunctionRouter_Tests.m; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* Wisper_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wisper_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -182,6 +184,7 @@
 				5F2AA03E1C736E42000BC85B /* WSPRInstanceRegistry_Tests.m */,
 				5F2AA0401C749E7F000BC85B /* RemoteObjectIntegrationTests.m */,
 				5F0B953B1C91C44C0009B45D /* WSPRFunctionRouter_Tests.m */,
+				5FED673D1CAA835F0003B6EA /* WSPRRemoteObjectEventFunctionRouter_Tests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -424,6 +427,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FED673E1CAA83600003B6EA /* WSPRRemoteObjectEventFunctionRouter_Tests.m in Sources */,
 				5F2F32EF1BC8703D0069D8E9 /* WSPRGateway_Tests.m in Sources */,
 				5F2AA0411C749E7F000BC85B /* RemoteObjectIntegrationTests.m in Sources */,
 				5F2F32F11BC8703D0069D8E9 /* WSPRRouter_Tests.m in Sources */,

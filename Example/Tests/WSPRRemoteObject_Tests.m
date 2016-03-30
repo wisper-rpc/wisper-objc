@@ -9,7 +9,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "WSPRRemoteObject.h"
-#import "WSPRGateway.h"
+#import "WSPRGatewayRouter.h"
 
 @interface WSPRRemoteObject ()
 
@@ -37,7 +37,9 @@
 
 - (void)testInitWithMapNameAndGatewayFiresInitMessage
 {
-    id mockGateway = OCMPartialMock([WSPRGateway alloc]);
+    WSPRGatewayRouter *gatewayRouter = [[WSPRGatewayRouter alloc] init];
+    id mockGateway = OCMPartialMock(gatewayRouter.gateway);
+    
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *initRequest = (WSPRRequest *)obj;
         if ([initRequest.method isEqualToString:@"test.Test~"])
@@ -47,14 +49,15 @@
         return NO;
     }]]);
     
-    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGateway:mockGateway];
+    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGatewayRouter:gatewayRouter];
     
     OCMVerifyAllWithDelay(mockGateway, 0.1);
 }
 
 - (void)testInitResponseSetsInstanceIdentifier
 {
-    id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
+    WSPRGatewayRouter *gatewayRouter = [[WSPRGatewayRouter alloc] init];
+    id mockGateway = OCMPartialMock(gatewayRouter.gateway);
     
     //Init should not have fired message
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -67,7 +70,7 @@
         return YES;
     }]]);
     
-    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGateway:mockGateway];
+    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGatewayRouter:gatewayRouter];
     
     XCTAssert([remoteObject.instanceIdentifier isEqualToString:@"AAA"], @"Instance identifier not set");
     
@@ -76,7 +79,8 @@
 
 - (void)testStaticMethodMessage
 {
-    id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
+    WSPRGatewayRouter *gatewayRouter = [[WSPRGatewayRouter alloc] init];
+    id mockGateway = OCMPartialMock(gatewayRouter.gateway);
     
     OCMExpect([mockGateway sendMessage:OCMOCK_ANY]);
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -88,7 +92,7 @@
         return NO;
     }]]);
     
-    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGateway:mockGateway];
+    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGatewayRouter:gatewayRouter];
     [remoteObject _wisperCallStaticMethod:@"staticCall" withParams:nil];
     
     OCMVerifyAllWithDelay(mockGateway, 0.1);
@@ -96,12 +100,13 @@
 
 - (void)testInstanceMethodQueuedAndNotFiredIfNoInstanceId
 {
-    id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
+    WSPRGatewayRouter *gatewayRouter = [[WSPRGatewayRouter alloc] init];
+    id mockGateway = OCMPartialMock(gatewayRouter.gateway);
     
     OCMExpect([mockGateway sendMessage:OCMOCK_ANY]);
     OCMExpect([[mockGateway reject] sendMessage:OCMOCK_ANY]);
     
-    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGateway:mockGateway];
+    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGatewayRouter:gatewayRouter];
     [remoteObject _wisperCallInstanceMethod:@"instanceCall" withParams:nil];
     
     OCMVerifyAllWithDelay(mockGateway, 0.5);
@@ -109,7 +114,8 @@
 
 - (void)testInstanceMethodQueuedFiredAfterDelayedInitResponse
 {
-    id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
+    WSPRGatewayRouter *gatewayRouter = [[WSPRGatewayRouter alloc] init];
+    id mockGateway = OCMPartialMock(gatewayRouter.gateway);
     
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *initRequest = (WSPRRequest *)obj;
@@ -131,7 +137,7 @@
         return NO;
     }]]);
     
-    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGateway:mockGateway];
+    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGatewayRouter:gatewayRouter];
     [remoteObject _wisperCallInstanceMethod:@"instanceCall" withParams:nil];
     
     OCMVerifyAllWithDelay(mockGateway, 1.0);
@@ -139,7 +145,8 @@
 
 - (void)testInstanceMethodMessage
 {
-    id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
+    WSPRGatewayRouter *gatewayRouter = [[WSPRGatewayRouter alloc] init];
+    id mockGateway = OCMPartialMock(gatewayRouter.gateway);
     
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *initRequest = (WSPRRequest *)obj;
@@ -159,7 +166,7 @@
         return NO;
     }]]);
     
-    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGateway:mockGateway];
+    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGatewayRouter:gatewayRouter];
     [remoteObject _wisperCallInstanceMethod:@"instanceCall" withParams:nil];
     
     OCMVerifyAllWithDelay(mockGateway, 0.1);
@@ -167,7 +174,8 @@
 
 - (void)testInstanceMethodSendsInstanceIDAsFirstParam
 {
-    id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
+    WSPRGatewayRouter *gatewayRouter = [[WSPRGatewayRouter alloc] init];
+    id mockGateway = OCMPartialMock(gatewayRouter.gateway);
     
     //Init should not have fired message
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -188,7 +196,7 @@
         return NO;
     }]]);
     
-    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGateway:mockGateway];
+    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGatewayRouter:gatewayRouter];
     [remoteObject _wisperCallInstanceMethod:@"instanceCall" withParams:@[@(123), @"test", @[@"hehe"]]];
     
     OCMVerifyAllWithDelay(mockGateway, 0.1);
@@ -199,7 +207,8 @@
 
 - (void)testForwardWisperInvocationNoParams
 {
-    id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
+    WSPRGatewayRouter *gatewayRouter = [[WSPRGatewayRouter alloc] init];
+    id mockGateway = OCMPartialMock(gatewayRouter.gateway);
     
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *initRequest = (WSPRRequest *)obj;
@@ -219,7 +228,7 @@
         return NO;
     }]]);
     
-    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGateway:mockGateway];
+    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGatewayRouter:gatewayRouter];
     [remoteObject implementationLessMethodTurnedIntoNotification];
     
     OCMVerifyAllWithDelay(mockGateway, 0.1);
@@ -227,7 +236,8 @@
 
 - (void)testForwardWisperInvocationSingleParam
 {
-    id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
+    WSPRGatewayRouter *gatewayRouter = [[WSPRGatewayRouter alloc] init];
+    id mockGateway = OCMPartialMock(gatewayRouter.gateway);
     
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *initRequest = (WSPRRequest *)obj;
@@ -249,7 +259,7 @@
         return NO;
     }]]);
     
-    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGateway:mockGateway];
+    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGatewayRouter:gatewayRouter];
     [remoteObject implementationLessMethodTurnedIntoNotificationWithString:@"someParam"];
     
     OCMVerifyAllWithDelay(mockGateway, 0.1);
@@ -257,7 +267,8 @@
 
 - (void)testForwardWisperInvocationMultipleParams
 {
-    id mockGateway = OCMPartialMock([[WSPRGateway alloc] init]);
+    WSPRGatewayRouter *gatewayRouter = [[WSPRGatewayRouter alloc] init];
+    id mockGateway = OCMPartialMock(gatewayRouter.gateway);
     
     OCMExpect([mockGateway sendMessage:[OCMArg checkWithBlock:^BOOL(id obj) {
         WSPRRequest *initRequest = (WSPRRequest *)obj;
@@ -280,7 +291,7 @@
         return NO;
     }]]);
     
-    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGateway:mockGateway];
+    WSPRRemoteObject *remoteObject = [[WSPRRemoteObject alloc] initWithMapName:@"test.Test" andGatewayRouter:gatewayRouter];
     [remoteObject implementationLessMethodTurnedIntoNotificationWithString:@"someString" andNumber:@(1337)];
     
     OCMVerifyAllWithDelay(mockGateway, 0.1);

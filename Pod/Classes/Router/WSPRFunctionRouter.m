@@ -32,7 +32,7 @@
 
 -(void)route:(WSPRMessage *)message toPath:(NSString *)path
 {
-    if (_block)
+    if (self.block)
     {
         //Handle as message to block
         self.block(self, message);

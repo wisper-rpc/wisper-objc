@@ -7,13 +7,23 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "WSPRGateway.h"
+#import "WSPRGatewayRouter.h"
+#import "WSPREvent.h"
+
+@protocol WSPRRemoteObjectEventProtocol <NSObject>
+
++(void)rpcHandleStaticEvent:(WSPREvent *)event;
+-(void)rpcHandleInstanceEvent:(WSPREvent *)event;
+-(NSString *)instanceIdentifier;
+
+@end
+
 
 /**
  * Object intended to be the remote instance representative. You can start calling methods even before the remote 
  * is initialized. All messages will be queued up and run sequentially as soon as the remote is ready.
  */
-@interface WSPRRemoteObject : NSObject
+@interface WSPRRemoteObject : NSObject <WSPRRemoteObjectEventProtocol>
 
 /**
  *  When enabled any call to this class will generate a Wisper Notification to the implementation object.
@@ -40,10 +50,10 @@
 @property (nonatomic, strong, readonly) NSString * _Nullable instanceIdentifier;
 
 /**
- *  The gateway that the remote object is located behind.
+ *  The gateway router that the remote object is located behind.
  *  Must be passed on init!
  */
-@property (nonatomic, strong, readonly) WSPRGateway * _Nonnull gateway;
+@property (nonatomic, strong, readonly) WSPRGatewayRouter * _Nonnull gatewayRouter;
 
 /**
  *  Disabled init method due to init argument requirement.
@@ -55,12 +65,12 @@
  *  Initialize a remote object with a map name and a gateway.
  *
  *  @param mapName The name of the remote object you want to represent with this object.
- *  @param gateway The gateway through where the remote object is reachable.
+ *  @param gatewayRouter The gateway router through where the remote object is reachable.
  *
  *  @return An instance of this object ready to be interacted with. There might be some delay before the remote 
  *  is initialized but method calls will be queued up until the remote is ready.
  */
--(_Nonnull instancetype)initWithMapName:(NSString * _Nonnull)mapName andGateway:(WSPRGateway * _Nonnull)gateway;
+-(_Nonnull instancetype)initWithMapName:(NSString * _Nonnull)mapName andGatewayRouter:(WSPRGatewayRouter * _Nonnull)gatewayRouter;
 
 /**
  *  Call a remote instance method expecting a return value. This message is sent as a request.
