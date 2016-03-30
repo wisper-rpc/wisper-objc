@@ -20,13 +20,13 @@
  *  @param remoteObject The remote object that should receive events.
  *  @warning This will not retain the remote object to allow you to destroy the object by just removing your strong references to it. Remember to unregister the remote object when it is being deallocated.
  */
--(void)registerRemoteObjectInstance:(WSPRRemoteObject *)remoteObject;
+-(void)registerRemoteObjectInstance:(id<WSPRRemoteObjectEventProtocol>)remoteObject;
 
 /**
  *  Remove a remote object from this router so that it no longer receives events.
  *  @param remoteObject The remote object that should no longer receive events.
  *  @warning Remember to unregister your object when deallocating it to avoid dangling pointers.
  */
--(void)unregisterRemoteObjectInstance:(WSPRRemoteObject *)remoteObject;
+-(void)unregisterRemoteObjectInstance:(id<WSPRRemoteObjectEventProtocol>)remoteObject;
 
 @end

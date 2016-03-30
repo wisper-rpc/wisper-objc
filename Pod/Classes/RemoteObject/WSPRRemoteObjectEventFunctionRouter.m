@@ -11,7 +11,7 @@
 #import "WSPREvent.h"
 
 @interface WSPRRemoteObjectEventFunctionRouterInstanceModel : NSObject
-@property (nonatomic, assign) WSPRRemoteObject *remoteObject;
+@property (nonatomic, assign) id<WSPRRemoteObjectEventProtocol> remoteObject;
 -(instancetype)initWithRemoteObject:(WSPRRemoteObject *)remoteObject;
 @end
 @implementation WSPRRemoteObjectEventFunctionRouterInstanceModel
@@ -93,13 +93,13 @@
 
 #pragma mark - Public Actions
 
--(void)registerRemoteObjectInstance:(WSPRRemoteObject *)remoteObject
+-(void)registerRemoteObjectInstance:(id<WSPRRemoteObjectEventProtocol>)remoteObject
 {
     WSPRRemoteObjectEventFunctionRouterInstanceModel *instanceModel = [[WSPRRemoteObjectEventFunctionRouterInstanceModel alloc] initWithRemoteObject:remoteObject];
     [self.remoteObjectInstances addObject:instanceModel];
 }
 
--(void)unregisterRemoteObjectInstance:(WSPRRemoteObject *)remoteObject
+-(void)unregisterRemoteObjectInstance:(id<WSPRRemoteObjectEventProtocol>)remoteObject
 {
     WSPRRemoteObjectEventFunctionRouterInstanceModel *instanceModel = nil;
     for (WSPRRemoteObjectEventFunctionRouterInstanceModel *anInstanceModel in self.remoteObjectInstances)
