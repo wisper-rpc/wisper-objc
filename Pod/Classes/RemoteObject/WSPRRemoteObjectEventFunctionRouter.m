@@ -128,9 +128,10 @@
         if ([instanceModel.remoteObject.instanceIdentifier isEqualToString:event.instanceIdentifier])
         {
             [instanceModel.remoteObject rpcHandleInstanceEvent:event];
-            break;
+            return;
         }
     }
+    [[NSException exceptionWithName:@"No instance for event" reason:@"The router could not handle the message." userInfo:nil] raise];
 }
 
 
