@@ -140,8 +140,10 @@
     id testObjectMock = OCMPartialMock(self.testObject);
     OCMExpect([[testObjectMock reject] rpcHandleInstanceEvent:[OCMArg any]]);
     
-    XCTAssertThrows([self.eventRouter route:[event createNotification] toPath:@""]);
-    
+    id eventRouterMock = OCMPartialMock(self.eventRouter);
+    OCMExpect([eventRouterMock respondToMessage:[OCMArg isNotNil] withError:[OCMArg isNotNil]]);
+    [self.eventRouter route:[event createNotification] toPath:@""];
+    OCMVerifyAll(eventRouterMock);
     OCMVerifyAll(testObjectMock);
 }
 
@@ -163,14 +165,16 @@
 
     id testObjectClassMock = OCMClassMock([TESTRemoteObject class]);
     id testObjectMock = OCMPartialMock(self.testObject);
+    id eventRouterMock = OCMPartialMock(self.eventRouter);
     OCMExpect([[testObjectClassMock reject] rpcHandleStaticEvent:[OCMArg any]]);
     OCMExpect([[testObjectMock reject] rpcHandleInstanceEvent:[OCMArg any]]);
     
     for (WSPRMessage *badMessage in @[badMessage1, badMessage2, badMessage3, badMessage4])
     {
-        XCTAssertThrows([self.eventRouter route:badMessage toPath:@""]);
+        OCMExpect([eventRouterMock respondToMessage:[OCMArg isNotNil] withError:[OCMArg isNotNil]]);
+        [self.eventRouter route:badMessage toPath:@""];
     }
-    
+    OCMVerifyAll(eventRouterMock);
     OCMVerifyAll(testObjectClassMock);
     OCMVerifyAll(testObjectMock);
 }

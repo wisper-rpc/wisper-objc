@@ -51,15 +51,18 @@
                 
                 switch (callType) {
                     case WSPRCallTypeStaticEvent:
-                        [self passStaticEvent:[[WSPREvent alloc] initWithNotification:notification]];
+                        [self passStaticEventFromNotification:notification];
                         break;
                     case WSPRCallTypeInstanceEvent:
-                        [self passInstanceEvent:[[WSPREvent alloc] initWithNotification:notification]];
+                        [self passInstanceEventFromNotification:notification];
                         break;
                     default:
-                        //Handle error by throwing (will respond to request or send global error)
-                        [[NSException exceptionWithName:@"No route for message" reason:@"The router could not handle the message." userInfo:nil] raise];
-                        break;
+                    {
+                        WSPRError *error = [[WSPRError alloc] init];
+                        error.message = [NSString  stringWithFormat:@"No route for message with method: %@", notification.method];
+                        [self respondToMessage:message withError:error];
+                        return;
+                    }
                 }
                 
                 if (request)
@@ -70,7 +73,9 @@
                 return;
             }
             
-            [[NSException exceptionWithName:@"No route for message" reason:@"The router could not handle the message." userInfo:nil] raise];
+            WSPRError *error = [[WSPRError alloc] init];
+            error.message = [NSString  stringWithFormat:@"No route for message with method: %@", notification.method];
+            [self respondToMessage:message withError:error];
         };
     }
     return self;
@@ -116,13 +121,15 @@
 
 #pragma mark - Private Actions
 
--(void)passStaticEvent:(WSPREvent *)event
+-(void)passStaticEventFromNotification:(WSPRNotification *)notification
 {
+    WSPREvent *event = [[WSPREvent alloc] initWithNotification:notification];
     [self.remoteObjectClass rpcHandleStaticEvent:event];
 }
 
--(void)passInstanceEvent:(WSPREvent *)event
+-(void)passInstanceEventFromNotification:(WSPRNotification *)notification
 {
+    WSPREvent *event = [[WSPREvent alloc] initWithNotification:notification];
     for (WSPRRemoteObjectEventFunctionRouterInstanceModel *instanceModel in self.remoteObjectInstances)
     {
         if ([instanceModel.remoteObject.instanceIdentifier isEqualToString:event.instanceIdentifier])
@@ -131,7 +138,10 @@
             return;
         }
     }
-    [[NSException exceptionWithName:@"No instance for event" reason:@"The router could not handle the message." userInfo:nil] raise];
+    
+    WSPRError *error = [[WSPRError alloc] init];
+    error.message = [NSString  stringWithFormat:@"No instance for event: %@", event];
+    [self respondToMessage:notification withError:error];
 }
 
 
