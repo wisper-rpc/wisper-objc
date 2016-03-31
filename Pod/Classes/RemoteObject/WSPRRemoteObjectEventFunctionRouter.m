@@ -40,8 +40,14 @@
     self = [super init];
     if (self)
     {
+        __weak WSPRRemoteObjectEventFunctionRouter *weakSelf = self;
         self.remoteObjectInstances = [NSMutableArray array];
         self.block = ^(WSPRFunctionRouter *caller, WSPRMessage *message) {
+            
+            __strong WSPRRemoteObjectEventFunctionRouter *strongSelf = weakSelf;
+            if (!strongSelf)
+                return;
+            
             WSPRNotification *notification = [message isKindOfClass:[WSPRNotification class]] ? (WSPRNotification *)message : nil;
             WSPRRequest *request = [message isKindOfClass:[WSPRRequest class]] ? (WSPRRequest *)message : nil;
             
@@ -51,16 +57,16 @@
                 
                 switch (callType) {
                     case WSPRCallTypeStaticEvent:
-                        [self passStaticEventFromNotification:notification];
+                        [strongSelf passStaticEventFromNotification:notification];
                         break;
                     case WSPRCallTypeInstanceEvent:
-                        [self passInstanceEventFromNotification:notification];
+                        [strongSelf passInstanceEventFromNotification:notification];
                         break;
                     default:
                     {
                         WSPRError *error = [[WSPRError alloc] init];
                         error.message = [NSString  stringWithFormat:@"No route for message with method: %@", notification.method];
-                        [self respondToMessage:message withError:error];
+                        [strongSelf respondToMessage:message withError:error];
                         return;
                     }
                 }
@@ -75,7 +81,7 @@
             
             WSPRError *error = [[WSPRError alloc] init];
             error.message = [NSString  stringWithFormat:@"No route for message with method: %@", notification.method];
-            [self respondToMessage:message withError:error];
+            [strongSelf respondToMessage:message withError:error];
         };
     }
     return self;
