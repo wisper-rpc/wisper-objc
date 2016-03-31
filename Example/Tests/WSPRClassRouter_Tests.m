@@ -284,6 +284,36 @@
     XCTAssertNil(weakClassRouter);
 }
 
+- (void)testCreateAndDestroyWisperInstanceDeallocatesInstance
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    WSPRClassRouter *classRouter = [[WSPRClassRouter alloc] initWithClass:[WSPRTestObject class]];
+    WSPRRequest *createRequest = [[WSPRRequest alloc] init];
+    createRequest.method = @"TestObject~";
+    createRequest.responseBlock = ^(WSPRResponse *response) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *instanceId = ((NSDictionary *)response.result)[@"id"];
+            WSPRNotification *destroyNotification = [[WSPRNotification alloc] init];
+            destroyNotification.method = @"TestObject:~";
+            destroyNotification.params = @[instanceId];
+            
+            __weak WSPRClassInstance *weakClassInstance = [WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:classRouter];
+            XCTAssertNotNil(weakClassInstance, @"Could not find instance!");
+            
+            [classRouter route:destroyNotification toPath:@""];
+            
+            if (weakClassInstance == nil)
+            {
+                [expectation fulfill];
+            }
+        });
+    };
+    [classRouter route:createRequest toPath:@""];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
 - (void)testSpecialParamsAreInserted
 {
     WSPRNotification *notification = [WSPRNotification message];
