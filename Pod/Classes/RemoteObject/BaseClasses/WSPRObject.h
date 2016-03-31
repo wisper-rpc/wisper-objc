@@ -30,14 +30,6 @@
 -(void)rpcSendEvent:(WSPREvent *)event;
 
 /**
- Call method on the representation of this class on the other side of the Wisper bridge.
- @param methodName    The wisper method you want to call
- @param params        A list of params to pass along to the method
- @param responseBlock Block that is executed once the other endpoint responds to your method. 
- */
--(void)rpcCallRemoteMethod:(NSString *)methodName withParams:(NSArray *)params responseBlock:(ResponseBlock)responseBlock;
-
-/**
  Create a notification already prefilled with the correct method for this class and instance event.
  If rpcController is not set this method will return nil.
  @see WSPRClassProtocol
