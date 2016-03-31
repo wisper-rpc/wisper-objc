@@ -52,7 +52,7 @@
     
     NSArray *splitPath = [[self class] splitPath:currentPath];
     NSString *step = [splitPath firstObject];
-    NSString *rest = [splitPath count] == 2 ? [splitPath lastObject] : nil;
+    //NSString *rest = [splitPath count] == 2 ? [splitPath lastObject] : nil;
 
     while (router.routes[step])
     {
