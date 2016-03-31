@@ -312,7 +312,7 @@
     [invocation setTarget:target];
     
     //Param count validation
-    NSInteger expectedNumberOfMethodParams = method.paramTypes.count;
+    NSUInteger expectedNumberOfMethodParams = method.paramTypes.count;
     for (NSString *paramType in method.paramTypes)
     {
         if ([paramType isEqualToString:WSPR_PARAM_TYPE_ASYNC_RETURN_BLOCK] || [paramType isEqualToString:WSPR_PARAM_TYPE_CALLER])
