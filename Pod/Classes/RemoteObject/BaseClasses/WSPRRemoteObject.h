@@ -12,9 +12,9 @@
 
 @protocol WSPRRemoteObjectEventProtocol <NSObject>
 
-+(void)rpcHandleStaticEvent:(WSPREvent *)event;
--(void)rpcHandleInstanceEvent:(WSPREvent *)event;
--(NSString *)instanceIdentifier;
++(void)rpcHandleStaticEvent:(WSPREvent * _Nonnull)event;
+-(void)rpcHandleInstanceEvent:(WSPREvent * _Nonnull)event;
+-(NSString * _Nullable)instanceIdentifier;
 
 @end
 
