@@ -237,7 +237,7 @@
 }
 
 // Reference deallocation of WSPRClassRouter using normal init method
-- (void)testDeallocWSPRClassRouteras
+- (void)testDeallocWSPRClassRouter
 {
     WSPRClassRouter *object = [[WSPRClassRouter alloc] initWithClass:[WSPRTestObject class]];
     __weak WSPRClassRouter *weakObject = object;
@@ -246,7 +246,7 @@
 }
 
 // Reference deallocation of WSPRClassRouter using `autoreleased` instance pattern
-- (void)testDeallocWSPRClassRouter
+- (void)testDeallocWSPRClassRouterAutoReleased
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
     
