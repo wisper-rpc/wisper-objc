@@ -179,7 +179,7 @@
     WSPRClassMethod *createMethod = self.classModel.instanceMethods[@"~"] ? : self.classModel.staticMethods[@"~"];
     if (createMethod)
     {
-        WSPRClassInstance *wisperInstance = [self internalAddInstance:instance];
+        WSPRClassInstance *wisperInstance = [self createAndStoreClassInstanceWithInstance:instance];
         
         if (createMethod.callBlock)
         {
@@ -225,7 +225,7 @@
         instance = [instance init];
         
         //Add instance after initializing to avoid events for all properties set in init and protecting instance variables from changes before init has been called.
-        WSPRClassInstance *wisperInstance = [self internalAddInstance:instance];
+        WSPRClassInstance *wisperInstance = [self createAndStoreClassInstanceWithInstance:instance];
         
         if ([message isKindOfClass:[WSPRRequest class]])
         {
@@ -415,7 +415,7 @@
     }
 }
 
--(WSPRClassInstance *)internalAddInstance:(id<WSPRClassProtocol>)instance
+-(WSPRClassInstance *)createAndStoreClassInstanceWithInstance:(id<WSPRClassProtocol>)instance
 {
     instance.classRouter = self;
     
@@ -463,7 +463,7 @@
 
 -(WSPRClassInstance *)addInstance:(id<WSPRClassProtocol>)instance
 {
-    WSPRClassInstance *wisperInstance = [self internalAddInstance:instance];
+    WSPRClassInstance *wisperInstance = [self createAndStoreClassInstanceWithInstance:instance];
     
     WSPREvent *event = [[WSPREvent alloc] init];
     event.name = @"~";
