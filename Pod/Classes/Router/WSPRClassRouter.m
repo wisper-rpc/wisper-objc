@@ -271,7 +271,10 @@
         return;
     }
     
-    [self invokeMethod:method withParams:instance ? [notification.params subarrayWithRange:NSMakeRange(1, notification.params.count-1)] : notification.params onTarget:instance ? instance.instance : (Class)self.classModel.classRef completion:^(id result, WSPRError *error) {
+    [self invokeMethod:method
+            withParams:instance ? [notification.params subarrayWithRange:NSMakeRange(1, notification.params.count-1)] : notification.params
+              onTarget:instance ? instance.instance : (Class)self.classModel.classRef
+            completion:^(id result, WSPRError *error) {
         if (error)
         {
             [self respondToMessage:notification withError:error];
