@@ -221,9 +221,9 @@
     return [instance description];
 }
 
-+(BOOL)passCaller:(id)caller
++(NSNumber *)passCaller:(id)caller
 {
-    return caller ? YES : NO;
+    return caller ? @YES : @NO;
 }
 
 +(void)passAsyncReturnBlock:(WSPRAsyncReturnBlock)asyncReturnBlock
