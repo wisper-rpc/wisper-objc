@@ -705,7 +705,7 @@
             if (![event.name isEqualToString:@"testProperty"])
                 return NO;
             
-            if (![event.data isEqualToString:@"testChange"])
+            if (![(NSString *)event.data isEqualToString:@"testChange"])
                 return NO;
             
             if (![event.instanceIdentifier isEqualToString:instance.instanceIdentifier])
@@ -876,7 +876,7 @@
                 if (![event.name isEqualToString:@"testPassByReferenceProperty"])
                     return NO;
                 
-                if (![event.data isEqualToString:argumentInstance.instanceIdentifier])
+                if (![(NSString *)event.data isEqualToString:argumentInstance.instanceIdentifier])
                     return NO;
                 
                 return YES;

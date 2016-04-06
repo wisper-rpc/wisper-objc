@@ -10,6 +10,22 @@
 
 @implementation WSPRResponse
 
++(instancetype)responseWithResult:(NSObject *)result andRequestIdentifier:(NSString *)requestIdentifier
+{
+    return [[[self class] alloc] initWithResult:result andRequestIdentifier:requestIdentifier];
+}
+
+-(instancetype)initWithResult:(NSObject *)result andRequestIdentifier:(NSString *)requestIdentifier
+{
+    self = [self init];
+    if (self)
+    {
+        self.result = result;
+        self.requestIdentifier = requestIdentifier;
+    }
+    return self;
+}
+
 -(id)copyWithZone:(NSZone *)zone
 {
     WSPRResponse *newResponse = [super copyWithZone:zone];
@@ -17,7 +33,6 @@
     newResponse.result = _result; //Do not copy this since it might not conform to NSCopying protocol
     return newResponse;
 }
-
 
 -(id)initWithDictionary:(NSDictionary *)dictionary
 {
@@ -33,7 +48,6 @@
     }
     return self;
 }
-
 
 -(NSDictionary *)asDictionary
 {
