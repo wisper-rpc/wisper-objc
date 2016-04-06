@@ -28,7 +28,7 @@
  The data for the event, this can be nil and must always be one of the allowed WSPR_PARAM_TYPE(s).
  Setting data that is not allowed does nothing.
  */
-@property (nonatomic, strong) id data;
+@property (nonatomic, strong) NSObject *data;
 
 /**
  If set the event will be routed to the specific instance. 
