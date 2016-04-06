@@ -10,6 +10,21 @@
 
 @implementation WSPRErrorMessage
 
++(instancetype)errorMessageWithError:(WSPRError *)error
+{
+    return [[[self class] alloc] initWithError:error];
+}
+
+-(instancetype)initWithError:(WSPRError *)error
+{
+    self = [self init];
+    if (self)
+    {
+        self.error = error;
+    }
+    return error;
+}
+
 -(id)copyWithZone:(NSZone *)zone
 {
     WSPRErrorMessage *newError = [super copyWithZone:zone];

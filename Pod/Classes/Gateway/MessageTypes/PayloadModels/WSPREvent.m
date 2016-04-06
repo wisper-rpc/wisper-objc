@@ -11,6 +11,24 @@
 
 @implementation WSPREvent
 
++(instancetype)eventWithMapName:(NSString *)mapName eventName:(NSString *)eventName data:(NSObject *)data andInstanceIdentifier:(NSString *)instanceIdentifier
+{
+    return [[[self class] alloc] initWithMapName:mapName eventName:eventName data:data andInstanceIdentifier:instanceIdentifier];
+}
+
+-(instancetype)initWithMapName:(NSString *)mapName eventName:(NSString *)eventName data:(NSObject *)data andInstanceIdentifier:(NSString *)instanceIdentifier
+{
+    self = [self init];
+    if (self)
+    {
+        self.mapName = mapName;
+        self.name = eventName;
+        self.data = data;
+        self.instanceIdentifier = instanceIdentifier;
+    }
+    return self;
+}
+
 -(instancetype)initWithNotification:(WSPRNotification *)notification
 {
     self = [self init];

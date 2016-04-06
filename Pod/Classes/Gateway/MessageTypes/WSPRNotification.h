@@ -24,4 +24,7 @@
  */
 @property (nonatomic, strong) NSArray *params;
 
++(instancetype)notificationWithMethod:(NSString *)method andParams:(NSArray *)params;
+-(instancetype)initWithMethod:(NSString *)method andParams:(NSArray *)params;
+
 @end

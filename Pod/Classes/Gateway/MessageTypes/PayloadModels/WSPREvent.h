@@ -49,5 +49,8 @@
  */
 -(WSPRNotification *)createNotification;
 
++(instancetype)eventWithMapName:(NSString *)mapName eventName:(NSString *)eventName data:(NSObject *)data andInstanceIdentifier:(NSString *)instanceIdentifier;
+-(instancetype)initWithMapName:(NSString *)mapName eventName:(NSString *)eventName data:(NSObject *)data andInstanceIdentifier:(NSString *)instanceIdentifier;
+
 
 @end

@@ -10,6 +10,24 @@
 
 @implementation WSPRRequest
 
++(instancetype)requestWithMethod:(NSString *)method params:(NSString *)params requestIdentifier:(NSString *)requestIdentifier andResponseBlock:(ResponseBlock)responseBlock
+{
+    return [[[self class] alloc] initWithMethod:method params:params requestIdentifier:requestIdentifier andResponseBlock:responseBlock];
+}
+
+-(instancetype)initWithMethod:(NSString *)method params:(NSString *)params requestIdentifier:(NSString *)requestIdentifier andResponseBlock:(ResponseBlock)responseBlock
+{
+    self = [self init];
+    if (self)
+    {
+        self.method = method;
+        self.params = params;
+        self.requestIdentifier = requestIdentifier;
+        self.responseBlock = responseBlock;
+    }
+    return self;
+}
+
 -(id)copyWithZone:(NSZone *)zone
 {
     WSPRRequest *newRequest = [super copyWithZone:zone];

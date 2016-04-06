@@ -16,4 +16,7 @@
  */
 @property (nonatomic, strong) WSPRError *error;
 
++(instancetype)errorMessageWithError:(WSPRError *)error;
+-(instancetype)initWithError:(WSPRError *)error;
+
 @end
