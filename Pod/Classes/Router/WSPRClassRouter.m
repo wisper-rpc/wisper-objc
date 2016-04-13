@@ -189,6 +189,7 @@
             }
             @catch (NSException *exception)
             {
+                [self destroyInstance:wisperInstance];
                 id<WSPRRouteProtocol> rootRouter = [self rootRouter];
                 WSPRGateway *gateway = [rootRouter isKindOfClass:[WSPRGatewayRouter class]] ? [(WSPRGatewayRouter *)rootRouter gateway] : nil;
 
@@ -203,6 +204,7 @@
                 if (error)
                 {
                     [self respondToMessage:message withError:error];
+                    [self destroyInstance:wisperInstance];
                     return;
                 }
                 
