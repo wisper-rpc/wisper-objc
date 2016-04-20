@@ -22,7 +22,7 @@
     {
         self.error = error;
     }
-    return error;
+    return self;
 }
 
 -(id)copyWithZone:(NSZone *)zone
