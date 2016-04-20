@@ -137,7 +137,7 @@
             else
             {
                 //Lookup instance
-                WSPRClassInstance *classInstanceModel = [WSPRInstanceRegistry instanceWithId:event.data underRootRoute:[(WSPRClassRouter *)self.instance.classRouter rootRouter]];
+                WSPRClassInstance *classInstanceModel = [WSPRInstanceRegistry instanceWithId:(NSString *)event.data underRootRoute:[(WSPRClassRouter *)self.instance.classRouter rootRouter]];
                 
                 if (classInstanceModel)
                 {
