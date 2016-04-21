@@ -553,6 +553,15 @@
 				GCC_PREFIX_HEADER = "Wisper/Wisper-Prefix.pch";
 				INFOPLIST_FILE = "Wisper/Wisper-Info.plist";
 				MODULE_NAME = ExampleApp;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-iquote",
+					"\"$CONFIGURATION_BUILD_DIR/Wisper.framework/Headers\"",
+					"-Wall",
+					"-Wextra",
+					"-Wno-direct-ivar-access",
+					"-Wno-unused-parameter",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
