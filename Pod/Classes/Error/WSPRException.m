@@ -32,8 +32,8 @@
     WSPRError *error = [WSPRError errorWithDomain:self.domain andCode:self.code];
     error.message = [self reason];
     error.data = @{
-                   @"description" : [[self userInfo] description] ? : @"",
-                   @"stackTrace" : [self callStackSymbols] ? : @""
+                   @"description" : [[self userInfo] description] ? : [[self.originalException userInfo] description] ? : [self.originalException reason] ? : @"",
+                   @"stackTrace" : [self callStackSymbols] ? : [self.originalException callStackSymbols] ? : @""
                    };
     return error;
 }
