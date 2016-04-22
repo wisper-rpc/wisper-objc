@@ -65,8 +65,9 @@
         [params addObject:_instanceIdentifier];
     if (_name)
         [params addObject:_name];
-    if (_data)
-        [params addObject:_data];
+    
+    //If we do not have any data we still add null to be spec compliant
+    [params addObject:_data ? : [NSNull null]];
     
     WSPRNotification *notification = [[WSPRNotification alloc] init];
     notification.method = [NSString stringWithFormat:@"%@%@", _mapName ? : @"", _instanceIdentifier ? @":!" : @"!"];
