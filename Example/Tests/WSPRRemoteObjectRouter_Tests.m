@@ -1,5 +1,5 @@
 //
-//  WSPRRemoteObjectEventFunctionRouter_Tests.m
+//  WSPRRemoteObjectRouter_Tests.m
 //  Wisper
 //
 //  Created by Patrik Nyblad on 29/03/16.
@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import <Wisper/WSPRRemoteObjectEventFunctionRouter.h>
+#import <Wisper/WSPRRemoteObjectRouter.h>
 
 //Mock object
 @interface TESTRemoteObject : WSPRRemoteObject
@@ -22,7 +22,7 @@
 @end
 
 //Expose private properties and methods for testing
-@interface WSPRRemoteObjectEventFunctionRouter ()
+@interface WSPRRemoteObjectRouter ()
 @property (nonatomic, strong) NSMutableArray *remoteObjectInstances;
 @end
 
@@ -33,15 +33,15 @@
 @end
 
 
-@interface WSPRRemoteObjectEventFunctionRouter_Tests : XCTestCase
+@interface WSPRRemoteObjectRouter_Tests : XCTestCase
 
 @property (nonatomic, strong) WSPRGatewayRouter *gatewayRouter;
 @property (nonatomic, strong) TESTRemoteObject *testObject;
-@property (nonatomic, strong) WSPRRemoteObjectEventFunctionRouter *eventRouter;
+@property (nonatomic, strong) WSPRRemoteObjectRouter *eventRouter;
 
 @end
 
-@implementation WSPRRemoteObjectEventFunctionRouter_Tests
+@implementation WSPRRemoteObjectRouter_Tests
 
 - (void)setUp {
     [super setUp];
@@ -187,7 +187,7 @@
 
 #pragma mark - Helpers
 
--(BOOL)eventRouter:(WSPRRemoteObjectEventFunctionRouter *)eventRouter containsInstance:(id<WSPRRemoteObjectEventProtocol>)instance
+-(BOOL)eventRouter:(WSPRRemoteObjectRouter *)eventRouter containsInstance:(id<WSPRRemoteObjectEventProtocol>)instance
 {
     for (NSObject<EventInstanceModelProtocol> *model in eventRouter.remoteObjectInstances)
     {

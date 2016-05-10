@@ -1,5 +1,5 @@
 //
-//  WSPRRemoteObjectEventFunctionRouter.h
+//  WSPRRemoteObjectRouter.h
 //  Pods
 //
 //  Created by Patrik Nyblad on 24/03/16.
@@ -12,7 +12,7 @@
 /**
  *  This class is instantiated by Remote Objects (as they in turn are instantiated) for the ability to receive events.
  */
-@interface WSPRRemoteObjectEventFunctionRouter : WSPRRouter
+@interface WSPRRemoteObjectRouter : WSPRRouter
 
 @property (nonatomic, assign) Class<WSPRRemoteObjectEventProtocol> remoteObjectClass;
 

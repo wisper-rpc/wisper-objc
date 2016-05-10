@@ -7,7 +7,7 @@
 //
 
 #import "WSPRRemoteObject.h"
-#import "WSPRRemoteObjectEventFunctionRouter.h"
+#import "WSPRRemoteObjectRouter.h"
 #import "WSPRGatewayRouter.h"
 
 @interface WSPRRemoteObject ()
@@ -220,14 +220,14 @@
     if (!eventRouter)
     {
         //No existing router so we create one
-        eventRouter = [[WSPRRemoteObjectEventFunctionRouter alloc] initWithRemoteObjectClass:[self class]];
+        eventRouter = [[WSPRRemoteObjectRouter alloc] initWithRemoteObjectClass:[self class]];
         [self.gatewayRouter exposeRoute:eventRouter onPath:self.mapName];
     }
     
     //Register for events
-    if ([eventRouter isKindOfClass:[WSPRRemoteObjectEventFunctionRouter class]])
+    if ([eventRouter isKindOfClass:[WSPRRemoteObjectRouter class]])
     {
-        [(WSPRRemoteObjectEventFunctionRouter *)eventRouter registerRemoteObjectInstance:self];
+        [(WSPRRemoteObjectRouter *)eventRouter registerRemoteObjectInstance:self];
     }
 }
 
@@ -237,9 +237,9 @@
     WSPRRouter *eventRouter = [self.gatewayRouter routerAtPath:self.mapName];
 
     //Unregister for events
-    if ([eventRouter isKindOfClass:[WSPRRemoteObjectEventFunctionRouter class]])
+    if ([eventRouter isKindOfClass:[WSPRRemoteObjectRouter class]])
     {
-        [(WSPRRemoteObjectEventFunctionRouter *)eventRouter unregisterRemoteObjectInstance:self];
+        [(WSPRRemoteObjectRouter *)eventRouter unregisterRemoteObjectInstance:self];
     }
 }
 

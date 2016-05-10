@@ -1,23 +1,23 @@
 //
-//  WSPRRemoteObjectEventFunctionRouter.m
+//  WSPRRemoteObjectRouter.m
 //  Pods
 //
 //  Created by Patrik Nyblad on 24/03/16.
 //
 //
 
-#import "WSPRRemoteObjectEventFunctionRouter.h"
+#import "WSPRRemoteObjectRouter.h"
 #import "WSPRHelper.h"
 #import "WSPREvent.h"
 
 /**
  *  Only here to hold a non-retained instance so we can have it in an array without retain cycles.
  */
-@interface WSPRRemoteObjectEventFunctionRouterInstanceModel : NSObject
+@interface WSPRRemoteObjectRouterInstanceModel : NSObject
 @property (nonatomic, assign) id<WSPRRemoteObjectEventProtocol> remoteObject;
 -(instancetype)initWithRemoteObject:(WSPRRemoteObject *)remoteObject;
 @end
-@implementation WSPRRemoteObjectEventFunctionRouterInstanceModel
+@implementation WSPRRemoteObjectRouterInstanceModel
 - (instancetype)initWithRemoteObject:(WSPRRemoteObject *)remoteObject
 {
     self = [self init];
@@ -27,13 +27,13 @@
 }
 @end
 
-@interface WSPRRemoteObjectEventFunctionRouter ()
+@interface WSPRRemoteObjectRouter ()
 
 @property (nonatomic, strong) NSMutableArray *remoteObjectInstances;
 
 @end
 
-@implementation WSPRRemoteObjectEventFunctionRouter
+@implementation WSPRRemoteObjectRouter
 
 #pragma mark - Lifecycle
 
@@ -42,7 +42,7 @@
     self = [super init];
     if (self)
     {
-        __weak WSPRRemoteObjectEventFunctionRouter *weakSelf = self;
+        __weak WSPRRemoteObjectRouter *weakSelf = self;
         self.remoteObjectInstances = [NSMutableArray array];
     }
     return self;
@@ -104,14 +104,14 @@
 
 -(void)registerRemoteObjectInstance:(id<WSPRRemoteObjectEventProtocol>)remoteObject
 {
-    WSPRRemoteObjectEventFunctionRouterInstanceModel *instanceModel = [[WSPRRemoteObjectEventFunctionRouterInstanceModel alloc] initWithRemoteObject:remoteObject];
+    WSPRRemoteObjectRouterInstanceModel *instanceModel = [[WSPRRemoteObjectRouterInstanceModel alloc] initWithRemoteObject:remoteObject];
     [self.remoteObjectInstances addObject:instanceModel];
 }
 
 -(void)unregisterRemoteObjectInstance:(id<WSPRRemoteObjectEventProtocol>)remoteObject
 {
-    WSPRRemoteObjectEventFunctionRouterInstanceModel *instanceModel = nil;
-    for (WSPRRemoteObjectEventFunctionRouterInstanceModel *anInstanceModel in self.remoteObjectInstances)
+    WSPRRemoteObjectRouterInstanceModel *instanceModel = nil;
+    for (WSPRRemoteObjectRouterInstanceModel *anInstanceModel in self.remoteObjectInstances)
     {
         if (anInstanceModel.remoteObject == remoteObject)
         {
@@ -134,7 +134,7 @@
 -(void)passInstanceEventFromNotification:(WSPRNotification *)notification
 {
     WSPREvent *event = [[WSPREvent alloc] initWithNotification:notification];
-    for (WSPRRemoteObjectEventFunctionRouterInstanceModel *instanceModel in self.remoteObjectInstances)
+    for (WSPRRemoteObjectRouterInstanceModel *instanceModel in self.remoteObjectInstances)
     {
         if ([instanceModel.remoteObject.instanceIdentifier isEqualToString:event.instanceIdentifier])
         {

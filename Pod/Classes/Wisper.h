@@ -25,7 +25,7 @@
 #import <Wisper/WSPRClassInstance.h>
 #import <Wisper/WSPRClassMethod.h>
 #import <Wisper/WSPRClassProperty.h>
-#import <Wisper/WSPRRemoteObjectEventFunctionRouter.h>
+#import <Wisper/WSPRRemoteObjectRouter.h>
 #import <Wisper/WSPRClassRouter.h>
 #import <Wisper/WSPRFunctionRouter.h>
 #import <Wisper/WSPRGatewayRouter.h>
