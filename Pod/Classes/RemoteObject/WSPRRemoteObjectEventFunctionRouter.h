@@ -6,13 +6,13 @@
 //
 //
 
-#import "WSPRFunctionRouter.h"
+#import "WSPRRouter.h"
 #import "WSPRRemoteObject.h"
 
 /**
  *  This class is instantiated by Remote Objects (as they in turn are instantiated) for the ability to receive events.
  */
-@interface WSPRRemoteObjectEventFunctionRouter : WSPRFunctionRouter
+@interface WSPRRemoteObjectEventFunctionRouter : WSPRRouter
 
 @property (nonatomic, assign) Class<WSPRRemoteObjectEventProtocol> remoteObjectClass;
 

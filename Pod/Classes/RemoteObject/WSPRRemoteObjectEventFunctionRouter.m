@@ -10,6 +10,9 @@
 #import "WSPRHelper.h"
 #import "WSPREvent.h"
 
+/**
+ *  Only here to hold a non-retained instance so we can have it in an array without retain cycles.
+ */
 @interface WSPRRemoteObjectEventFunctionRouterInstanceModel : NSObject
 @property (nonatomic, assign) id<WSPRRemoteObjectEventProtocol> remoteObject;
 -(instancetype)initWithRemoteObject:(WSPRRemoteObject *)remoteObject;
@@ -27,7 +30,6 @@
 @interface WSPRRemoteObjectEventFunctionRouter ()
 
 @property (nonatomic, strong) NSMutableArray *remoteObjectInstances;
-@property (nonatomic, copy) void (^block)(WSPRFunctionRouter *caller, WSPRMessage *message);
 
 @end
 
@@ -42,47 +44,6 @@
     {
         __weak WSPRRemoteObjectEventFunctionRouter *weakSelf = self;
         self.remoteObjectInstances = [NSMutableArray array];
-        self.block = ^(WSPRFunctionRouter *caller, WSPRMessage *message) {
-            
-            __strong WSPRRemoteObjectEventFunctionRouter *strongSelf = weakSelf;
-            if (!strongSelf)
-                return;
-            
-            WSPRNotification *notification = [message isKindOfClass:[WSPRNotification class]] ? (WSPRNotification *)message : nil;
-            WSPRRequest *request = [message isKindOfClass:[WSPRRequest class]] ? (WSPRRequest *)message : nil;
-            
-            if (notification)
-            {
-                WSPRCallType callType = [WSPRHelper callTypeFromMethodString:notification.method];
-                
-                switch (callType) {
-                    case WSPRCallTypeStaticEvent:
-                        [strongSelf passStaticEventFromNotification:notification];
-                        break;
-                    case WSPRCallTypeInstanceEvent:
-                        [strongSelf passInstanceEventFromNotification:notification];
-                        break;
-                    default:
-                    {
-                        WSPRError *error = [[WSPRError alloc] init];
-                        error.message = [NSString  stringWithFormat:@"No route for message with method: %@", notification.method];
-                        [strongSelf respondToMessage:message withError:error];
-                        return;
-                    }
-                }
-                
-                if (request)
-                {
-                    request.responseBlock([request createResponse]);
-                }
-                
-                return;
-            }
-            
-            WSPRError *error = [[WSPRError alloc] init];
-            error.message = [NSString  stringWithFormat:@"No route for message with method: %@", notification.method];
-            [strongSelf respondToMessage:message withError:error];
-        };
     }
     return self;
 }
@@ -100,6 +61,43 @@
 
 #pragma mark - Setters & Getters
 
+
+
+#pragma mark - WSPRRouteProtocol
+
+-(void)route:(WSPRMessage *)message toPath:(NSString *)path
+{
+    WSPRNotification *notification = [message isKindOfClass:[WSPRNotification class]] ? (WSPRNotification *)message : nil;
+    WSPRRequest *request = [message isKindOfClass:[WSPRRequest class]] ? (WSPRRequest *)message : nil;
+
+    if (notification)
+    {
+        WSPRCallType callType = [WSPRHelper callTypeFromMethodString:notification.method];
+        
+        switch (callType) {
+            case WSPRCallTypeStaticEvent:
+                [self passStaticEventFromNotification:notification];
+                break;
+            case WSPRCallTypeInstanceEvent:
+                [self passInstanceEventFromNotification:notification];
+                break;
+            default:
+            {
+                [super route:message toPath:path];
+                return;
+            }
+        }
+        
+        if (request)
+        {
+            request.responseBlock([request createResponse]);
+        }
+        
+        return;
+    }
+    
+    [super route:message toPath:path];
+}
 
 
 #pragma mark - Public Actions
