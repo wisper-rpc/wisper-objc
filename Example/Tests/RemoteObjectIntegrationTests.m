@@ -912,7 +912,7 @@
             if (![event.name isEqualToString:@"testPassByReferenceProperty"])
                 return NO;
             
-            if (event.data != [NSNull null])
+            if (event.data)
                 return NO;
             
             return YES;
@@ -948,7 +948,7 @@
             if (![event.name isEqualToString:@"testPassByReferenceProperty"])
                 return NO;
             
-            if (event.data != [NSNull null])
+            if (event.data)
                 return NO;
             
             return YES;
