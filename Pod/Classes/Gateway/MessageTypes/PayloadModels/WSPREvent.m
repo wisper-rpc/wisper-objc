@@ -51,6 +51,13 @@
                 break;
         }
     }
+    
+    //Strip away unnecessary NSNull values 
+    if ([self.data isKindOfClass:[NSNull class]])
+    {
+        self.data = nil;
+    }
+    
     return self;
 }
 
