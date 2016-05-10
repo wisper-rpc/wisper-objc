@@ -59,10 +59,6 @@
 }
 
 
-#pragma mark - Setters & Getters
-
-
-
 #pragma mark - WSPRRouteProtocol
 
 -(void)route:(WSPRMessage *)message toPath:(NSString *)path
@@ -147,9 +143,6 @@
     error.message = [NSString  stringWithFormat:@"No instance for event: %@", event];
     [self respondToMessage:notification withError:error];
 }
-
-
-#pragma mark - Helpers
 
 
 @end
