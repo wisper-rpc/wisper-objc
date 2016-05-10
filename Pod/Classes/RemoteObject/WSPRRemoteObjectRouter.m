@@ -42,7 +42,6 @@
     self = [super init];
     if (self)
     {
-        __weak WSPRRemoteObjectRouter *weakSelf = self;
         self.remoteObjectInstances = [NSMutableArray array];
     }
     return self;
