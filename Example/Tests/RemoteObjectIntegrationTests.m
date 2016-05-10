@@ -1283,9 +1283,13 @@
     WSPRRequest *request = [[WSPRRequest alloc] init];
     request.requestIdentifier = @"create0";
     request.method = @"wisp.test.TestObject~";
+    request.params = @[@"TEST"];
     request.responseBlock = ^(WSPRResponse *response){
         if (response.error)
             [expectation fulfill];
+        
+        //Stop mocking so that dealloc does not mess with the test
+        [classMock stopMocking];
     };
     
     [_gatewayRouter.gateway handleMessage:request];
