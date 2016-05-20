@@ -525,6 +525,10 @@
     {
         WSPRClassProperty *property = classRepresentation.properties[propertyName];
         
+        if (property.mode == WSPRPropertyModeWriteOnly) {
+            continue;
+        }
+        
         NSObject *propertyValue = [classInstance.instance valueForKeyPath:property.keyPath];
         
         if (propertyValue)
