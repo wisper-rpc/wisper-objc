@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2A94BAF2348C1DA2DA4CF6EF /* Pods_Wisper_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD7B29E6509C8119C6EA4F74 /* Pods_Wisper_Tests.framework */; };
+		0D47709BF7B3D46E15AC0284 /* Pods_Wisper_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 330FECAF61B589A34B761BA7 /* Pods_Wisper_Tests.framework */; };
+		491577C734523F9EA232AC1E /* Pods_Wisper_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00225B0285638143BCFB08B /* Pods_Wisper_Example.framework */; };
 		5F0B953C1C91C44C0009B45D /* WSPRFunctionRouter_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F0B953B1C91C44C0009B45D /* WSPRFunctionRouter_Tests.m */; };
 		5F2AA0351C6D0385000BC85B /* WSPRClassRouter_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2AA0341C6D0385000BC85B /* WSPRClassRouter_Tests.m */; };
 		5F2AA03F1C736E42000BC85B /* WSPRInstanceRegistry_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F2AA03E1C736E42000BC85B /* WSPRInstanceRegistry_Tests.m */; };
@@ -31,7 +32,6 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
-		D4D5A4944C2BE7AB6179DCFD /* Pods_Wisper_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 743C34212026D187DCD6FCB2 /* Pods_Wisper_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,10 +45,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1AD5AA6F5E4395D071FBFB47 /* Pods-Wisper_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisper_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wisper_Example/Pods-Wisper_Example.release.xcconfig"; sourceTree = "<group>"; };
-		2D2CBD590EB589398AF65E37 /* Pods-Wisper_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisper_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wisper_Example/Pods-Wisper_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		330FECAF61B589A34B761BA7 /* Pods_Wisper_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wisper_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4097EF0ADE746039AF3FAA20 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		47CCCA9CB7B50639CD55C0D5 /* Pods-Wisper_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisper_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wisper_Tests/Pods-Wisper_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		51BB929F10E235055688DEC5 /* Pods-Wisper_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisper_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wisper_Tests/Pods-Wisper_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		5F0B953B1C91C44C0009B45D /* WSPRFunctionRouter_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRFunctionRouter_Tests.m; sourceTree = "<group>"; };
 		5F2AA0341C6D0385000BC85B /* WSPRClassRouter_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRClassRouter_Tests.m; sourceTree = "<group>"; };
 		5F2AA03E1C736E42000BC85B /* WSPRInstanceRegistry_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSPRInstanceRegistry_Tests.m; sourceTree = "<group>"; };
@@ -77,12 +76,13 @@
 		6003F5B7195388D20070C39A /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
-		743C34212026D187DCD6FCB2 /* Pods_Wisper_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wisper_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		765F26AEDE9B7558FBE43298 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		885C8888C638F538F2F6DCF2 /* Pods-Wisper_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisper_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wisper_Example/Pods-Wisper_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		97E53B80212D383FEBF47255 /* Pods-Wisper_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisper_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wisper_Example/Pods-Wisper_Example.release.xcconfig"; sourceTree = "<group>"; };
 		9D3B6CBA427725565C1D4FEF /* Wisper.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Wisper.podspec; path = ../Wisper.podspec; sourceTree = "<group>"; };
-		BD7B29E6509C8119C6EA4F74 /* Pods_Wisper_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wisper_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		ED6BF38F642C959146671D2A /* Pods-Wisper_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisper_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wisper_Tests/Pods-Wisper_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		E6CB867A5295600A7726A0F3 /* Pods-Wisper_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisper_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wisper_Tests/Pods-Wisper_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		F00225B0285638143BCFB08B /* Pods_Wisper_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wisper_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,7 +93,7 @@
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
-				D4D5A4944C2BE7AB6179DCFD /* Pods_Wisper_Example.framework in Frameworks */,
+				491577C734523F9EA232AC1E /* Pods_Wisper_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,7 +104,7 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				2A94BAF2348C1DA2DA4CF6EF /* Pods_Wisper_Tests.framework in Frameworks */,
+				0D47709BF7B3D46E15AC0284 /* Pods_Wisper_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,7 +119,7 @@
 				6003F5B5195388D20070C39A /* Tests */,
 				6003F58C195388D20070C39A /* Frameworks */,
 				6003F58B195388D20070C39A /* Products */,
-				C555C294AB13620C0B78BBDD /* Pods */,
+				9734D1B55E619127E3CCF048 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -139,8 +139,8 @@
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
 				6003F5AF195388D20070C39A /* XCTest.framework */,
-				743C34212026D187DCD6FCB2 /* Pods_Wisper_Example.framework */,
-				BD7B29E6509C8119C6EA4F74 /* Pods_Wisper_Tests.framework */,
+				F00225B0285638143BCFB08B /* Pods_Wisper_Example.framework */,
+				330FECAF61B589A34B761BA7 /* Pods_Wisper_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -209,13 +209,13 @@
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
-		C555C294AB13620C0B78BBDD /* Pods */ = {
+		9734D1B55E619127E3CCF048 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2D2CBD590EB589398AF65E37 /* Pods-Wisper_Example.debug.xcconfig */,
-				1AD5AA6F5E4395D071FBFB47 /* Pods-Wisper_Example.release.xcconfig */,
-				47CCCA9CB7B50639CD55C0D5 /* Pods-Wisper_Tests.debug.xcconfig */,
-				ED6BF38F642C959146671D2A /* Pods-Wisper_Tests.release.xcconfig */,
+				885C8888C638F538F2F6DCF2 /* Pods-Wisper_Example.debug.xcconfig */,
+				97E53B80212D383FEBF47255 /* Pods-Wisper_Example.release.xcconfig */,
+				51BB929F10E235055688DEC5 /* Pods-Wisper_Tests.debug.xcconfig */,
+				E6CB867A5295600A7726A0F3 /* Pods-Wisper_Tests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -227,12 +227,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6003F5BF195388D20070C39A /* Build configuration list for PBXNativeTarget "Wisper_Example" */;
 			buildPhases = (
-				2ADEC734F6BB17588069CD9C /* Check Pods Manifest.lock */,
+				05BE4AAC6AA67121716D7161 /* 📦 Check Pods Manifest.lock */,
 				6003F586195388D20070C39A /* Sources */,
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
-				8B9EC08D6831990DF7D4DF2E /* Embed Pods Frameworks */,
-				81D1E002D38335B20A1F0F19 /* Copy Pods Resources */,
+				CB2AA75B94F7B3C521553FFB /* 📦 Embed Pods Frameworks */,
+				FBEF93FD3E3D5E30CD0F6B66 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -247,12 +247,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6003F5C2195388D20070C39A /* Build configuration list for PBXNativeTarget "Wisper_Tests" */;
 			buildPhases = (
-				D3D29B234D9FA62F271F9BDA /* Check Pods Manifest.lock */,
+				079188246DB33B38E2BBB4F3 /* 📦 Check Pods Manifest.lock */,
 				6003F5AA195388D20070C39A /* Sources */,
 				6003F5AB195388D20070C39A /* Frameworks */,
 				6003F5AC195388D20070C39A /* Resources */,
-				740B5FC58A412A0EFBB6D021 /* Embed Pods Frameworks */,
-				6FB40F43195B2A7E615BC0C7 /* Copy Pods Resources */,
+				06C1A905A4E345FAA60B971C /* 📦 Embed Pods Frameworks */,
+				6BD311CFD060AB2F069E8E76 /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -320,14 +320,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2ADEC734F6BB17588069CD9C /* Check Pods Manifest.lock */ = {
+		05BE4AAC6AA67121716D7161 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "📦 Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -335,29 +335,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		6FB40F43195B2A7E615BC0C7 /* Copy Pods Resources */ = {
+		06C1A905A4E345FAA60B971C /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wisper_Tests/Pods-Wisper_Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		740B5FC58A412A0EFBB6D021 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
+			name = "📦 Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -365,29 +350,44 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wisper_Tests/Pods-Wisper_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		81D1E002D38335B20A1F0F19 /* Copy Pods Resources */ = {
+		079188246DB33B38E2BBB4F3 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "📦 Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wisper_Example/Pods-Wisper_Example-resources.sh\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		8B9EC08D6831990DF7D4DF2E /* Embed Pods Frameworks */ = {
+		6BD311CFD060AB2F069E8E76 /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "📦 Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wisper_Tests/Pods-Wisper_Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CB2AA75B94F7B3C521553FFB /* 📦 Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "📦 Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -395,19 +395,19 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wisper_Example/Pods-Wisper_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D3D29B234D9FA62F271F9BDA /* Check Pods Manifest.lock */ = {
+		FBEF93FD3E3D5E30CD0F6B66 /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "📦 Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wisper_Example/Pods-Wisper_Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -503,7 +503,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -536,7 +536,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -545,13 +545,14 @@
 		};
 		6003F5C0195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2D2CBD590EB589398AF65E37 /* Pods-Wisper_Example.debug.xcconfig */;
+			baseConfigurationReference = 885C8888C638F538F2F6DCF2 /* Pods-Wisper_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Wisper/Wisper-Prefix.pch";
 				INFOPLIST_FILE = "Wisper/Wisper-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MODULE_NAME = ExampleApp;
 				OTHER_CFLAGS = (
 					"$(inherited)",
@@ -570,13 +571,14 @@
 		};
 		6003F5C1195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1AD5AA6F5E4395D071FBFB47 /* Pods-Wisper_Example.release.xcconfig */;
+			baseConfigurationReference = 97E53B80212D383FEBF47255 /* Pods-Wisper_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Wisper/Wisper-Prefix.pch";
 				INFOPLIST_FILE = "Wisper/Wisper-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -586,14 +588,9 @@
 		};
 		6003F5C3195388D20070C39A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 47CCCA9CB7B50639CD55C0D5 /* Pods-Wisper_Tests.debug.xcconfig */;
+			baseConfigurationReference = 51BB929F10E235055688DEC5 /* Pods-Wisper_Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tests/Tests-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -610,14 +607,9 @@
 		};
 		6003F5C4195388D20070C39A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ED6BF38F642C959146671D2A /* Pods-Wisper_Tests.release.xcconfig */;
+			baseConfigurationReference = E6CB867A5295600A7726A0F3 /* Pods-Wisper_Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tests/Tests-Prefix.pch";
 				INFOPLIST_FILE = "Tests/Tests-Info.plist";
