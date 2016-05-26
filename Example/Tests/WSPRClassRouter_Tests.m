@@ -352,5 +352,6 @@
 }
 
 //TODO: Add test where deallocating a gateway router should destroy all paths below and manage to clean up all instances correctly.
+//TODO: Add test for non nil properties
 
 @end
