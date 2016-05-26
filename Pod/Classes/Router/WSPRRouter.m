@@ -85,7 +85,16 @@
     else
     {
         WSPRError *error = [[WSPRError alloc] init];
-        error.message = [NSString  stringWithFormat:@"No route for message with method: %@", message.method];
+        
+        if ([message respondsToSelector:@selector(method)])
+        {
+            error.message = [NSString  stringWithFormat:@"No route for message with method: %@", message.method];
+        }
+        else
+        {
+            error.message = [NSString stringWithFormat:@"Bad message, expected message of type Notification. You sent: %@", message];
+        }
+        
         [self respondToMessage:message withError:error];
     }
 }
