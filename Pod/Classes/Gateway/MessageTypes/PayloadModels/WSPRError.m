@@ -31,6 +31,11 @@
     return [[[self class] alloc] initWithDictionary:dictionary];
 }
 
++(instancetype)errorWithError:(NSError *)error
+{
+    return [[[self class] alloc] initWithError:error];
+}
+
 +(instancetype)errorWithDomain:(WSPRErrorDomain)domain andCode:(NSInteger)code
 {
     return [[[self class] alloc] initWithDomain:domain andCode:code];
@@ -49,6 +54,20 @@
         if (dictionary[@"underlying"])
         {
             self.underlyingError = [[[self class] alloc] initWithDictionary:dictionary[@"underlying"]];
+        }
+    }
+    return self;
+}
+
+-(instancetype)initWithError:(NSError *)error
+{
+    self = [self init];
+    if (self)
+    {
+        self.message = [error description];
+        if ([error userInfo][NSUnderlyingErrorKey])
+        {
+            self.underlyingError = [[WSPRError alloc] initWithError:[error userInfo][NSUnderlyingErrorKey]];
         }
     }
     return self;

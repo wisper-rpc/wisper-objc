@@ -113,11 +113,22 @@ typedef NS_ENUM(NSInteger, WSPRErrorAction)
 +(instancetype)errorWithDictionary:(NSDictionary *)dictionary;
 
 /**
+ Convenience method for creating an error from an NSError object.
+ @param error An NSError object that you want to convert into a WSPRError.
+ */
++(instancetype)errorWithError:(NSError *)error;
+
+/**
  Method for initializing the error object with a dictionary.
  @param dictionary An NSDictionary containing keys and values for all properties you want to set.
  */
 -(instancetype)initWithDictionary:(NSDictionary *)dictionary;
 
+/**
+ Method for initializing an error from an NSError object.
+ @param error An NSError object that you want to convert into a WSPRError.
+ */
+-(instancetype)initWithError:(NSError *)error;
 
 /**
  Convenience method for creating an error without calling alloc and also initializing it based on domain and code, you should fill out other
