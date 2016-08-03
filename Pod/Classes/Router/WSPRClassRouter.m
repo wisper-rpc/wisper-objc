@@ -186,6 +186,7 @@
             //try to run the callblock method and catch if any exception occurs
             @try {
                 createMethod.callBlock(self, wisperInstance, createMethod, message);
+                wisperInstance.shouldSkipPropertyEvent = NO;
             }
             @catch (NSException *exception)
             {
@@ -218,6 +219,7 @@
                     response.error = error;
                     request.responseBlock(response);
                 }
+                wisperInstance.shouldSkipPropertyEvent = NO;
             }];
         }
     }
@@ -427,6 +429,7 @@
     NSString *key = [NSString stringWithFormat:@"%p", instance];
     
     WSPRClassInstance *wisperInstance = [[WSPRClassInstance alloc] init];
+    wisperInstance.shouldSkipPropertyEvent = YES;
     wisperInstance.rpcClass = self.classModel;
     wisperInstance.instance = instance;
     wisperInstance.instanceIdentifier = key;
