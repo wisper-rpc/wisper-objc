@@ -20,8 +20,6 @@
  */
 @property (nonatomic, strong) NSDictionary *keyPathProperties;
 
-@property (nonatomic, assign) BOOL isSettingProperty;
-
 @end
 
 @implementation WSPRClassInstance
@@ -94,7 +92,7 @@
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (!_delegate || _isSettingProperty)
+    if (!_delegate || _shouldSkipPropertyEvent)
         return;
     
     WSPRClassProperty *property = self.keyPathProperties[keyPath];
@@ -156,9 +154,9 @@
                 data = property.deserializeWisperPropertyBlock(data);
             }
             
-            self.isSettingProperty = YES;
+            self.shouldSkipPropertyEvent = YES;
             [self.instance setValue:data forKeyPath:property.keyPath];
-            self.isSettingProperty = NO;
+            self.shouldSkipPropertyEvent = NO;
             return YES;
         }
     }
