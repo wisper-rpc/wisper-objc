@@ -1610,7 +1610,10 @@
 
 - (void)testObjectInstanceWithCompletion:(void (^)(WSPRClassInstance *instance))completion
 {
-    [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    if (![_gatewayRouter routerAtPath:@"wisp.test.TestObject"])
+    {
+        [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
+    }
     
     WSPRRequest *request = [[WSPRRequest alloc] init];
     request.requestIdentifier = @"create0";
@@ -1619,7 +1622,11 @@
     request.responseBlock = ^(WSPRResponse *response){
         NSString *instanceId = [(NSDictionary *)response.result objectForKey:@"id"];
         WSPRClassInstance *instance = [WSPRInstanceRegistry instanceWithId:instanceId underRootRoute:_gatewayRouter];
-        completion(instance);
+        
+        //Async to wait until `shouldSkipPropertyEvent` property is `NO`
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(instance);
+        });
     };
     
     [_gatewayRouter.gateway handleMessage:request];
