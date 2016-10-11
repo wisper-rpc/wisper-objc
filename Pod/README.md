@@ -1,7 +1,7 @@
 # wisper-objc
 The Objective C implementation of a simple, JSON-based RPC protocol.
 
-Details about the wisper protocol itself can be found [here](https://bitbucket.org/WidespaceGIT/wisper-protocol/src).
+Details about the wisper protocol itself can be found [here](https://github.com/wisper-rpc/wisper-protocol).
 
 ## Getting Started
 Take a look at the documentation for the [`WSPRGateway` class](./Classes/Gateway/), it's at the core of `wisper-objc` and will point you in the right direction for everything else.
