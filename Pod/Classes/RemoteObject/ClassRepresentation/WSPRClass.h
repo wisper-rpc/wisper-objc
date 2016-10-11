@@ -13,7 +13,7 @@
 #import "WSPRClassProperty.h"
 
 @class WSPRClass;
-@class WSPRRemoteObjectController;
+@class WSPRClassRouter;
 
 /**
  Implementation protocol that must be implemented to enable RPC functionality for any class.
@@ -26,7 +26,7 @@
  @discussion This is handled automatically by all subclasses of WSRPCObject.
  @see WSRPCObject
  */
-@property (nonatomic, assign) WSPRRemoteObjectController *rpcController;
+@property (nonatomic, assign) WSPRClassRouter *classRouter;
 
 /**
  Will be called by the RPCController when a class is being registered to get a model describing what methods are static/instance available.
@@ -67,13 +67,6 @@
  The actual class that we are registering towards the RPC controller.
  */
 @property (nonatomic, assign) Class<WSPRClassProtocol> classRef;
-
-/**
- This will be used when mapping incoming requests against classes. You could strip the prefix of a class here to make it pretty for the caller ;)
- The mapname must be uniqe, otherwise the latest class registered in the RPCController will be the only available with the mapName.
- If nil the getter will return the classRef as a string.
- */
-@property (nonatomic, strong) NSString *mapName;
 
 /**
  Map of available static methods for this class to be invoked over the RPC interface. 

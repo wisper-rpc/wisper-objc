@@ -39,4 +39,7 @@ typedef void (^ResponseBlock)(WSPRResponse *response);
  */
 -(WSPRResponse *)createResponse;
 
++(instancetype)requestWithMethod:(NSString *)method params:(NSArray *)params requestIdentifier:(NSString *)requestIdentifier andResponseBlock:(ResponseBlock)responseBlock;
+-(instancetype)initWithMethod:(NSString *)method params:(NSArray *)params requestIdentifier:(NSString *)requestIdentifier andResponseBlock:(ResponseBlock)responseBlock;
+
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "WSPRObject.h"
+#import "WSPRInstanceRegistry.h"
 
 @interface WSPRObject ()
 
@@ -14,14 +15,13 @@
 
 @end
 @implementation WSPRObject
-@synthesize rpcController = _rpcController;
+@synthesize classRouter = _classRouter;
 @synthesize rpcClassInstance = _rpcClassInstance;
 
 +(WSPRClass *)rpcRegisterClass
 {
     WSPRClass *rpcObjectClass = [[WSPRClass alloc] init];
     rpcObjectClass.classRef = [self class];
-    rpcObjectClass.mapName = @"WSPRClass";
     return rpcObjectClass;
 }
 
@@ -31,7 +31,7 @@
     {
         return _rpcClassInstance;
     }
-    _rpcClassInstance = [self.rpcController getRPCClassInstanceForInstance:self];
+    _rpcClassInstance = [WSPRInstanceRegistry instanceModelForInstance:self underRootRoute:[self.classRouter rootRouter]];
     return _rpcClassInstance;
 }
 
@@ -44,26 +44,15 @@
     self.isDestroying = YES;
 }
 
-#pragma mark - RPCEvent methods
 
--(void)rpcCallRemoteMethod:(NSString *)methodName withParams:(NSArray *)params responseBlock:(ResponseBlock)responseBlock
-{
-    NSMutableArray *idAndParams = [NSMutableArray arrayWithObject:self.rpcClassInstance.instanceIdentifier];
-    [idAndParams addObjectsFromArray:params];
-    
-    WSPRRequest *request = [[WSPRRequest alloc] init];
-    request.method = [NSString stringWithFormat:@"%@:%@", self.rpcClassInstance.rpcClass.mapName, methodName];
-    request.params = [NSArray arrayWithArray:idAndParams];
-    request.responseBlock = responseBlock;
-    [self.rpcController sendMessage:request];
-}
+#pragma mark - RPCEvent methods
 
 -(void)rpcSendEvent:(WSPREvent *)event
 {
-    if (!event || !self.rpcController || self.isDestroying)
+    if (!event || !self.classRouter || self.isDestroying)
         return;
     
-    [self.rpcController sendMessage:[event createNotification]];
+    [self.classRouter reverse:[event createNotification] fromPath:nil];
 }
 
 -(WSPREvent *)rpcCreateInstanceEvent
@@ -73,7 +62,6 @@
     
     WSPREvent *event = [[WSPREvent alloc] init];
     event.instanceIdentifier = self.rpcClassInstance.instanceIdentifier;
-    event.mapName = self.rpcClassInstance.rpcClass.mapName;
     return event;
 }
 
@@ -83,7 +71,6 @@
         return nil;
 
     WSPREvent *event = [[WSPREvent alloc] init];
-    event.mapName = self.rpcClassInstance.rpcClass.mapName;
     return event;
 }
 

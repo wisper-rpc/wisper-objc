@@ -20,6 +20,7 @@
 @property (nonatomic, strong) NSString *testProperty;
 
 @property (nonatomic, weak) WSPRTestObject *testPassByReferenceProperty;
+@property (nonatomic, assign) CGPoint testSerializeProperty;
 
 /**
  Test method for the Wisper Gateway to verify that it works correctly.
@@ -50,6 +51,12 @@
 +(NSString *)passByReference:(id<WSPRClassProtocol>)instance;
 
 -(NSString *)passByReference:(id<WSPRClassProtocol>)instance;
+
++(NSNumber *)passCaller:(id)caller;
+
++(void)passAsyncReturnBlock:(WSPRAsyncReturnBlock)asyncReturnBlock;
+
++(void)passAsyncReturnBlock:(WSPRAsyncReturnBlock)asyncReturnBlock andCaller:(id)caller;
 
 
 @end

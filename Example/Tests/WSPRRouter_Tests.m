@@ -23,9 +23,9 @@
 - (void)setUp
 {
     [super setUp];
-    self.router1 = [[WSPRRouter alloc] initWithNameSpace:@"r1"];
-    self.router2 = [[WSPRRouter alloc] initWithNameSpace:@"r2"];
-    self.router3 = [[WSPRRouter alloc] initWithNameSpace:@"r3"];
+    self.router1 = [[WSPRRouter alloc] init];
+    self.router2 = [[WSPRRouter alloc] init];
+    self.router3 = [[WSPRRouter alloc] init];
 }
 
 - (void)tearDown
@@ -57,6 +57,27 @@
     XCTAssertEqual([_router2 parentRoute], pathRouter, @"Parent router not linked properly");
     XCTAssertEqual([pathRouter parentRoute], someRouter, @"Parent router not linked properly");
     XCTAssertEqual([someRouter parentRoute], _router1, @"Parent router not linked properly");
+}
+
+- (void)testExposeSameRouteTwice
+{
+    [_router1 exposeRoute:_router2 onPath:@"some.path.r2"];
+    [_router1 exposeRoute:_router2 onPath:@"some.path.r2"];
+    
+    WSPRRouter *someRouter = [_router1 routes][@"some"];
+    WSPRRouter *pathRouter = [someRouter routes][@"path"];
+    WSPRRouter *r2Router = [pathRouter routes][@"r2"];
+    
+    XCTAssert(someRouter && someRouter != _router1 && someRouter != _router2, @"Router was not generated properly");
+    
+    XCTAssert(pathRouter && pathRouter != _router1 && pathRouter != _router2, @"Router was not generated properly");
+    
+    XCTAssertEqual(_router2, r2Router, @"Last route was not set correctly.");
+    
+    XCTAssertEqual([_router2 parentRoute], pathRouter, @"Parent router not linked properly");
+    XCTAssertEqual([pathRouter parentRoute], someRouter, @"Parent router not linked properly");
+    XCTAssertEqual([someRouter parentRoute], _router1, @"Parent router not linked properly");
+
 }
 
 - (void)testRouteMessage
@@ -115,6 +136,66 @@
     [_router3 reverse:notification fromPath:nil];
     
     OCMVerifyAll(router1Mock);
+}
+
+- (void)testGetRootRouter
+{
+    [_router1 exposeRoute:_router2 onPath:@"r2"];
+    [_router2 exposeRoute:_router3 onPath:@"r3"];
+    
+    XCTAssertEqual([_router3 rootRouter], _router1, @"Wrong root router returned");
+}
+
+- (void)testGetRootRouterOnRoot
+{
+    XCTAssertEqual([_router1 rootRouter], _router1, @"Wrong root router returned");
+}
+
+- (void)testGetRouterAtPath
+{
+    [_router1 exposeRoute:_router3 onPath:@"r2.r3"];
+    XCTAssertEqual([_router1 routerAtPath:@"r2.r3"], _router3, @"Router could not be found!");
+}
+
+- (void)testGetRouterAtPathReturnsNilIfPathCouldNotBeFound
+{
+    [_router1 exposeRoute:_router3 onPath:@"r2.r3"];
+    XCTAssertNil([_router1 routerAtPath:@"r2.r3.r4"], @"Router could not be found!");
+}
+
+- (void)testBadRequestRouteRespondsWithError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"n/a"];
+    
+    WSPRRequest *request = [[WSPRRequest alloc] init];
+    request.method = @"no.route.for.message";
+    request.requestIdentifier = @"0";
+    request.params = @[@"Yup"];
+    request.responseBlock = ^(WSPRResponse *response) {
+        if (response.error)
+            [expectation fulfill];
+    };
+    
+    [_router1 route:request toPath:request.method];
+    
+    [self waitForExpectationsWithTimeout:0.1 handler:nil];
+}
+
+- (void)testBadNotificationRouteSendsError
+{
+    WSPRNotification *notification = [[WSPRNotification alloc] init];
+    notification.method = @"no.route.for.message";
+    notification.params = @[@"Yup"];
+
+    id routerMock = OCMPartialMock(_router1);
+    
+    OCMExpect([routerMock reverse:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isKindOfClass:[WSPRErrorMessage class]];
+    }] fromPath:[OCMArg any]]);
+    
+    [_router1 route:notification toPath:notification.method];
+    
+    OCMVerifyAll(routerMock);
 }
 
 

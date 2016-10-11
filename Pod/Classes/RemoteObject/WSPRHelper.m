@@ -7,6 +7,7 @@
 //
 
 #import "WSPRHelper.h"
+#import "WSPRRouter.h"
 
 @implementation WSPRHelper
 
@@ -35,8 +36,19 @@
     if ([paramType isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
     {
         //Argument should already be an instance or nil.
-        return argument == nil || [argument respondsToSelector:@selector(rpcController)];
+        return argument == nil || [argument respondsToSelector:@selector(classRouter)];
     }
+    
+    if ([paramType isEqualToString:WSPR_PARAM_TYPE_CALLER])
+    {
+        return [argument respondsToSelector:@selector(route:toPath:)];
+    }
+    
+    if ([paramType isEqualToString:WSPR_PARAM_TYPE_ASYNC_RETURN_BLOCK])
+    {
+        return argument ? YES : NO;
+    }
+    
     return NO;
 }
 

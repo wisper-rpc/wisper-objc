@@ -6,13 +6,13 @@
 //  Copyright (c) 2015 Patrik Nyblad. All rights reserved.
 //
 
-#import "WSPRViewController.h"
+#import "WSPRMainViewController.h"
 
-@interface WSPRViewController ()
+@interface WSPRMainViewController ()
 
 @end
 
-@implementation WSPRViewController
+@implementation WSPRMainViewController
 
 - (void)viewDidLoad
 {

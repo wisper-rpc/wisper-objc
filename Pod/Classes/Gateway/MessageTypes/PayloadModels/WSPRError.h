@@ -11,7 +11,7 @@
 typedef NS_ENUM(NSInteger, WSPRErrorDomain)
 {
     WSPRErrorDomainJavaScript = 0,
-    WSPRErrorDomainRPC = 1,
+    WSPRErrorDomainWisper = 1,
     WSPRErrorDomainRemoteObject = 2,
     WSPRErrorDomainAction = 3,
     WSPRErrorDomainiOS_OSX = 10,
@@ -60,7 +60,7 @@ typedef NS_ENUM(NSInteger, WSPRErrorAction)
  Object to represent an error as part of a WSPRResponse.
  @see WSPRGateway
  */
-@interface WSPRError : NSObject
+@interface WSPRError : NSObject <NSCopying>
 
 /**
  The error domain of this error.
@@ -113,11 +113,22 @@ typedef NS_ENUM(NSInteger, WSPRErrorAction)
 +(instancetype)errorWithDictionary:(NSDictionary *)dictionary;
 
 /**
+ Convenience method for creating an error from an NSError object.
+ @param error An NSError object that you want to convert into a WSPRError.
+ */
++(instancetype)errorWithError:(NSError *)error;
+
+/**
  Method for initializing the error object with a dictionary.
  @param dictionary An NSDictionary containing keys and values for all properties you want to set.
  */
 -(instancetype)initWithDictionary:(NSDictionary *)dictionary;
 
+/**
+ Method for initializing an error from an NSError object.
+ @param error An NSError object that you want to convert into a WSPRError.
+ */
+-(instancetype)initWithError:(NSError *)error;
 
 /**
  Convenience method for creating an error without calling alloc and also initializing it based on domain and code, you should fill out other
@@ -153,5 +164,15 @@ typedef NS_ENUM(NSInteger, WSPRErrorAction)
  Error code as string representation.
  */
 -(NSString *)errorCodeName;
+
+/**
+ Domain as string representation.
+ */
++(NSString *)domainNameFromDomain:(WSPRErrorDomain)domain;
+
+/**
+ Error code as string representation.
+ */
++(NSString *)errorCodeNameForCode:(NSInteger)code underDomain:(WSPRErrorDomain)domain;
 
 @end

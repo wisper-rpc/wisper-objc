@@ -12,6 +12,9 @@
 
 +(WSPRMessage *)messageFromDictionary:(NSDictionary *)dictionary
 {
+    if (!dictionary)
+        return nil;
+    
     WSPRGatewayMessageType type = [self messageTypeFromMessageDictionary:dictionary];
     switch (type)
     {
@@ -35,19 +38,22 @@
 
 +(WSPRGatewayMessageType)messageTypeFromMessageDictionary:(NSDictionary *)message
 {
-    if (message[@"method"] && message[@"params"])
+    if (!message)
+        return WSPRGatewayMessageTypeUndefined;
+    
+    if ([message[@"method"] isKindOfClass:[NSString class]] && [message[@"params"] isKindOfClass:[NSArray class]])
     {
-        if (message[@"id"])
-        {
-            return WSPRGatewayMessageTypeRequest;
-        }
-        else
+        if (!message[@"id"])
         {
             return WSPRGatewayMessageTypeNotification;
         }
+        else if([message[@"id"] isKindOfClass:[NSString class]])
+        {
+            return WSPRGatewayMessageTypeRequest;
+        }
     }
     
-    if ((message[@"result"] || message[@"error"]) && message[@"id"])
+    if ((message[@"result"] || message[@"error"]) && [message[@"id"] isKindOfClass:[NSString class]])
     {
         return WSPRGatewayMessageTypeResponse;
     }

@@ -11,6 +11,24 @@
 
 @implementation WSPREvent
 
++(instancetype)eventWithMapName:(NSString *)mapName eventName:(NSString *)eventName data:(NSObject *)data andInstanceIdentifier:(NSString *)instanceIdentifier
+{
+    return [[[self class] alloc] initWithMapName:mapName eventName:eventName data:data andInstanceIdentifier:instanceIdentifier];
+}
+
+-(instancetype)initWithMapName:(NSString *)mapName eventName:(NSString *)eventName data:(NSObject *)data andInstanceIdentifier:(NSString *)instanceIdentifier
+{
+    self = [self init];
+    if (self)
+    {
+        self.mapName = mapName;
+        self.name = eventName;
+        self.data = data;
+        self.instanceIdentifier = instanceIdentifier;
+    }
+    return self;
+}
+
 -(instancetype)initWithNotification:(WSPRNotification *)notification
 {
     self = [self init];
@@ -33,6 +51,13 @@
                 break;
         }
     }
+    
+    //Strip away unnecessary NSNull values 
+    if ([self.data isKindOfClass:[NSNull class]])
+    {
+        self.data = nil;
+    }
+    
     return self;
 }
 
@@ -47,11 +72,12 @@
         [params addObject:_instanceIdentifier];
     if (_name)
         [params addObject:_name];
-    if (_data)
-        [params addObject:_data];
+    
+    //If we do not have any data we still add null to be spec compliant
+    [params addObject:_data ? : [NSNull null]];
     
     WSPRNotification *notification = [[WSPRNotification alloc] init];
-    notification.method = [NSString stringWithFormat:@"%@%@", _mapName, _instanceIdentifier ? @":!" : @"!"];
+    notification.method = [NSString stringWithFormat:@"%@%@", _mapName ? : @"", _instanceIdentifier ? @":!" : @"!"];
     notification.params = [NSArray arrayWithArray:params];
     return notification;
 }

@@ -10,6 +10,16 @@
 
 @implementation WSPRError
 
+-(id)copyWithZone:(NSZone *)zone
+{
+    WSPRError *newError = [[self class] allocWithZone:zone];
+    newError.domain = _domain;
+    newError.code = _code;
+    newError.message = [_message copyWithZone:zone];
+    newError.data = [_data copyWithZone:zone];
+    newError.underlyingError = [_underlyingError copyWithZone:zone];
+    return newError;
+}
 
 +(instancetype)error
 {
@@ -19,6 +29,11 @@
 +(instancetype)errorWithDictionary:(NSDictionary *)dictionary
 {
     return [[[self class] alloc] initWithDictionary:dictionary];
+}
+
++(instancetype)errorWithError:(NSError *)error
+{
+    return [[[self class] alloc] initWithError:error];
 }
 
 +(instancetype)errorWithDomain:(WSPRErrorDomain)domain andCode:(NSInteger)code
@@ -39,6 +54,20 @@
         if (dictionary[@"underlying"])
         {
             self.underlyingError = [[[self class] alloc] initWithDictionary:dictionary[@"underlying"]];
+        }
+    }
+    return self;
+}
+
+-(instancetype)initWithError:(NSError *)error
+{
+    self = [self init];
+    if (self)
+    {
+        self.message = [error description];
+        if ([error userInfo][NSUnderlyingErrorKey])
+        {
+            self.underlyingError = [[WSPRError alloc] initWithError:[error userInfo][NSUnderlyingErrorKey]];
         }
     }
     return self;
@@ -69,11 +98,11 @@
 -(NSDictionary *)asDictionary
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:@{
-             @"domain" : @(self.domain),
-             @"code" : @(self.code),
-             @"name" : self.name,
-             @"message" : self.message ? : @"",
-             }];
+                                                                                      @"domain" : @(self.domain),
+                                                                                      @"code" : @(self.code),
+                                                                                      @"name" : self.name,
+                                                                                      @"message" : self.message ? : @"",
+                                                                                      }];
     if (self.data)
     {
         [dictionary setObject:self.data forKey:@"data"];
@@ -90,15 +119,26 @@
     return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:[self asDictionary] options:0 error:nil] encoding:NSASCIIStringEncoding];
 }
 
+
 #pragma mark - Enum to string helpers
 
 -(NSString *)domainName
 {
-    switch (self.domain)
+    return [[self class] domainNameFromDomain:self.domain];
+}
+
+-(NSString *)errorCodeName
+{
+    return [[self class] errorCodeNameForCode:self.code underDomain:self.domain];
+}
+
++(NSString *)domainNameFromDomain:(WSPRErrorDomain)domain
+{
+    switch (domain)
     {
         case WSPRErrorDomainJavaScript:
             return @"JavaScript";
-        case WSPRErrorDomainRPC:
+        case WSPRErrorDomainWisper:
             return @"RPC";
         case WSPRErrorDomainRemoteObject:
             return @"RemoteObject";
@@ -114,14 +154,13 @@
     return @"";
 }
 
-
--(NSString *)errorCodeName
++(NSString *)errorCodeNameForCode:(NSInteger)code underDomain:(WSPRErrorDomain)domain
 {
-    switch (self.domain)
+    switch (domain)
     {
         case WSPRErrorDomainJavaScript:
         {
-            WSPRErrorJavascript errorCode = self.code;
+            WSPRErrorJavascript errorCode = code;
             switch (errorCode)
             {
                 case WSPRErrorJavascriptError:
@@ -141,9 +180,9 @@
             }
         }
             break;
-        case WSPRErrorDomainRPC:
+        case WSPRErrorDomainWisper:
         {
-            WSPRErrorRPC errorCode = self.code;
+            WSPRErrorRPC errorCode = code;
             switch (errorCode)
             {
                 case WSPRErrorRPCError:
@@ -161,7 +200,7 @@
             break;
         case WSPRErrorDomainRemoteObject:
         {
-            WSPRErrorRemoteObject errorCode = self.code;
+            WSPRErrorRemoteObject errorCode = code;
             switch (errorCode)
             {
                 case WSPRErrorRemoteObjectMissingClass:
@@ -179,7 +218,7 @@
             break;
         case WSPRErrorDomainAction:
         {
-            WSPRErrorAction errorCode = self.code;
+            WSPRErrorAction errorCode = code;
             switch (errorCode) {
                 case WSPRErrorActionAppNotFound:
                     return @"AppNotFound";

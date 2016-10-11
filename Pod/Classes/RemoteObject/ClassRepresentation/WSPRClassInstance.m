@@ -7,7 +7,10 @@
 //
 
 #import "WSPRClassInstance.h"
-#import "WSPRRemoteObjectController.h"
+#import "WSPRHelper.h"
+#import "WSPRInstanceRegistry.h"
+#import "WSPRClassRouter.h"
+
 @interface WSPRClassInstance ()
 
 @property (nonatomic, assign) BOOL hasAddedPropertyListeners;
@@ -89,30 +92,77 @@
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (!_delegate)
+    if (!_delegate || _shouldSkipPropertyEvent)
         return;
+    
+    WSPRClassProperty *property = self.keyPathProperties[keyPath];
     
     WSPREvent *event = [[WSPREvent alloc] init];
     event.instanceIdentifier = self.instanceIdentifier;
-    event.mapName = _rpcClass.mapName;
-    event.name = [(WSPRClassProperty *)self.keyPathProperties[keyPath] mapName];
+    event.name = [property mapName];
+    event.data = [object valueForKeyPath:keyPath];
     
     //If instance property
-    if ([[(WSPRClassProperty *)self.keyPathProperties[keyPath] type] isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
+    if ([[property type] isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
     {
         //Look for instance in rpcController
-        WSPRRemoteObjectController *remoteObjectController = self.instance.rpcController;
-        WSPRClassInstance *classInstance = [remoteObjectController getRPCClassInstanceForInstance:[object valueForKeyPath:keyPath]];
-        
+        WSPRClassInstance *classInstance = [WSPRInstanceRegistry instanceModelForInstance:[object valueForKeyPath:keyPath] underRootRoute:[(WSPRClassRouter *)self.instance.classRouter rootRouter]];
         event.data = classInstance ? classInstance.instanceIdentifier : [NSNull null];
     }
-    else
+    
+    //Encode if block is provided
+    if (property.serializeWisperPropertyBlock)
     {
-        event.data = [object valueForKeyPath:keyPath];
+        event.data = property.serializeWisperPropertyBlock(event.data);
     }
     
     [_delegate classInstance:self didCreatePropertyEvent:event];
 }
+
+-(BOOL)handlePropertyEvent:(WSPREvent *)event
+{
+    WSPRClassProperty *property = self.rpcClass.properties[event.name];
+    if (property && (property.mode == WSPRPropertyModeReadWrite || property.mode == WSPRPropertyModeWriteOnly) && property.type)
+    {
+        //Property pass by reference lookup
+        if ([property.type isEqualToString:WSPR_PARAM_TYPE_INSTANCE])
+        {
+            //Accept NSNull
+            if ([event.data isKindOfClass:[NSNull class]])
+            {
+                event.data = nil;
+            }
+            else
+            {
+                //Lookup instance
+                WSPRClassInstance *classInstanceModel = [WSPRInstanceRegistry instanceWithId:(NSString *)event.data underRootRoute:[(WSPRClassRouter *)self.instance.classRouter rootRouter]];
+                
+                if (classInstanceModel)
+                {
+                    event.data = classInstanceModel.instance;
+                }
+            }
+        }
+        
+        if ([WSPRHelper paramType:property.type matchesArgument:event.data])
+        {
+            id data = event.data;
+            
+            //Decode property value if decode block is provided
+            if (property.deserializeWisperPropertyBlock)
+            {
+                data = property.deserializeWisperPropertyBlock(data);
+            }
+            
+            self.shouldSkipPropertyEvent = YES;
+            [self.instance setValue:data forKeyPath:property.keyPath];
+            self.shouldSkipPropertyEvent = NO;
+            return YES;
+        }
+    }
+    return NO;
+}
+
 
 
 -(NSString *)description

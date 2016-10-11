@@ -133,7 +133,7 @@
         //Verify message
         WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)obj;
         WSPRError *error = errorMessage.error;
-        if (error.domain == WSPRErrorDomainRPC &&
+        if (error.domain == WSPRErrorDomainWisper &&
             error.code == 1234 &&
             [error.message isEqualToString:@"error message"]
             )
@@ -245,7 +245,7 @@
         NSString *jsonMessage = (NSString *)obj;
         WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)[WSPRMessageFactory messageFromDictionary:[self dictionaryFromJSONString:jsonMessage]];
         WSPRError *error = errorMessage.error;
-        if (error.domain == WSPRErrorDomainRPC &&
+        if (error.domain == WSPRErrorDomainWisper &&
             error.code == 1234 &&
             [error.message isEqualToString:@"error message"]
             )
@@ -272,7 +272,7 @@
         //Verify message
         WSPRErrorMessage *errorMessage = (WSPRErrorMessage *)obj;
         WSPRError *error = errorMessage.error;
-        if (error.domain == WSPRErrorDomainRPC &&
+        if (error.domain == WSPRErrorDomainWisper &&
             error.code == 1234 &&
             [error.message isEqualToString:@"error message"]
             )

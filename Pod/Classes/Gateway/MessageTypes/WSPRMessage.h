@@ -11,7 +11,7 @@
 /**
  * Wisper abstract message class. All message types must subclass this class.
  */
-@interface WSPRMessage : NSObject
+@interface WSPRMessage : NSObject <NSCopying>
 
 /**
  Convenience method for creating a message without calling alloc + -init

@@ -24,5 +24,7 @@
  */
 @property (nonatomic, strong) NSObject *result;
 
++(instancetype)responseWithResult:(NSObject *)result andRequestIdentifier:(NSString *)requestIdentifier;
+-(instancetype)initWithResult:(NSObject *)result andRequestIdentifier:(NSString *)requestIdentifier;
 
 @end
