@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   
   # Some cool diagrams or the Wisper logo here
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
-  s.license          = 'MIT'
+  s.license          = 'UNLICENCED'
   s.authors          = { "Patrik Nyblad" => "patrik.nyblad@widespace.com", "Ehssan Hoorvash" => "ehssan.hoorvash@widespace.com", "Oskar Segersvärd" => "oskar.segersvard@widespace.com" }
   s.source           = { :git => "https://bitbucket.org/widespaceGIT/wisper-ios.git", :tag => s.version.to_s }
 
