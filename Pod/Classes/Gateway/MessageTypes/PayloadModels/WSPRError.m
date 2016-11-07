@@ -7,6 +7,7 @@
 //
 
 #import "WSPRError.h"
+#import "WSPRHelper.h"
 
 @implementation WSPRError
 
@@ -116,7 +117,14 @@
 
 -(NSString *)asJSONString
 {
-    return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:[self asDictionary] options:0 error:nil] encoding:NSASCIIStringEncoding];
+    __block NSString *json = nil;
+    
+    // Completion is called synchronously, safe!
+    [WSPRHelper jsonStringFromObject:[self asDictionary] completion:^(NSString *jsonString, NSError *error) {
+        json = jsonString;
+    }];
+    
+    return json;
 }
 
 

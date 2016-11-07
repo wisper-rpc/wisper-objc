@@ -8,6 +8,7 @@
 
 #import "WSPRGateway.h"
 #import "WSPRExceptionHandler.h"
+#import "WSPRHelper.h"
 
 #define WISPER_REQUEST_PREFIX @"WISPER_IOS_REQ-"
 
@@ -31,62 +32,62 @@
 
 -(void)handleMessageAsJSONString:(NSString *)jsonString
 {
-    NSError *serializationError = nil;
-    id object =  [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&serializationError];
-    
-    if (serializationError && !object)
-    {
-        //We were supposed to handle the request but the JSON was malformatted
-        WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCParseError];
-        error.message = [serializationError localizedDescription];
+    [WSPRHelper objectFromJSONString:jsonString completion:^(NSDictionary *jsonDict, NSArray *jsonArray, NSError *serializationError) {
         
-        WSPRResponse *response = [WSPRResponse message];
-        response.error = error;
-        
-        //Try to manually parse some sort of ID from the JSON string and return the error to the sender as a response.
-        NSRange idRange = [jsonString rangeOfString:@"id"];
-        if (idRange.location != NSNotFound)
+        if (serializationError && !(jsonDict || jsonArray))
         {
-            //Get just the id part
-            NSString *idString = [jsonString substringFromIndex:idRange.location];
-            NSArray *idKeyAndValue = [idString componentsSeparatedByString:@":"];
-            if (idKeyAndValue.count > 1)
+            //We were supposed to handle the request but the JSON was malformatted
+            WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCParseError];
+            error.message = [serializationError localizedDescription];
+            
+            WSPRResponse *response = [WSPRResponse message];
+            response.error = error;
+            
+            //Try to manually parse some sort of ID from the JSON string and return the error to the sender as a response.
+            NSRange idRange = [jsonString rangeOfString:@"id"];
+            if (idRange.location != NSNotFound)
             {
-                NSString *valuePart = idKeyAndValue[1];
-                NSUInteger valueStart = [valuePart rangeOfString:@"\""].location+1;
-                NSUInteger valueLength = [valuePart rangeOfString:@"\"" options:NSCaseInsensitiveSearch range:NSMakeRange(valueStart, valuePart.length - valueStart)].location-1;
-                
-                NSString *value = [valuePart substringWithRange:NSMakeRange(valueStart, valueLength)];
-                
-                if (value)
+                //Get just the id part
+                NSString *idString = [jsonString substringFromIndex:idRange.location];
+                NSArray *idKeyAndValue = [idString componentsSeparatedByString:@":"];
+                if (idKeyAndValue.count > 1)
                 {
-                    response.requestIdentifier = value;
+                    NSString *valuePart = idKeyAndValue[1];
+                    NSUInteger valueStart = [valuePart rangeOfString:@"\""].location+1;
+                    NSUInteger valueLength = [valuePart rangeOfString:@"\"" options:NSCaseInsensitiveSearch range:NSMakeRange(valueStart, valuePart.length - valueStart)].location-1;
+                    
+                    NSString *value = [valuePart substringWithRange:NSMakeRange(valueStart, valueLength)];
+                    
+                    if (value)
+                    {
+                        response.requestIdentifier = value;
+                    }
                 }
             }
+            [self sendMessage:response];
+            return;
         }
-        [self sendMessage:response];
-        return;
-    }
-    
-    WSPRMessage *wisperMessage = [WSPRMessageFactory messageFromDictionary:[object isKindOfClass:[NSDictionary class]] ? object : nil];
-    
-    if (wisperMessage)
-    {
-        [self handleMessage:wisperMessage];
-    }
-    else
-    {
-        WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCFormatError];
-        error.message = [NSString stringWithFormat:@"Could not parse message type from message: %@", jsonString];
         
-        WSPRResponse *response = [[WSPRResponse alloc] init];
-        response.error = error;
-        if (object[@"id"])
+        WSPRMessage *wisperMessage = [WSPRMessageFactory messageFromDictionary:jsonDict];
+        
+        if (wisperMessage)
         {
-            response.requestIdentifier = object[@"id"];
+            [self handleMessage:wisperMessage];
         }
-        [self sendMessage:response];
-    }
+        else
+        {
+            WSPRError *error = [[WSPRError alloc] initWithDomain:WSPRErrorDomainWisper andCode:WSPRErrorRPCFormatError];
+            error.message = [NSString stringWithFormat:@"Could not parse message type from message: %@", jsonString];
+            
+            WSPRResponse *response = [[WSPRResponse alloc] init];
+            response.error = error;
+            if (jsonDict[@"id"])
+            {
+                response.requestIdentifier = jsonDict[@"id"];
+            }
+            [self sendMessage:response];
+        }
+    }];
 }
 
 #pragma mark - Receive message

@@ -195,5 +195,156 @@
     return [method componentsSeparatedByCharactersInSet:[NSCharacterSet alphanumericCharacterSet]];
 }
 
+/*
+ An object that may be converted to JSON must have the following properties:
+ 
+ The top level object is an NSArray or NSDictionary. All objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.
+ All dictionary keys are instances of NSString. Numbers are not NaN or infinity.
+ */
++(id)jsonSafeObjectFromObject:(NSObject *)object
+{
+    if ([object isKindOfClass:[NSDictionary class]])
+    {
+        NSDictionary *dictionary = (NSDictionary *)object;
+        NSMutableDictionary *safeDictionary = [NSMutableDictionary dictionary];
+        
+        for (id key in [dictionary allKeys])
+        {
+            id safeKey = [self jsonSafeObjectFromObject:key];
+            if ([safeKey isKindOfClass:[NSString class]])
+            {
+                safeDictionary[safeKey] = [self jsonSafeObjectFromObject:dictionary[key]];
+            }
+        }
+        
+        return [NSDictionary dictionaryWithDictionary:safeDictionary];
+    }
+    
+    if ([object isKindOfClass:[NSArray class]])
+    {
+        NSArray *array = (NSArray *)object;
+        NSMutableArray *safeArray = [NSMutableArray array];
+        
+        for (id object in array)
+        {
+            [safeArray addObject:[self jsonSafeObjectFromObject:object]];
+        }
+        
+        return [NSArray arrayWithArray:safeArray];
+    }
+
+    if ([object isKindOfClass:[NSSet class]])
+    {
+        NSSet *set = (NSSet *)object;
+        NSMutableArray *safeArray = [NSMutableArray array];
+        
+        for (id object in set)
+        {
+            [safeArray addObject:[self jsonSafeObjectFromObject:object]];
+        }
+        
+        return [NSArray arrayWithArray:safeArray];
+    }
+
+    if ([object isKindOfClass:[NSString class]] || [object isKindOfClass:[NSNull class]])
+    {
+        return object;
+    }
+    
+    if ([object isKindOfClass:[NSNumber class]])
+    {
+        NSNumber *number = (NSNumber *)object;
+        
+        if([number isEqualToNumber:[NSDecimalNumber notANumber]])
+            return @(0);
+        
+        if ([number floatValue] == INFINITY)
+            return @(0);
+        
+        return number;
+    }
+    
+    if ([object isKindOfClass:[NSURL class]])
+    {
+        return [(NSURL *)object absoluteString];
+    }
+    
+    if ([object isKindOfClass:[NSDate class]])
+    {
+        NSTimeInterval epochInterval = [(NSDate *)object timeIntervalSince1970];
+        return [NSNumber numberWithInteger:(NSInteger)(epochInterval * 1000)];
+    }
+    
+    if ([object description])
+    {
+        return [object description];
+    }
+    
+    return [NSNull null];
+}
+
++(void)objectFromJSONString:(NSString *)jsonString completion:(void (^)(NSDictionary *jsonDict, NSArray *jsonArray, NSError *error))completion
+{
+    @try
+    {
+        NSError *error = nil;
+        id object =  [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+        
+        if ([object isKindOfClass:[NSDictionary class]])
+        {
+            NSDictionary *dict = object;
+            completion(dict, nil, error);
+        }
+        else
+        {
+            NSArray *array = object;
+            completion(nil, array, error);
+        }
+    }
+    @catch (NSException *exception)
+    {
+        NSError *errorFromException = [NSError errorWithDomain:@"WSPRJSONSerilization" code:-1 userInfo:@{NSLocalizedDescriptionKey : [exception description]}];
+        
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey : @"Exception when parsing json string!",
+                                   NSUnderlyingErrorKey :errorFromException
+                                   };
+        
+        NSError *wrapperError = [NSError errorWithDomain:@"WSPRJSONSerilization" code:-1 userInfo:userInfo];
+        completion(nil, nil, wrapperError);
+    }
+}
+
++(void)jsonStringFromObject:(NSObject *)object completion:(void (^)(NSString *, NSError *))completion
+{
+    NSObject *jsonSafeObject = [self jsonSafeObjectFromObject:object];
+    
+    if (![jsonSafeObject isKindOfClass:[NSDictionary class]] && ![jsonSafeObject isKindOfClass:[NSArray class]])
+    {
+        completion(nil, [NSError errorWithDomain:@"WSPRJSONSerialization" code:-1 userInfo:@{NSLocalizedDescriptionKey : @"Root object is not NSDictionary or NSArray subclass"}]);
+        return;
+    }
+    
+    @try
+    {
+        NSError *error;
+        NSString *jsonString = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:jsonSafeObject options:0 error:&error] encoding:NSUTF8StringEncoding];
+        completion(jsonString, error);
+    }
+    @catch (NSException *exception)
+    {
+        NSError *errorFromException = [NSError errorWithDomain:@"WSPRJSONSerilization" code:-1 userInfo:@{NSLocalizedDescriptionKey : [exception description]}];
+        
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey : @"Exception when serializing object!",
+                                   NSUnderlyingErrorKey :errorFromException
+                                   };
+        
+        NSError *wrapperError = [NSError errorWithDomain:@"WSPRJSONSerilization" code:-1 userInfo:userInfo];
+        completion(nil, wrapperError);
+    }
+}
+
+
 
 @end
