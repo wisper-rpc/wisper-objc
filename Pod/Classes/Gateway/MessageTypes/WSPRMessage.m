@@ -7,6 +7,7 @@
 //
 
 #import "WSPRMessage.h"
+#import "WSPRHelper.h"
 
 @implementation WSPRMessage
 
@@ -46,7 +47,14 @@
 
 -(NSString *)asJSONString
 {
-    return [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:[self asDictionary] options:0 error:nil] encoding:NSUTF8StringEncoding];
+    __block NSString *json = nil;
+
+    // Completion is called synchronously, safe!
+    [WSPRHelper jsonStringFromObject:[self asDictionary] completion:^(NSString *jsonString, NSError *error) {
+        json = jsonString;        
+    }];
+    
+    return json;
 }
 
 
