@@ -974,13 +974,13 @@
         WSPRNotification *notification = [[WSPRNotification alloc] init];
         notification.method = @"wisp.test.TestObject:!";
         notification.params = @[instance.instanceIdentifier, @"testSerializeProperty", @{
-                                    @"x" : @(10.5f),
-                                    @"y" : @(11.7f)
+                                    @"location" : @(10),
+                                    @"length" : @(11)
                                     }];
         
         [_gatewayRouter.gateway handleMessage:notification];
         
-        if (((WSPRTestObject *)instance.instance).testSerializeProperty.x == 10.5f && ((WSPRTestObject *)instance.instance).testSerializeProperty.y == 11.7f) {
+        if (((WSPRTestObject *)instance.instance).testSerializeProperty.location == 10 && ((WSPRTestObject *)instance.instance).testSerializeProperty.length == 11) {
             [expectation fulfill];
         }
     }];
@@ -1010,13 +1010,13 @@
             if (![event.name isEqualToString:@"testSerializeProperty"])
                 return NO;
             
-            if ([serializedPoint[@"x"] floatValue] != 10.5f || [serializedPoint[@"y"] floatValue] != 11.7f)
+            if ([serializedPoint[@"location"] floatValue] != 10 || [serializedPoint[@"length"] floatValue] != 11)
                 return NO;
             
             return YES;
         }]]);
         
-        [(WSPRTestObject *)instance.instance setTestSerializeProperty:CGPointMake(10.5, 11.7)];
+        [(WSPRTestObject *)instance.instance setTestSerializeProperty:NSMakeRange(10, 11)];
         
         OCMVerifyAll(gatewayMock);
         [expectation fulfill];
