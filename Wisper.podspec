@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "Wisper"
-  s.version          = "0.2.1"
+  s.version          = "0.2.2"
   s.summary          = "Wisper a descrete and asynchronous communication protocol between platforms and processes."
   s.description      = <<-DESC
                         Wisper is an extension of the JSON RPC protocol that allows full remote objects with construction/destruction of instances, static/instance methods and events. Wisper can be used for the simplest implementation where you just want to call an exposed method or the more complex cases where you need to instantiate multiple instances of an exposed class, run instance methods and receive events.
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => "https://github.com/wisper-rpc/wisper-ios.git", :tag => s.version.to_s }
 
   #Not sure about lowest compatible versions
-  s.ios.deployment_target = "4.0"
+  s.ios.deployment_target = "6.0"
   s.osx.deployment_target = "10.10"
   s.requires_arc = true
 
