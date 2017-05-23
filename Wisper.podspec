@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => "https://github.com/wisper-rpc/wisper-ios.git", :tag => s.version.to_s }
 
   #Not sure about lowest compatible versions
-  s.ios.deployment_target = "4.0"
+  s.ios.deployment_target = "6.0"
   s.osx.deployment_target = "10.10"
   s.requires_arc = true
 
