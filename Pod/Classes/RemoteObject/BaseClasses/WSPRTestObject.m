@@ -43,17 +43,17 @@
     testSerializeProperty.mode = WSPRPropertyModeReadWrite;
     testSerializeProperty.type = WSPR_PARAM_TYPE_DICTIONARY;
     [testSerializeProperty setSerializeWisperPropertyBlock:^id(NSObject *property) {
-        CGPoint pointValue = [(NSValue *)property CGPointValue];
+        NSRange rangeValue = [(NSValue *)property rangeValue];
         return @{
-                 @"x" : @(pointValue.x),
-                 @"y" : @(pointValue.y)
+                 @"location" : @(rangeValue.location),
+                 @"length" : @(rangeValue.length)
                  };
     }];
     [testSerializeProperty setDeserializeWisperPropertyBlock:^id(NSObject *serializedProperty) {
-        NSDictionary *pointDictionary = (NSDictionary *)serializedProperty;
-        return [NSValue valueWithCGPoint:CGPointMake(
-                                                     [pointDictionary[@"x"] floatValue],
-                                                     [pointDictionary[@"y"] floatValue]
+        NSDictionary *rangeDictionary = (NSDictionary *)serializedProperty;
+        return [NSValue valueWithRange:NSMakeRange(
+                                                     [rangeDictionary[@"location"] unsignedIntegerValue],
+                                                     [rangeDictionary[@"length"] unsignedIntegerValue]
                                                      )];
     }];
     
