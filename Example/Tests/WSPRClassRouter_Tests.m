@@ -94,10 +94,10 @@
         if (!dataDictionary[@"id"])
             return NO;
         
-        if ([(NSNumber *)dataDictionary[@"props"][@"testSerializeProperty"][@"x"] floatValue] != 0.5f)
+        if ([(NSNumber *)dataDictionary[@"props"][@"testSerializeProperty"][@"location"] floatValue] != 1)
             return NO;
         
-        if ([(NSNumber *)dataDictionary[@"props"][@"testSerializeProperty"][@"y"] floatValue] != 0.6f)
+        if ([(NSNumber *)dataDictionary[@"props"][@"testSerializeProperty"][@"length"] floatValue] != 12)
             return NO;
         
         return YES;
@@ -107,7 +107,7 @@
     [_gatewayRouter exposeRoute:[WSPRClassRouter routerWithClass:[WSPRTestObject class]] onPath:@"wisp.test.TestObject"];
     
     WSPRTestObject *testObjectToBeAdded = [[WSPRTestObject alloc] init];
-    testObjectToBeAdded.testSerializeProperty = CGPointMake(0.5f, 0.6f);
+    testObjectToBeAdded.testSerializeProperty = NSMakeRange(1, 12);
     WSPRClassRouter *classRouter = [_gatewayRouter routerAtPath:@"wisp.test.TestObject"];
     WSPRClassInstance *instance = [classRouter addInstance:testObjectToBeAdded];
     
